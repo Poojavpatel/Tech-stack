@@ -5,6 +5,8 @@ A collection of all pure JS (ES6) code snippets
 
 * ## [Object oriented programming in javascript](https://gist.github.com/Poojavpatel/48e17c3ecd47a01836fd3e520874fe7c)
 
+* ## [Asynchronous Javascript](https://gist.github.com/Poojavpatel/05713f3af15e68671a02f47733349570)
+
 * ### More array methods
 ```javascript
 const people = [
