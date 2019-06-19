@@ -1,6 +1,10 @@
 # Its_all_Javascript
 A collection of all pure JS (ES6) code snippets 
 
+* ## [Javascript Array Methods - map() filter() reduce() sort()](https://gist.github.com/Poojavpatel/14477c2201ba29cdfbb0c1bef8d9dc81)
+
+* ## [Object oriented programming in javascript](https://gist.github.com/Poojavpatel/48e17c3ecd47a01836fd3e520874fe7c)
+
 * ### Sort an array in JS
 ```javascript
 var points = [40, 100, 1, 5, 25, 10];
@@ -134,6 +138,66 @@ console.log(i*i);               //0
 console.log(i+1);               //1
 console.log(i-1);               //-1
 console.log(i/i);               //1
+```
+---
+
+* ### String Reverse
+```javascript
+function FirstReverse(str){ 
+   return str.split("").reverse().join("");         
+}
+/* The split() method splits a String object into an array of string by separating the string into sub strings.  ["h", "e", "l", "l", "o"]
+The reverse() method reverses an array in place     ["o", "l", "l", "e", "h"]
+The join() method joins all elements of an array into a string.     "olleh" */
+
+const ans = FirstReverse("Hello world");
+console.log('Reversed string is', ans);
+```
+---
+
+* ### String Reverse using For loop
+```javascript
+function reverseString(str) {
+    let rev = "";
+    for (let i = str.length-1; i >= 0 ; i--) {
+        rev = rev + str[i];
+    }
+    return rev;
+}
+console.log('reversed string is', reverseString("Hello world"));
+```
+---
+
+* ### Higher order functions
+A Higher order function is a function that takes a function as an argument or a function that returns a function as an argument
+```javascript
+//1- a function that accepts a function as an argument
+document.addEventListener('click',myFunction);
+function myFunction(){
+    console.log('You clicked ..');
+}
+
+//2- a function that returns a function as an argument
+function MultiplyMe(multiplier){
+    return function(x){
+        return x * multiplier; 
+    }
+}
+
+let doubleMe = MultiplyMe(2);
+let tripleMe = MultiplyMe(3);
+
+console.log(doubleMe(10));
+console.log(tripleMe(5));
+
+//3- Useful higher order function examples (that are a part of core js)
+// forEach is a function that takes a function as an argument and runs it for each ele in an array
+let colors=['red','green','yellow','blue','grey'];
+colors.forEach(saySomething);
+
+function saySomething(color){
+    console.log(`${color} is a great color`);
+}
 ```
 ---
 
