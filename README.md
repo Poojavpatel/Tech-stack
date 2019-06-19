@@ -1,6 +1,148 @@
 # Its_all_Javascript
 A collection of all pure JS (ES6) code snippets 
 
+* ### Sort an array in JS
+```javascript
+var points = [40, 100, 1, 5, 25, 10];
+
+//ascending
+points.sort((a, b) =>  a - b );
+console.log('points:', points);
+points.sort((a, b) =>  a > b );
+console.log('points:', points);
+
+//descending
+points.sort((a, b) =>  b - a );
+console.log('points:', points);
+points.sort((a, b) =>  a < b );
+console.log('points:', points);
+```
+---
+
+* ### indexOf () operator
+```javascript
+x=[1,2,3]
+console.log(x);                         //[ 1, 2, 3 ]
+console.log(x[-1]);                     //undefined
+x[-1]=5;
+console.log(x);                         //[ 1, 2, 3, '-1': 5 ]
+console.log(x[-1]);                     //5
+
+console.log(x.indexOf(5));              //-1
+console.log(x.indexOf(1000000));        //-1
+console.log(x.indexOf(254982));         //-1
+// indexOf() looks for a value in an array, if it does not find it,
+// it returns -1
+
+console.log(x[x.indexOf(5)]);           //5
+console.log(x[x.indexOf(1000000)]);     //5
+console.log(x[x.indexOf(254982)]);      //5
+```
+---
+
+* ### Capitalize first letter of each word
+    Using the JavaScript language, have the function LetterCapitalize(str) take the str parameter being passed and capitalize the first letter of each word. Words will be separated by only one space.
+```javascript
+function LetterCapitalize(str) {
+    let foo = str.split(" ");
+    for(let i=0 ; i<foo.length ; i++){
+       foo[i] = foo[i].charAt(0).toUpperCase() + foo[i].substring(1);
+    }
+    foo = foo.join(" ");
+    return foo;
+}
+     
+console.log('answer:', LetterCapitalize("i ran there"));
+```
+---
+
+* ### Change letter
+    Using the JavaScript language, have the function LetterChanges(str) take the str parameter being passed and modify it using the following algorithm.   Replace every letter in the string with the letter following it in the alphabet (ie. c becomes d, z becomes a). Then capitalize every vowel in this new string (a, e, i, o, u) and finally return this modified string.  
+       
+    Input : "hello*3"  Output : "Ifmmp*3" Input : "fun times!" Output : "gvO Ujnft!" 
+```javascript
+function LetterChanges(str) { 
+    let copy = str;
+    for (let i = 0; i < str.length; i++) {
+        if(copy[i].match(/^[A-Za-z]+$/)){
+            let foo = String.fromCharCode(copy.charCodeAt(i) + 1);
+            // console.log('foo', foo);
+            // console.log('copy', copy);
+            copy = copy.replace( copy[i] , foo);
+        }
+    }
+    for (let i = 0; i < copy.length; i++) {
+        if(copy[i].match(/[aeiouAEIOU]/)){
+            copy = copy.replace(copy[i],copy[i].toUpperCase());
+            // console.log('copy:', copy);
+        }
+    }
+    return copy;       
+}
+ 
+console.log('answer:', LetterChanges("hello*3")); 
+console.log('answer:', LetterChanges("fun times!"));
+```
+---
+* ### Find sum of all border elements of a matrix
+```javascript
+const a = [
+    [1,1,1,1,1],
+    [5,1,1,1,7],
+    [3,1,1,1,5],
+    [2,2,2,2,2]
+]
+
+const nrows = a.length;         //4
+const ncols = a[0].length;      //5
+
+const arrSum = arr => arr.reduce((total,no) => total + no, 0)
+// console.log(arrSum([1,2,3]));
+
+console.log('sum of first row', arrSum(a[0]));               //sum of first row
+console.log('sum of last row', arrSum(a[nrows - 1]));        //sum of last row
+sum = arrSum(a[0]) + arrSum(a[nrows - 1]) ;
+
+for (let i = 1; i < nrows-1 ; i++) {
+    sum += a[i][0] + a[i][ncols - 1];
+}                                                // adding first n last ele of remaining rows
+
+console.log('sum of border elements of matrix is:', sum)
+```
+---
+
+* ### Max () operator
+```javascript
+console.log(Math.max());
+// -Infinity
+
+console.log( Math.max([1,2,3]));
+// NaN
+
+console.log( Math.max(...[1,2,3]));
+// 3
+```
+---
+
+* ### Number.MIN_VALUE 
+    Number.MIN_VALUE is a number closest to zero that can be represented in js
+```javascript
+let i = Number.MIN_VALUE;
+console.log('i:', i);           //5e-324
+
+console.log(i*i);               //0
+console.log(i+1);               //1
+console.log(i-1);               //-1
+console.log(i/i);               //1
+```
+---
+
+* ### Title
+```javascript
+code
+```
+---
+
 * ### Fetch and query data from an API using Axios in node
 ```javascript
 const axios = require('axios');
