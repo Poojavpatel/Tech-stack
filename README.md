@@ -75,6 +75,13 @@ console.table(newcomments);
 ```
 ---
 
+* ### Check if an element exists in an array
+```javascript
+const myarray = [10,20,20,10,10,30,50,10,20];
+myarray.includes(20)                // true
+```
+---
+
 * ### Sort an array in JS
 ```javascript
 var points = [40, 100, 1, 5, 25, 10];

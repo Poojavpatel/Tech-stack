@@ -1,6 +1,6 @@
 ### Asynchronous Javascript
 
-Asynchronous 
+Asynchronous JavaScript is Javascript code which has some calls or functions(that take long time to execute) that run without affecting the current flow of execution
 
 The Problem - 
 ```javascript
