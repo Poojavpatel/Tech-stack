@@ -82,6 +82,7 @@ myarray.includes(20)                // true
 ```
 ---
 
+
 * ### Sort an array in JS
 ```javascript
 var points = [40, 100, 1, 5, 25, 10];
@@ -217,6 +218,14 @@ console.log(i-1);               //-1
 console.log(i/i);               //1
 ```
 ---
+
+* ### Substring
+```javascript
+var str = "Hello world!";
+var res = str.substring(1, 4);          // ell 
+```
+---
+
 
 * ### String Reverse
 ```javascript
