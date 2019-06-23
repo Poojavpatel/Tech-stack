@@ -1,7 +1,8 @@
 class Stack{
     constructor(){
         this.items=[];
-        this.count=0;
+        this.mountain=0;
+        this.valley=0;
     }
     push(item){
         this.items.push(item);
@@ -19,26 +20,25 @@ class Stack{
         return this.items.length;
     }
 }
-const mountain = new Stack();
-const valley = new Stack();
+const hill = new Stack();
 
-function countValley(n,s){
-    var nextind = 0;
+function countValley(n, s){
     console.log(s);
-    if(s[nextind] == 'U'){
-        mountain.push('U');
-        var i=1;
-        while(mountain.stacklength() && i<n){
-            (s[i] == 'U') ? mountain.push('U') : mountain.pop();
-            console.log('Mountain:',mountain.items);
-            i=i+1;
-        }
-        mountain.count += 1;
-        nextind = i;
-        console.log('Next index',nextind);
+    var pointer =0;
+    if(s[pointer] == 'U')
+}
+
+function OneHill( s, nextind ){
+    const firstchar = s[nextind];
+    console.log("Added as",firstchar);
+    hill.push(firstchar);
+    var i = nextind + 1;
+    while(hill.stacklength() && i<n ){
+        (s[i] == firstchar) ? hill.push(firstchar) : hill.pop();
+        console.log('hill:',hill.items);
+        i = i+1;
     }
-    elseif()
-};
+}
 
 // countValley(8,['D','D','U','U','U','U','D','D']);
 // countValley(8,['U','D','D','D','U','D','U','U']);
