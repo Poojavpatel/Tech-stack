@@ -121,6 +121,96 @@ console.log(x[x.indexOf(1000000)]);     //5
 console.log(x[x.indexOf(254982)]);      //5
 ```
 ---
+* ### creating a reusable method using Array.prototype
+
+```javascript
+const Students = [];
+class Student{
+    constructor(name,course,college){
+        this.name=name;
+        this.course=course;
+        this.college=college;
+        Students.push(this);
+    }
+}
+const s1=new Student('Priya','BE','Thakur');
+const s2=new Student('Rohan','MS','Stevens');
+const s3=new Student('Jay','BE','Thadomal');
+const s4=new Student('Mansi','ME','Thakur');
+const s5=new Student('Sneha','Diploma','Thakur');
+
+// Grouping students by specified college name
+const thakurStudents = Students.filter((student) => {
+    if(student.college == 'Thakur'){
+        return true;
+    }
+});
+console.log("Students from college Thakur :");
+console.table(thakurStudents);
+
+// Generalising - creating a reusable method that can be used to group by any property name
+Array.prototype.groupBy = function(prop) {
+    return this.reduce(function(groups, item) {
+      const val = item[prop]
+      groups[val] = groups[val] || []
+      groups[val].push(item)
+      return groups
+    }, {})
+};
+
+const collegeGroup = Students.groupBy('college');
+console.log("Grouping by college name:")
+console.log(collegeGroup);
+```
+---
+* ### Substring
+```javascript
+var str = "Hello world!";
+var res = str.substring(1, 4);          // ell 
+```
+---
+
+
+* ### String Reverse
+```javascript
+function FirstReverse(str){ 
+   return str.split("").reverse().join("");         
+}
+/* The split() method splits a String object into an array of string by separating the string into sub strings.  ["h", "e", "l", "l", "o"]
+The reverse() method reverses an array in place     ["o", "l", "l", "e", "h"]
+The join() method joins all elements of an array into a string.     "olleh" */
+
+const ans = FirstReverse("Hello world");
+console.log('Reversed string is', ans);
+```
+---
+
+* ### String Reverse using For loop
+```javascript
+function reverseString(str) {
+    let rev = "";
+    for (let i = str.length-1; i >= 0 ; i--) {
+        rev = rev + str[i];
+    }
+    return rev;
+}
+console.log('reversed string is', reverseString("Hello world"));
+```
+---
+* ### Check wether input scentence is palindrome or not
+```javascript
+const readline = require('readline').createInterface({input: process.stdin,output: process.stdout})
+
+readline.question(`Enter a scentence to check if its a palindrome or not:`, (scentence) => {
+    s1 = scentence.replace(/\s/g,'').trim().toLowerCase();
+    const rev = s1.split("").reverse().join("");
+    if(s1==rev){result='a'}
+    else{result='not a'}
+    console.log(`The scentence "${scentence}" is ${result} palindrome`);
+    readline.close()
+})
+```
+---
 
 * ### Capitalize first letter of each word
     Using the JavaScript language, have the function LetterCapitalize(str) take the str parameter being passed and capitalize the first letter of each word. Words will be separated by only one space.
@@ -219,40 +309,7 @@ console.log(i/i);               //1
 ```
 ---
 
-* ### Substring
-```javascript
-var str = "Hello world!";
-var res = str.substring(1, 4);          // ell 
-```
----
 
-
-* ### String Reverse
-```javascript
-function FirstReverse(str){ 
-   return str.split("").reverse().join("");         
-}
-/* The split() method splits a String object into an array of string by separating the string into sub strings.  ["h", "e", "l", "l", "o"]
-The reverse() method reverses an array in place     ["o", "l", "l", "e", "h"]
-The join() method joins all elements of an array into a string.     "olleh" */
-
-const ans = FirstReverse("Hello world");
-console.log('Reversed string is', ans);
-```
----
-
-* ### String Reverse using For loop
-```javascript
-function reverseString(str) {
-    let rev = "";
-    for (let i = str.length-1; i >= 0 ; i--) {
-        rev = rev + str[i];
-    }
-    return rev;
-}
-console.log('reversed string is', reverseString("Hello world"));
-```
----
 
 * ### Higher order functions
 A Higher order function is a function that takes a function as an argument or a function that returns a function as an argument
@@ -310,63 +367,8 @@ async function getData(){
 getData();
 ```
 ---
-* ### Check wether input scentence is palindrome or not
-```javascript
-const readline = require('readline').createInterface({input: process.stdin,output: process.stdout})
 
-readline.question(`Enter a scentence to check if its a palindrome or not:`, (scentence) => {
-    s1 = scentence.replace(/\s/g,'').trim().toLowerCase();
-    const rev = s1.split("").reverse().join("");
-    if(s1==rev){result='a'}
-    else{result='not a'}
-    console.log(`The scentence "${scentence}" is ${result} palindrome`);
-    readline.close()
-})
-```
----
 
-* ### creating a reusable method using Array.prototype
-
-```javascript
-const Students = [];
-class Student{
-    constructor(name,course,college){
-        this.name=name;
-        this.course=course;
-        this.college=college;
-        Students.push(this);
-    }
-}
-const s1=new Student('Priya','BE','Thakur');
-const s2=new Student('Rohan','MS','Stevens');
-const s3=new Student('Jay','BE','Thadomal');
-const s4=new Student('Mansi','ME','Thakur');
-const s5=new Student('Sneha','Diploma','Thakur');
-
-// Grouping students by specified college name
-const thakurStudents = Students.filter((student) => {
-    if(student.college == 'Thakur'){
-        return true;
-    }
-});
-console.log("Students from college Thakur :");
-console.table(thakurStudents);
-
-// Generalising - creating a reusable method that can be used to group by any property name
-Array.prototype.groupBy = function(prop) {
-    return this.reduce(function(groups, item) {
-      const val = item[prop]
-      groups[val] = groups[val] || []
-      groups[val].push(item)
-      return groups
-    }, {})
-};
-
-const collegeGroup = Students.groupBy('college');
-console.log("Grouping by college name:")
-console.log(collegeGroup);
-```
----
 
 * ### Input output from terminal in node
 ```javascript
