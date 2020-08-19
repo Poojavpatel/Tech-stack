@@ -448,3 +448,20 @@ code
 code
 ```
 ---
+
+
+fetch call is sent from main call stack to web api call stack
+once it is done everything is pushed back to call back queue
+Event loop keeps on looking at the main call stack,
+
+What is callback
+
+
+Mocha is test runner
+chai is an insertion library
+
+Jest is testing framework
+
+blanket and jscoverage , instanbul - for code coverage
+
+closure
