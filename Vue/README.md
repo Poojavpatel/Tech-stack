@@ -3,9 +3,12 @@
 > Javascript Framework for building Front End User Interfaces
 
 ## Why Use Vue
-* In Vue you can start simple, and add features and tools that you need to build complex web application (Build Core view layer, later can add Router, state management, CLI)
-* Simplicity but can also be scaled up for complexity
+* Simplicity but can also be scaled up for complexity - In Vue you can start simple, and add features and tools that you need to build complex web application (Build Core view layer, later can add Router, state management, CLI)
 * Plugin systems allows to easliy drop in Routers, state managememt, firebase support etc
+* Vue has **best of React and Angular Combined**
+* Any JS developer can quickliy be a vue js developer by going through the docs, **very easy to learn**
+* **Has good documentation**
+* **A sigle file holds the html, styling and the js, but still keeps them seperate**, unlike angular with seperate files for each, or react where everything is combined together in JSX
 
 ## What Vue Does
 * At its core, it provides a way to build **components that encapsulate data/state in your javascript**   
