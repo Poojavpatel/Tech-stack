@@ -1,6 +1,18 @@
 ## Node js
 
-Node js is a 
+Node js is a **Runtime environment for executing javacsript code outside of a browser**
+* Written on google chrome's V8 engine
+* Its cross-platform and open source
+* We oftenly use node to build backend services also called APIs
+* Ideal for Highly-scalable, data-intensive, and real time apps
+* Supports non-blocking I/O operations
+
+---
+### Node js is used in
+* Server client applications
+* Responsive web apps
+* Distributed computing
+* Network application
 
 ---
 ### Core Modules of Node js
@@ -8,6 +20,10 @@ Node js is a
 1. os module
 2. fs module
 3. path module
+
+---
+### Event loop
+* 
 
 ---
 ### Setup basic server and using node.
