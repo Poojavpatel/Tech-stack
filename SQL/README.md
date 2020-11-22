@@ -113,3 +113,87 @@ CREATE TABLE a SELECT SalesPerson,AVG(TotalSale) as b FROM Sales GROUP BY SalesP
 select * from a
 select MAX(b) from a;
 ```
+---
+
+## Leetcode Problems
+
+* Second highest salary from the Employee table
+  ``` sql
+  Create table If Not Exists Employee (Id int, Salary int)
+  Truncate table Employee
+  insert into Employee (Id, Salary) values ('1', '100')
+  insert into Employee (Id, Salary) values ('2', '200')
+  insert into Employee (Id, Salary) values ('3', '300')
+  ```
+  Given the above Employee table, the query should return 200 as the second highest salary. If there is no second highest salary, then the query should return null.
+  ``` sql
+  +---------------------+   
+  | SecondHighestSalary |   
+  +---------------------+   
+  | 200                 |   
+  +---------------------+   
+  ```
+
+  ``` sql
+  /* To get the Higest Salary */
+  SELECT MAX(Salary) AS HighestSalary FROM Employee;
+  /* Sort salary in descend order and then utilize the OFFSET clause to get second highest and LIMIT clause to get one result */
+  SELECT Salary AS SecondHighestSalary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET 1
+  /* To Handle one or no records use IFNULL, To Handle Duplicates use  DISTINCT*/
+  SELECT IFNULL((SELECT DISTINCT Salary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET 1), NULL) AS SecondHighestSalary;
+  ```
+
+* Employees Earning More Than Their Managers
+  ``` sql
+  +----+-------+--------+-----------+
+  | Id | Name  | Salary | ManagerId |
+  +----+-------+--------+-----------+
+  | 1  | Joe   | 70000  | 3         |
+  | 2  | Henry | 80000  | 4         |
+  | 3  | Sam   | 60000  | NULL      |
+  | 4  | Max   | 90000  | NULL      |
+  +----+-------+--------+-----------+
+  ```
+
+  ``` sql
+  SELECT a.Name AS 'Employee'
+  FROM Employee AS a,Employee AS b
+  WHERE a.ManagerId = b.Id AND a.Salary > b.Salary;
+  ```
+
+  ``` sql
+  /* Using JOIN */
+  SELECT a.Name AS 'Employee' FROM Employee AS a
+  JOIN Employee as b
+  ON a.ManagerId = b.id
+  WHERE a.Salary > b.Salary;
+  ```
+
+* Customers Who Never Order
+  ``` sql
+  /* Customers */
+  +----+-------+
+  | Id | Name  |
+  +----+-------+
+  | 1  | Joe   |
+  | 2  | Henry |
+  | 3  | Sam   |
+  | 4  | Max   |
+  +----+-------+
+
+  /* Orders */
+  +----+------------+
+  | Id | CustomerId |
+  +----+------------+
+  | 1  | 3          |
+  | 2  | 1          |
+  +----+------------+
+  ```
+  
+  ``` sql
+  SELECT * FROM Customers WHERE Id NOT IN (SELECT CustomerId FROM Orders); 
+
+  SELECT Name As 'Customers' FROM Customers WHERE Id NOT IN (SELECT CustomerId FROM Orders);
+  ```
+
+* 
