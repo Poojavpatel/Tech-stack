@@ -1,3 +1,14 @@
+# Operating Systems and Linux
+
+* An operating system (or OS) is a **group of computer programs**, including **device drivers, kernels, and other software** that **lets people interact with a computer**
+* It manages computer hardware and software resources
+* It provides common services for computer programs
+* A software which performs all the basic tasks like **file management, memory management, process management, handling input and output, and controlling peripheral devices such as disk drives and printers**
+* **Allocating computer resources to various functions**
+* An operating system is the most important software that runs on a computer. It manages the computer's memory and processes, as well as all of its software and hardware
+
+---
+
 ## Basic Linux and Unix Commands
 ---
 

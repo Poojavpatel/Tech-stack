@@ -20,3 +20,7 @@ And then connect that state **Reactievely** to a template in HTML
 * Vue Template also provides a **variety of directives to control the behaviour of HTML**
 * Like v-if, v-else, v-on directive to listen to events on a element
 * Methods have access to data
+
+---
+## Vuex
+
