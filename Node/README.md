@@ -115,6 +115,47 @@ There are four different ways to create a child process in Node: ```spawn(), for
 ---
 ### process.nextTick() and setImmediate()   
 
+> Consoles -> then all process.nextTick -> then all setImmediate
+
+* Understanding process.nextTick() - Whenever a new queue of operations is initialized we can think of it as a new tick. The process.nextTick() method **adds the callback function to the start of the next event queue**. It is to be noted that, at the start of the program process.nextTick() method is called for the first time before the event loop is processed.
+
+* Understanding setImmdeiate() - Whenever we call setImmediate() method, it’s **callback function is placed in the check phase of the next event queue**. There is slight detail to be noted here that setImmediate() method is called in the poll phase and it’s callback functions are invoked in the check phase.
+
+```javascript
+setImmediate(function A() { 
+    console.log("1st immediate"); 
+}); 
+  
+setImmediate(function B() { 
+    console.log("2nd immediate"); 
+}); 
+  
+process.nextTick(function C() { 
+    console.log("1st process"); 
+}); 
+  
+process.nextTick(function D() { 
+    console.log("2nd process"); 
+}); 
+  
+console.log("program started"); 
+
+/* Output
+program started
+1st process
+2nd process
+1st immediate
+2nd immediate
+*/
+```
+Event queues are initialized in the following manner:
+1. In the first event queue only ‘program started is printed’.
+1. Then second event queue is started and function C i.e. callback of process.nextTick() method is placed at the start of the event queue. C is executed and the queue ends.
+1. Then previous event queue ends and third event queue is initialized with callback D. Then callback function A of setImmdeiate() method is placed in the followed by B.
+1. Now, the third event queue looks like this,
+D A B
+1. Now functions D, A, B are executed in the order they are present in the queue
+
 ```javascript
 function cb1(){
   console.log(1);
@@ -133,6 +174,62 @@ process.nextTick(cb2);
 */
 ```
 
+```javascript
+let racer = function() {
+  setTimeout(() => console.log("timeout"), 0);
+  setImmediate(() => console.log("immediate"));
+  process.nextTick(() => console.log("nextTick"));
+  console.log("current event loop");
+}
+
+racer()
+
+/* 
+current event loop
+nextTick
+timeout
+immediate
+*/
+```
+
+```javascript
+let racer1 = function() {
+  setTimeout(() => console.log("timeout"), 0);
+  setImmediate(() => console.log("immediate"));
+  process.nextTick(() => console.log("nextTick"));
+  console.log("current event loop");
+}
+let racer2 = function() {
+  process.nextTick(() => console.log("nextTick"));
+  setTimeout(() => console.log("timeout"), 0);
+  setImmediate(() => console.log("immediate"));
+  console.log("current event loop");
+}
+let racer3 = function() {
+  setImmediate(() => console.log("immediate"));
+  process.nextTick(() => console.log("nextTick"));
+  setTimeout(() => console.log("timeout"), 0);
+  console.log("current event loop");
+}
+racer1()
+racer2()
+racer3()
+
+/*
+current event loop
+current event loop
+current event loop
+nextTick
+nextTick
+nextTick
+timeout
+timeout
+timeout
+immediate
+immediate
+immediate
+*/
+```
 ---
 ### Difference between readFile and createReadStream 
 
