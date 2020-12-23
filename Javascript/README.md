@@ -1,13 +1,154 @@
-# Its_all_Javascript
-A collection of all pure JS (ES6) code snippets 
+# Javascript
 
-* ## [Javascript Array Methods - map() filter() reduce() sort()](https://gist.github.com/Poojavpatel/14477c2201ba29cdfbb0c1bef8d9dc81)
+## JS Concepts
 
-* ## [Object oriented programming in javascript](https://gist.github.com/Poojavpatel/48e17c3ecd47a01836fd3e520874fe7c)
+### <ins>Clousre</ins>
+JavaScript variables can belong to the local or global scope.   
+Global variables can be made local (private) with closures.   
 
-* ## [Asynchronous Javascript](https://gist.github.com/Poojavpatel/05713f3af15e68671a02f47733349570)
+> Global and local variables with the same name are different variables. Modifying one, does not modify the other.   
+> Variables created without the keyword var, are always global, even if they are created inside a function.
 
-* ### More array methods
+```javascript
+/*To use a closure, simply define a function inside another function and expose it. To expose a function, return it or pass it to another function.
+
+The inner function will have access to the variables in the outer function scope, even after the outer function has returned.*/
+
+var add = (function () {
+var counter = 0;
+return function () {counter += 1; return counter}
+})();
+```
+The variable add is assigned the return value of a self-invoking function.
+
+The self-invoking function only runs once. It sets the counter to zero (0), and returns a function expression.
+
+This way add becomes a function. The "wonderful" part is that it can access the counter in the parent scope.
+
+This is called a JavaScript closure. It makes it possible for a function to have "private" variables.
+
+The counter is protected by the scope of the anonymous function, and can only be changed using the add function.
+> A closure is a function having access to the parent scope, even after the parent function has closed.
+
+
+### <ins>Higher order functions</ins>
+A Higher order function is a function that takes a function as an argument or a function that returns a function as an argument
+```javascript
+//1- a function that accepts a function as an argument
+document.addEventListener('click',myFunction);
+function myFunction(){
+    console.log('You clicked ..');
+}
+
+//2- a function that returns a function as an argument
+function MultiplyMe(multiplier){
+    return function(x){
+        return x * multiplier; 
+    }
+}
+
+let doubleMe = MultiplyMe(2);
+let tripleMe = MultiplyMe(3);
+
+console.log(doubleMe(10));
+console.log(tripleMe(5));
+
+//3- Useful higher order function examples (that are a part of core js)
+// forEach is a function that takes a function as an argument and runs it for each ele in an array
+let colors=['red','green','yellow','blue','grey'];
+colors.forEach(saySomething);
+
+function saySomething(color){
+    console.log(`${color} is a great color`);
+}
+```
+
+---
+
+## Asynchronous JS
+
+[Asynchronous Javascript](https://gist.github.com/Poojavpatel/05713f3af15e68671a02f47733349570)
+
+Asynchronous JavaScript is Javascript code which has some calls or functions(that take long time to execute) that run without affecting the current flow of execution
+
+The Problem - 
+```javascript
+const posts =[
+    { title:"Post 1", body:"This is Post 1" },
+    { title:"Post 2", body:"This is Post 2" }
+];
+
+// Getting posts takes 1 sec
+function getPosts(){
+    setTimeout(() => {
+        let output = '';
+        posts.forEach((post) => {
+            output += `${post.title} \n`
+        })
+        console.log(output);
+    },1000)
+}
+
+// Creating a post takes 2 sec
+function createPost(post){
+    setTimeout(() => {
+        posts.push(post)
+    },2000)
+}
+
+getPosts();
+createPost({ title:"Post 3", body:"This is Post 3" })
+```
+Output - 
+```javascript
+Post 1
+Post 2
+
+```
+
+The getPosts returns only two posts as the third post took more time to be created
+
+The Solution - 
+We deal with this using
+
+1. ### Call Backs   
+
+    > A callback is a function that is to be executed after another function has finished executing   
+    
+    Here we pass the getPosts as a callback to createPost    
+    ie. getPost will run once createPost is done
+
+1. ### Promise
+
+    >Promise constructor takes only one argument,a callback function.\
+    Callback function takes two arguments, resolve and reject\
+    Perform operations inside the callback function and if everything went well then call resolve.\
+    If desired operations do not go well then call reject.
+
+    >Promises can be consumed by registering functions using .then and .catch methods.   
+    then()   
+    then() is invoked when a promise is resolved   
+    catch()   
+    catch() is invoked when a promise is either rejected or some error has occured in execution.
+
+    Let the createPost return a promise  
+    If the promise is "resolved" , "then" call the getPosts   
+    else if the promise is "rejected" , "catch" and display the error msg
+
+1. ### Async-await
+    > Async-await is a special syntax to work with promises in a more comfortable fashion   
+    Async functions are created by prepending the word async before the function declaration   
+    Asynchronous functions can be paused with await, the keyword that can only be used inside an async function. Await returns whatever the async function returns when it is done.
+
+    we declare an async function a and inside the function await for the promise   
+    after that we call the getPosts
+
+---
+
+## Array Methods
+
+[Javascript Array Methods - map() filter() reduce() sort()](https://gist.github.com/Poojavpatel/14477c2201ba29cdfbb0c1bef8d9dc81)
+
 ```javascript
 const people = [
     { name: 'Wes', year: 1988 },
@@ -74,14 +215,92 @@ const newcomments = [
 console.table(newcomments);
 ```
 ---
+## Object oriented programming in javascript
+[Object oriented programming in javascript](https://gist.github.com/Poojavpatel/48e17c3ecd47a01836fd3e520874fe7c)
+
+---
+
+
+
+
+
+## Fetch, I/O, APIs
+
+<details>
+<summary>Fetch and query data from an API using Axios in node</summary>
+
+```javascript
+const axios = require('axios');
+
+async function getData(){
+    try {
+        const blob = await axios.get('http://www.espncricinfo.com/ci/engine/match/1157752.json'); 
+        console.log("data successfully fetched");
+        // console.log('innings', blob.data.innings[0].runs);
+        const i1 = blob.data.innings[0].runs;
+        const w1 = blob.data.innings[1].runs;
+        const w2 = blob.data.innings[2].runs;
+        console.log("Runs scored by India in first inning : "+ i1);
+        console.log("Runs scored by West Indies in first inning : "+ w1);
+        console.log("India enforced a follow-on");
+        console.log("Runs scored by West Indies in second inning : "+ w2);
+    } catch (error) {
+        console.log("error fetching");
+    }   
+}
+getData();
+```
+</details>
+
+<details>
+<summary>Input output from terminal in node</summary>
+
+```javascript
+const readline = require('readline').createInterface({input: process.stdin,output: process.stdout})
+
+readline.question(`Enter your name: `, (name) => {
+    console.log(`Hello ${name}, Welcome`);
+    readline.close()
+})
+```
+</details>
+
+<details>
+<summary>Ajax request to an API</summary>
+
+```javascript
+var ourRequest = new XMLHttpRequest();
+ourRequest.open('GET','https://poojavpatel.github.io/ajaxtest/pets.json');
+ourRequest.onload = function(){
+	console.log(ourRequest.responseText);
+
+	ourData = ourRequest.responseText;
+	console.log(ourData[0]);  /* returns only [ */
+	a = ourData[1].species;
+	console.log(a);  /*this is undefined:( */
+	/*happens as browser sees it as text file | we need to specify its JSON*/
+
+	myData = JSON.parse(ourRequest.responseText);
+	console.log(myData[0]);
+	a = myData[1].species;
+        b = myData[1].name;
+        c = myData[1].foods.likes[1];
+	console.log(a,b,c);
+
+};
+ourRequest.send();
+```
+</details>
+
+
+---
+## Common code
 
 * ### Check if an element exists in an array
 ```javascript
 const myarray = [10,20,20,10,10,30,50,10,20];
 myarray.includes(20)                // true
 ```
----
-
 
 * ### Sort an array in JS
 ```javascript
@@ -99,7 +318,6 @@ console.log('points:', points);
 points.sort((a, b) =>  a < b );
 console.log('points:', points);
 ```
----
 
 * ### indexOf () operator
 ```javascript
@@ -120,7 +338,6 @@ console.log(x[x.indexOf(5)]);           //5
 console.log(x[x.indexOf(1000000)]);     //5
 console.log(x[x.indexOf(254982)]);      //5
 ```
----
 * ### creating a reusable method using Array.prototype
 
 ```javascript
@@ -162,14 +379,11 @@ const collegeGroup = Students.groupBy('college');
 console.log("Grouping by college name:")
 console.log(collegeGroup);
 ```
----
 * ### Substring
 ```javascript
 var str = "Hello world!";
 var res = str.substring(1, 4);          // ell 
 ```
----
-
 
 * ### String Reverse
 ```javascript
@@ -183,7 +397,6 @@ The join() method joins all elements of an array into a string.     "olleh" */
 const ans = FirstReverse("Hello world");
 console.log('Reversed string is', ans);
 ```
----
 
 * ### String Reverse using For loop
 ```javascript
@@ -196,7 +409,6 @@ function reverseString(str) {
 }
 console.log('reversed string is', reverseString("Hello world"));
 ```
----
 * ### Check wether input scentence is palindrome or not
 ```javascript
 const readline = require('readline').createInterface({input: process.stdin,output: process.stdout})
@@ -210,7 +422,6 @@ readline.question(`Enter a scentence to check if its a palindrome or not:`, (sce
     readline.close()
 })
 ```
----
 
 * ### Capitalize first letter of each word
     Using the JavaScript language, have the function LetterCapitalize(str) take the str parameter being passed and capitalize the first letter of each word. Words will be separated by only one space.
@@ -226,7 +437,6 @@ function LetterCapitalize(str) {
      
 console.log('answer:', LetterCapitalize("i ran there"));
 ```
----
 
 * ### Change letter
     Using the JavaScript language, have the function LetterChanges(str) take the str parameter being passed and modify it using the following algorithm.   Replace every letter in the string with the letter following it in the alphabet (ie. c becomes d, z becomes a). Then capitalize every vowel in this new string (a, e, i, o, u) and finally return this modified string.  
@@ -255,7 +465,6 @@ function LetterChanges(str) {
 console.log('answer:', LetterChanges("hello*3")); 
 console.log('answer:', LetterChanges("fun times!"));
 ```
----
 * ### Find sum of all border elements of a matrix
 ```javascript
 const a = [
@@ -281,7 +490,6 @@ for (let i = 1; i < nrows-1 ; i++) {
 
 console.log('sum of border elements of matrix is:', sum)
 ```
----
 
 * ### Max () operator
 ```javascript
@@ -294,7 +502,6 @@ console.log( Math.max([1,2,3]));
 console.log( Math.max(...[1,2,3]));
 // 3
 ```
----
 
 * ### Number.MIN_VALUE 
     Number.MIN_VALUE is a number closest to zero that can be represented in js
@@ -307,148 +514,6 @@ console.log(i+1);               //1
 console.log(i-1);               //-1
 console.log(i/i);               //1
 ```
----
-
-
-
-* ### Higher order functions
-A Higher order function is a function that takes a function as an argument or a function that returns a function as an argument
-```javascript
-//1- a function that accepts a function as an argument
-document.addEventListener('click',myFunction);
-function myFunction(){
-    console.log('You clicked ..');
-}
-
-//2- a function that returns a function as an argument
-function MultiplyMe(multiplier){
-    return function(x){
-        return x * multiplier; 
-    }
-}
-
-let doubleMe = MultiplyMe(2);
-let tripleMe = MultiplyMe(3);
-
-console.log(doubleMe(10));
-console.log(tripleMe(5));
-
-//3- Useful higher order function examples (that are a part of core js)
-// forEach is a function that takes a function as an argument and runs it for each ele in an array
-let colors=['red','green','yellow','blue','grey'];
-colors.forEach(saySomething);
-
-function saySomething(color){
-    console.log(`${color} is a great color`);
-}
-```
----
-
-* ### Fetch and query data from an API using Axios in node
-```javascript
-const axios = require('axios');
-
-async function getData(){
-    try {
-        const blob = await axios.get('http://www.espncricinfo.com/ci/engine/match/1157752.json'); 
-        console.log("data successfully fetched");
-        // console.log('innings', blob.data.innings[0].runs);
-        const i1 = blob.data.innings[0].runs;
-        const w1 = blob.data.innings[1].runs;
-        const w2 = blob.data.innings[2].runs;
-        console.log("Runs scored by India in first inning : "+ i1);
-        console.log("Runs scored by West Indies in first inning : "+ w1);
-        console.log("India enforced a follow-on");
-        console.log("Runs scored by West Indies in second inning : "+ w2);
-    } catch (error) {
-        console.log("error fetching");
-    }   
-}
-getData();
-```
----
-
-
-
-* ### Input output from terminal in node
-```javascript
-const readline = require('readline').createInterface({input: process.stdin,output: process.stdout})
-
-readline.question(`Enter your name: `, (name) => {
-    console.log(`Hello ${name}, Welcome`);
-    readline.close()
-})
-```
----
-* ### Javascript Clock
-```javascript
-const secondHand = document.querySelector('.sec');
-const minuteHand = document.querySelector('.min');
-const hourHand = document.querySelector('.hour');
-
-function setDate() {
-   const now = new Date();
-   //console.log(now);
-   const seconds = now.getSeconds();
-   const minutes = now.getMinutes();
-   let hours = now.getHours();
-   if (hours > 12) {
-       hours = hours - 12;
-   }
-   console.log(` ${hours}hr ${minutes}min ${seconds}sec`);
-   // 0s is 0deg , 30s is 180deg , 60s is 360deg
-   // 1hr 30deg ,3hr 90deg , 6hr 180deg, 12hr 0deg 
-   const secondDegrees = ((seconds/60) * 360) - 90 ;
-   const minuteDegrees = ((minutes/60) * 360) - 90 ;
-   const hourDegrees = ((hours/12) * 360) - 90 ;
-   //console.log(secondDegrees);
-   secondHand.style.transform = `rotate(${secondDegrees}deg)` ;
-   minuteHand.style.transform = `rotate(${minuteDegrees}deg)` ;
-   hourHand.style.transform = `rotate(${hourDegrees}deg)` ;
-
-}
-setInterval(setDate,1000);
-```
----
-* ### Ajax request to an API
-```javascript
-var ourRequest = new XMLHttpRequest();
-ourRequest.open('GET','https://poojavpatel.github.io/ajaxtest/pets.json');
-ourRequest.onload = function(){
-	console.log(ourRequest.responseText);
-
-	ourData = ourRequest.responseText;
-	console.log(ourData[0]);  /* returns only [ */
-	a = ourData[1].species;
-	console.log(a);  /*this is undefined:( */
-	/*happens as browser sees it as text file | we need to specify its JSON*/
-
-	myData = JSON.parse(ourRequest.responseText);
-	console.log(myData[0]);
-	a = myData[1].species;
-        b = myData[1].name;
-        c = myData[1].foods.likes[1];
-	console.log(a,b,c);
-
-};
-ourRequest.send();
-```
----
-* ### Title
-```javascript
-code
-```
----
-
-
-
-
-* ### Title
-```javascript
-code
-```
----
-
 
 fetch call is sent from main call stack to web api call stack
 once it is done everything is pushed back to call back queue
@@ -465,136 +530,3 @@ Jest is testing framework
 blanket and jscoverage , instanbul - for code coverage
 
 closure
-
-
-## Javascript - The wierd parts
-
-1. ### Closure
-    JavaScript variables can belong to the local or global scope.   
-    Global variables can be made local (private) with closures.   
-
-    > Global and local variables with the same name are different variables. Modifying one, does not modify the other.   
-    > Variables created without the keyword var, are always global, even if they are created inside a function.
-
-    ```javascript
-    /*To use a closure, simply define a function inside another function and expose it. To expose a function, return it or pass it to another function.
-
-    The inner function will have access to the variables in the outer function scope, even after the outer function has returned.*/
-
-    var add = (function () {
-    var counter = 0;
-    return function () {counter += 1; return counter}
-    })();
-    ```
-    The variable add is assigned the return value of a self-invoking function.
-
-    The self-invoking function only runs once. It sets the counter to zero (0), and returns a function expression.
-
-    This way add becomes a function. The "wonderful" part is that it can access the counter in the parent scope.
-
-    This is called a JavaScript closure. It makes it possible for a function to have "private" variables.
-
-    The counter is protected by the scope of the anonymous function, and can only be changed using the add function.
-    > A closure is a function having access to the parent scope, even after the parent function has closed.
-    ---
-
-
-1. ### Hoisting
-
-```javascript
-
-```
-
-1. ### Scope and Context
-
-```javascript
-
-```
-
-1. ### Hoisting
-
-```javascript
-
-```
-
-1. ### Hoisting
-
-```javascript
-
-```
-
-### Asynchronous Javascript
-
-Asynchronous JavaScript is Javascript code which has some calls or functions(that take long time to execute) that run without affecting the current flow of execution
-
-The Problem - 
-```javascript
-const posts =[
-    { title:"Post 1", body:"This is Post 1" },
-    { title:"Post 2", body:"This is Post 2" }
-];
-
-// Getting posts takes 1 sec
-function getPosts(){
-    setTimeout(() => {
-        let output = '';
-        posts.forEach((post) => {
-            output += `${post.title} \n`
-        })
-        console.log(output);
-    },1000)
-}
-
-// Creating a post takes 2 sec
-function createPost(post){
-    setTimeout(() => {
-        posts.push(post)
-    },2000)
-}
-
-getPosts();
-createPost({ title:"Post 3", body:"This is Post 3" })
-```
-Output - 
-```javascript
-Post 1
-Post 2
-
-```
-
-### The getPosts returns only two posts as the third post took more time to be created
----
-The Solution - 
-We deal with this using
-
-1. ### Call Backs   
-
-    > A callback is a function that is to be executed after another function has finished executing   
-    
-    Here we pass the getPosts as a callback to createPost    
-    ie. getPost will run once createPost is done
-
-1. ### Promise
-
-    >Promise constructor takes only one argument,a callback function.\
-    Callback function takes two arguments, resolve and reject\
-    Perform operations inside the callback function and if everything went well then call resolve.\
-    If desired operations do not go well then call reject.
-
-    >Promises can be consumed by registering functions using .then and .catch methods.   
-    then()   
-    then() is invoked when a promise is resolved   
-    catch()   
-    catch() is invoked when a promise is either rejected or some error has occured in execution.
-
-    Let the createPost return a promise  
-    If the promise is "resolved" , "then" call the getPosts   
-    else if the promise is "rejected" , "catch" and display the error msg
-
-1. ### Async-await
-    > Async-await is a special syntax to work with promises in a more comfortable fashion   
-    Async functions are created by prepending the word async before the function declaration   
-    Asynchronous functions can be paused with await, the keyword that can only be used inside an async function. Await returns whatever the async function returns when it is done.
-
-    we declare an async function a and inside the function await for the promise   
-    after that we call the getPosts
