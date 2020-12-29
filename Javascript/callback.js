@@ -23,3 +23,25 @@ function createPost(post , callback){
 }
 
 createPost({ title:"Post 3", body:"This is Post 3" },getPosts);
+
+// console.log('Hi');
+// setTimeout(() => {
+//     console.log('I am a callback function');
+// },0)
+// console.log('Finish');
+// console.log('Hi');
+// setTimeout(() => {
+//     console.log('I am a callback function');
+// },2000)
+
+// console.log('Finish');
+
+console.log('Hi');
+setTimeout(() => {
+    console.log('I am a slower callback function');
+},3000)
+console.log('Hello');
+setTimeout(() => {
+    console.log('I am a faster callback function');
+},1000)
+console.log('Done');

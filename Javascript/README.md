@@ -2,6 +2,109 @@
 
 ## JS Concepts
 
+### <ins>Hoisting</ins>
+<br/>
+
+> Before js code runs, compiler takes all the variable declaration and function declaration and moves them on top of the file   
+> In Hoisting only declarations are moved to the top, not assignments
+
+```javascript
+
+/* 
+var items    This is a variable declaration
+items = 10   This is assignment
+In Hoisting only declarations are moved to the top, not assignments
+*/
+
+
+console.log(name) // undefined
+console.log(age) // ReferenceError: age is not defined, process exits
+var name = 'pooja'
+
+sayHello();   // Hello There
+
+function sayHello(){
+  console.log('Hello There');
+}
+
+sayBye(); // TypeError: sayBye is not a function, process exits
+
+var sayBye = function(){
+  console.log('Byee');
+}
+
+/* only the variable declaration 'var sayBye' is moved to the top, and since its a variable not a function, gives error */
+```
+
+<br/>
+
+```javascript
+console.log(age); // ReferenceError: age is not defined
+const age = 23;
+
+// only vars are hoisted and not let or const
+```
+<br/>
+<br/>
+
+### <ins>IIFE (Immediately Invoked Function Expression)</ins>
+
+> Write a function and immediately invoke it   
+> we do that so that variables cannot be accessed or modified outside of that function
+
+```javascript
+
+(function(){
+  var name = 'Sid';
+  console.log(name);
+})();
+
+console.log(name);   // ReferenceError: name is not defined
+
+```
+
+<br/>
+<br/>
+
+### <ins>Scope</ins>
+
+```javascript
+const name = 'pooja';
+const age = '23';
+
+function sayName(){
+  console.log(`Hello i am ${name}`);    // Hello i am pooja
+  function sayAge(){
+    console.log(`My age is ${age}`);    // My age is 23
+  }
+  sayAge();
+}
+sayName();
+```
+
+
+```javascript
+const name = 'pooja';
+const age = '23';
+
+function sayName(){
+  console.log(`Hello i am ${name}`);    // Hello i am pooja
+  function sayAge(){
+    const age = '10';
+    console.log(`My age is ${age}`);    // My age is 10
+  }
+  sayAge();
+}
+sayName();
+console.log('age:', age);               // age: 23
+
+/* When printing age, it first checks in the sayAge function id variable is defined, if not checks in parent scope sayName, if not checks in parent scope
+*/
+```
+
+<br/>
+<br/>
+
 ### <ins>Clousre</ins>
 JavaScript variables can belong to the local or global scope.   
 Global variables can be made local (private) with closures.   
@@ -15,8 +118,8 @@ Global variables can be made local (private) with closures.
 The inner function will have access to the variables in the outer function scope, even after the outer function has returned.*/
 
 var add = (function () {
-var counter = 0;
-return function () {counter += 1; return counter}
+  var counter = 0;
+  return function () {counter += 1; return counter}
 })();
 ```
 The variable add is assigned the return value of a self-invoking function.
@@ -30,6 +133,7 @@ This is called a JavaScript closure. It makes it possible for a function to have
 The counter is protected by the scope of the anonymous function, and can only be changed using the add function.
 > A closure is a function having access to the parent scope, even after the parent function has closed.
 
+<br/>
 
 ### <ins>Higher order functions</ins>
 A Higher order function is a function that takes a function as an argument or a function that returns a function as an argument
@@ -66,8 +170,66 @@ function saySomething(color){
 ---
 
 ## Asynchronous JS
+<br/>
 
-[Asynchronous Javascript](https://gist.github.com/Poojavpatel/05713f3af15e68671a02f47733349570)
+### Understanding how asynchronus calls work
+* The browser has 4 main compoments - **Call Stack, Web APIs, Callback Queue, Event loop**
+* Code lines get added to the **call stack** as they appear
+* Asynchronous types (like setTimeout, fetch, await), gets poped of the stack and is moved on to the **Web APIs**
+* The asynchronous code runs and once it finishes running, it is passed to the **Call back Queue**
+* **The Event loop** takes the first item from the Call back Queue, and pushes it up to the call stack **only if it is EMPTY**
+
+```javascript
+console.log('Hi');
+setTimeout(() => {
+    console.log('I am a callback function');
+},2000)
+console.log('Finish');
+
+/*
+Hi
+Finish
+I am a callback function
+*/
+```
+
+```javascript
+// Even though the timeout is of 0ms, it gets pushed onto call stack only after it gets empty (ie all other lines are executed)
+
+console.log('Hi');
+setTimeout(() => {
+    console.log('I am a callback function');
+},0)
+console.log('Finish');
+
+/*
+Hi
+Finish
+I am a callback function
+*/
+```
+
+```javascript
+console.log('Hi');
+setTimeout(() => {
+    console.log('I am a slower callback function');
+},3000)
+console.log('Hello');
+setTimeout(() => {
+    console.log('I am a faster callback function');
+},1000)
+console.log('Done');
+/*
+Hi
+Hello
+Done
+I am a faster callback function
+I am a slower callback function
+*/
+```
+
+<br/>
+<br/>
 
 Asynchronous JavaScript is Javascript code which has some calls or functions(that take long time to execute) that run without affecting the current flow of execution
 
@@ -111,37 +273,35 @@ The getPosts returns only two posts as the third post took more time to be creat
 The Solution - 
 We deal with this using
 
-1. ### Call Backs   
+### Call Backs   
 
-    > A callback is a function that is to be executed after another function has finished executing   
-    
-    Here we pass the getPosts as a callback to createPost    
-    ie. getPost will run once createPost is done
+> A callback is a function that is to be executed after another function has finished executing   
 
-1. ### Promise
+Here we pass the getPosts as a callback to createPost    
+ie. getPost will run once createPost is done
 
-    >Promise constructor takes only one argument,a callback function.\
-    Callback function takes two arguments, resolve and reject\
-    Perform operations inside the callback function and if everything went well then call resolve.\
-    If desired operations do not go well then call reject.
+### Promise
 
-    >Promises can be consumed by registering functions using .then and .catch methods.   
-    then()   
-    then() is invoked when a promise is resolved   
-    catch()   
-    catch() is invoked when a promise is either rejected or some error has occured in execution.
+>Promise constructor takes only one argument,a callback function.\
+Callback function takes two arguments, resolve and reject\
+Perform operations inside the callback function and if everything went well then call resolve.\
+If desired operations do not go well then call reject.
 
-    Let the createPost return a promise  
-    If the promise is "resolved" , "then" call the getPosts   
-    else if the promise is "rejected" , "catch" and display the error msg
+>Promises can be consumed by registering functions using .then and .catch methods.   
+then() - then() is invoked when a promise is resolved   
+catch() - catch() is invoked when a promise is either rejected or some error has occured in execution.
 
-1. ### Async-await
-    > Async-await is a special syntax to work with promises in a more comfortable fashion   
-    Async functions are created by prepending the word async before the function declaration   
-    Asynchronous functions can be paused with await, the keyword that can only be used inside an async function. Await returns whatever the async function returns when it is done.
+Let the createPost return a promise  
+If the promise is "resolved" , "then" call the getPosts   
+else if the promise is "rejected" , "catch" and display the error msg
 
-    we declare an async function a and inside the function await for the promise   
-    after that we call the getPosts
+### Async-await
+> Async-await is a special syntax to work with promises in a more comfortable fashion   
+Async functions are created by prepending the word async before the function declaration   
+Asynchronous functions can be paused with await, the keyword that can only be used inside an async function. Await returns whatever the async function returns when it is done.
+
+we declare an async function a and inside the function await for the promise   
+after that we call the getPosts
 
 ---
 

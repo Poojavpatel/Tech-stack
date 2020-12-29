@@ -24,6 +24,8 @@ Node js is a **Runtime environment for executing javacsript code outside of a br
 Other Modules 
 1. Datagram Module (dgram) - The dgram module provides a way of working with Datagram sockets.   
   It can be used to send messages from one computer/server to another.
+     
+  (A datagram socket provides a symmetric data exchange interface. There is no requirement for connection establishment. Each message carries the destination address)
 
 1. Zlib Module - The Zlib module provides a way of zip and unzip files.
 1. Cluster Process Module - The cluster module provides a way of creating child processes that runs simultaneously and share the same server port.   
