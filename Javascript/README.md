@@ -175,6 +175,8 @@ function saySomething(color){
 ### Understanding how asynchronus calls work
 * The browser has 4 main compoments - **Call Stack, Web APIs, Callback Queue, Event loop**
 * Code lines get added to the **call stack** as they appear
+* All browsers have a set of built-in Web APIs to support complex operations, and to help accessing data.
+    For example, the Geolocation API can return the coordinates of where the browser is located
 * Asynchronous types (like setTimeout, fetch, await), gets poped of the stack and is moved on to the **Web APIs**
 * The asynchronous code runs and once it finishes running, it is passed to the **Call back Queue**
 * **The Event loop** takes the first item from the Call back Queue, and pushes it up to the call stack **only if it is EMPTY**
@@ -378,6 +380,146 @@ console.table(newcomments);
 ## Object oriented programming in javascript
 [Object oriented programming in javascript](https://gist.github.com/Poojavpatel/48e17c3ecd47a01836fd3e520874fe7c)
 
+### Class
+* A blueprint for creating objects with predefined properties and methods, like making a mould
+* class names conventionally start with capital letters
+* Constructor is a special function that runs when the class is instantiated
+* The class keyword creates a constant so you cannot redefine it
+* class instances are created using the new keyword
+
+```javascript
+// Declaring class as OBJECT
+
+const Book={
+    title:'The Moon',
+    author:'daisy',
+    year:'2001',
+    getSummary: function(){
+        return `${this.title} was written by ${this.author} in year ${this.year}`
+    }
+};
+
+console.log(Book.title);
+console.log(Book.getSummary());
+```
+
+
+```javascript
+// Declaring class using ES6 syntax   
+
+class Book{
+    constructor(title,author,year){
+        this.title=title;
+        this.author=author;
+        this.year=year;
+    }
+    getSummary(){
+        return `${this.title} was written by ${this.author} in year ${this.year}`
+    }
+}
+
+//instantiate book object
+const book1 = new Book('murder','bella','2002');
+console.log(book1);
+console.log(book1.getSummary());
+```
+
+### Class has 2 types of methods - Instance Methods & Class Methods
+### Instance Methods
+Methods that work on individual instance level, and not class level
+```javascript
+class Student() {
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  fullName() {
+    return `Your full name is ${this.firstName} ${this.lastName}`;
+  }
+}
+
+let pooja = new Student('Pooja', 'patel');
+pooja.fullName()
+```
+
+### Class Methods
+
+* Methods that is relevent to class, but not necessarily to individual instances
+* we use static keyword in front of method defination
+* static methods are called without instantiating thier class and cannot be called through a class instance
+* static methods are often used to create utility functions for an application
+```javascript
+class Student() {
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  fullName() {
+    return `Your full name is ${this.firstName} ${this.lastName}`;
+  }
+  static enrollStudents(...students) {
+    // send email to students
+  }
+}
+
+let pooja = new Student('Pooja', 'patel');
+Student.enrollStudents([pooja]);
+```
+
+* Use case of a class method
+```javascript
+class Point{
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  static calculateDistance(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.hypot(dx,dy);
+  }
+}
+
+const p1 = new Point(5,5);
+const p2 = new Point(10,10);
+
+Point.calculateDistance(p1, p2);
+```
+* here each point represents a point in x,y cordinate system
+* To calculate distance between two points, it does not make much sense to call distance on a single point
+* Can be implemented like p1.calculateDistance(p2) but since it is more of a utility function, we make it a class method
+
+```javascript
+class Book{
+    constructor(title,author,year){
+        this.title=title;
+        this.author=author;
+        this.year=year;
+    }
+    getSummary(){
+        return `${this.title} was written by ${this.author} in year ${this.year}`
+    }
+    revise(newYear){
+        this.year = newYear;
+        this.revised = true;
+    }
+    // Static method - a method that we have in a class which we can use without instantiating an object
+    static topBookStore(){
+        return `Barnes and Nobles`;
+    }
+}
+
+//instantiate book object
+const book1 = new Book('murder','bella','2002');
+console.log(book1);
+console.log(book1.getSummary());
+book1.revise(2006);
+console.log(book1.getSummary());
+
+//call a static method with directly the class name
+console.log(Book.topBookStore());
+```
 ---
 
 
