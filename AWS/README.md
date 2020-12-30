@@ -1,5 +1,5 @@
 # Amazon Web Services
-
+Reference - [What is AWS and What can you do with it](https://blog.usejournal.com/what-is-aws-and-what-can-you-do-with-it-395b585b03c)   
 Amazon Web Services (AWS) is a secure cloud services platform, offering compute power, database storage, content delivery and other functionality to help businesses scale and grow.
    
 In simple words AWS allows you to do the following things-
@@ -9,6 +9,8 @@ In simple words AWS allows you to do the following things-
 * Deliver static and dynamic files quickly around the world using a Content Delivery Network (CDN).
 * Send bulk email to your customers.
 
+---
+## AWS Services
 ## Compute
 * <ins>EC2 (Elastic Compute Cloud)</ins> — **These are just the virtual machines in the cloud on which you have the OS level control. You can run whatever you want in them.**
 * <ins>Lambda</ins> — AWS’s serverless technology that allows you to run functions in the cloud. It’s a huge cost saver as you pay only when your functions execute.
@@ -43,8 +45,11 @@ In simple words AWS allows you to do the following things-
 * CloudFormation — It is a way of turning infrastructure into the cloud. You can use templates to provision a whole production environment in minutes.
 * CloudTrail — A way of auditing AWS resources. It logs all changes and API calls made to AWS.
 
-<br/>
-<br/>
-<br/>
+---
 
-* Reference - [What is AWS and What can you do with it](https://blog.usejournal.com/what-is-aws-and-what-can-you-do-with-it-395b585b03c)
+## Microservices
+[What are Microservices](https://www.youtube.com/watch?v=j3XufmvEMiM)
+
+<br/>
+<br/>
+<br/>
