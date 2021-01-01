@@ -1,3 +1,32 @@
+## Microservices vs Monolithic Systems
+
+<br/>
+
+### Monolithic Architecture
+* Monolithic structure is where frontend, backend, storage etc is done within the same application
+* Monoliths **communicate within the system** since all parts are running in the same process
+* This type is **Highly coupled** as every function is relient on another 
+
+<br/>
+
+### Microservice Architecture
+> Microservice is decoupling of entire application into small small services 
+* [What are Microservices](https://www.youtube.com/watch?v=j3XufmvEMiM)
+* The application is divided into small services, where **each microservice is developed seperately**
+* Finished application is the sum of its microservices
+* For these microservices to **communicate with each other, a message queue is used**
+* Its easy to add features, make changes, and maintain written code
+* **Different services can be simultaneously developed without disrupting others**
+* Different services can be written in **different languages**
+* **Isolates falut to a single service**, if one service goes down, rest of the app is still working
+* **No need to deploy the entire application**
+* Microservices can communicate among each other over HTTP uing REST API
+
+### Best Practices for Microservice Architecture
+* We can dockerise each microservice 
+* Seperate build for each application
+
+---
 ## When to choose which database
 
 <br/>
@@ -48,6 +77,10 @@
 * Updating the data is a slow process in Document DB since the data can be divided between machines and can be duplicated.
 * Atomic transactions are not inherently supported. you can add it yourself in code by using verification and revert mechanism, but since the records are divided between machines it cannot be an atomic process and race conditions can occur.
 
+
+> A race condition is an undesirable situation that occurs when a device or system attempts to perform two or more operations at the same time (two or more threads can access shared data and they try to change it at the same time).   
+Because the thread scheduling algorithm can swap between threads at any time, you don't know the order in which the threads will attempt to access the shared data.
+
 <br/>
 <br/>
 
@@ -85,3 +118,7 @@ References
 * [How to Choose the Right Database] (https://towardsdatascience.com/how-to-choose-the-right-database-afcf95541741)
 
 ---
+
+## PWA - Progressive Web Apps
+
+* 

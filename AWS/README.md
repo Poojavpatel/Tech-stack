@@ -47,30 +47,5 @@ In simple words AWS allows you to do the following things-
 
 ---
 
-## Microservices vs Monolithic Systems
-
-### Monolithic Architecture
-* Monolithic structure is where frontend, backend, storage etc is done within the same application
-* Monoliths **communicate within the system** since all parts are running in the same process
-* This type is **Highly coupled** as every function is relient on another 
-
-### Microservice Architecture
-> Microservice is decoupling of entire application into small small services 
-* [What are Microservices](https://www.youtube.com/watch?v=j3XufmvEMiM)
-* The application is divided into small services, where **each microservice is developed seperately**
-* Finished application is the sum of its microservices
-* For these microservices to **communicate with each other, a message queue is used**
-* Its easy to add features, make changes, and maintain written code
-* **Different services can be simultaneously developed without disrupting others**
-* Different services can be written in **different languages**
-* **Isolates falut to a single service**, if one service goes down, rest of the app is still working
-* **No need to deploy the entire application**
-* Microservices can communicate among each other over HTTP uing REST API
-
-### Best Practices 
-* We can dockerise each microservice 
-* Seperate build for each application
-
-<br/>
 <br/>
 <br/>
