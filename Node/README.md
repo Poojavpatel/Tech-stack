@@ -16,10 +16,11 @@ Node js is a **Runtime environment for executing javacsript code outside of a br
 
 ---
 ### Core Modules of Node js
-1. http module
-1. os module
-2. fs module
-3. path module
+1. Http/http2/https module - provides an HTTP client/server implementation
+1. OS module - provides operating system-related utility methods and properties
+2. FS module - provides an API for interacting with the file system
+3. Path module - provides utilities for working with file and directory paths
+4. Events module - provides us the EventEmitter class, which is key to working with events in Node.js.
 
 Other Modules 
 1. Datagram Module (dgram) - The dgram module provides a way of working with Datagram sockets.   
@@ -36,8 +37,39 @@ The child_process module enables us to access Operating System functionalities b
 We can control that child process input stream, and listen to its output stream. We can also control the arguments to be passed to the underlying OS command, and we can do whatever we want with that command’s output   
 There are four different ways to create a child process in Node: ```spawn(), fork(), exec(), and execFile()```.
 ---
-### Event loop
-* 
+### Event Emitters
+* The core of NodeJS is **event-driven programming**. In NodeJS, we achieve event-driven programming with the event-emitter class
+* EventEmitter is a class that helps us create a **publisher-subscriber** pattern in NodeJS.   
+    With an event emitter, we can simply raise a new event from a different part of an application, and a listener will listen to the raised event and have some action performed for the event.
+* To create an event emitter, we need to create an instance of the event emitter instance from the **events module in NodeJS**
+* It has many useful member functions, some of them are - on(eventName, …), emit(eventName, …)
+* To publish an event, we use the emit() function, and to listen to an event, we use the on() function
+```javascript
+import { EventEmitter } from 'events';
+const eventEmitter = new EventEmitter();
+
+// listen to the event
+eventEmitter.on('myEvent', () => {
+    console.log('Data Received');
+});
+
+// publish an event
+eventEmitter.emit('myEvent');
+```
+* The events raised by event emitters are **synchronously** executed by the listeners in the current event loop’s iteration.
+* NodeJs internally uses event emitters widely across its environment. The first example we can think of is streams.   
+    Streams extend event emitters. Streams are built on top of event emitters that raise predefined events like open, end, data, etc.
+* Another example of NodeJS using event emitters is the global **process** variable.
+    The process object exposes some variables we can listen to and respond to accordingly.
+```javascript
+process.on("exit", () => console.log("Exit"));
+process.on("beforeExit", () => console.log("Before Exit"));
+process.on('uncaughtException', () => {
+    console.log('Exception');
+    process.exit();
+});
+throw new Error('Test Error');
+```
 
 ---
 * In Node Console is a Global Object
