@@ -107,6 +107,13 @@ throw new Error('Test Error');
 **Underscore(_) is a special variable in node which stores the result of last expression evaluation**. It can be used to access result of last command execution — similar to $? in bash
 
 ---
+### Asynchronous vs Non-blocking
+
+* Asynchronous literally means not synchronous. We are making HTTP requests which are asynchronous, means we are not waiting for the server response. We continue with other block and respond to the server response when we received.
+
+* The term Non-Blocking is widely used with IO. For example non-blocking read/write calls return with whatever they can do and expect caller to execute the call again. Read will wait until it has some data and put calling thread to sleep.
+
+---
 ### How to serve static files
   * A basic necessity for most http servers is to be able to serve static files   
   This example takes the path requested and it serves that path, relative to the local directory. 
@@ -429,3 +436,4 @@ undefined
 ```javascript
 
 ```
+https://medium.com/@vigowebs/frequently-asked-node-js-interview-questions-and-answers-b74fa1f20678
