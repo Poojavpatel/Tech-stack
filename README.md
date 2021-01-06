@@ -143,6 +143,29 @@ References
 
 ---
 
+## Horizontal vs Vertical Scaling
+
+The heart of the difference is the approach to adding computing resources to your infrastructure
+> With vertical scaling (scaling up), you’re adding more power to your existing machine
+
+> In horizontal scaling (scaling out), you get the additional resources into your system by adding more machines to your network, sharing the processing and memory workload across multiple devices.
+
+<br/>
+
+### Why Horizontal scaling Is Better Than Vertical Scaling
+Horizontal scaling is almost always more desirable than vertical scaling because you don’t get caught in a resource deficit. Instead of taking your server offline while you’re scaling up to a better one, horizontal scaling lets you keep your existing pool of computing resources online while adding more to what you already have. When your app is scaled horizontally, you have the benefit of elasticity.
+
+* Instant and continuous availability
+* No limit to hardware capacity
+* Cost can be tied to use
+* You’re not stuck always paying for peak demand
+* Built-in redundancy
+* Easy to size and resize properly to your needs
+
+<br/>
+
+---
+
 ## PWA - Progressive Web Apps
 
 * 

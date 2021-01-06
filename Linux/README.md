@@ -59,3 +59,9 @@ $ code --list-extensions
 $ sudo apt install gnome-shell-extensions-gpaste gpaste
 ```
 After the installation completes, restart Gnome Shell by pressing Alt + F2 and typing r, then pressing the Enter key.
+
+---
+
+*nix just means operating systems that are like the old workhorse Unix. Some examples include Linux, FreeBSD, and Mac OS X (its kernel, Darwin, is based on BSD).
+
+The main relation between *nix and Ruby is just a pragmatic one; most Ruby developers seem to prefer to work on Unix-like OSes (typically Linux or Mac OS X). There's no official relationship, and it's quite possible to work with Ruby on non-*nix OSes like Windows.

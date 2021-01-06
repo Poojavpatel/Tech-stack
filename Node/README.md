@@ -6,6 +6,7 @@ Node js is a **Runtime environment for executing javacsript code outside of a br
 * We oftenly use node to build backend services also called APIs
 * Ideal for Highly-scalable, data-intensive, and real time apps
 * Supports non-blocking I/O operations
+* Node applications are asynchronous by default
 
 ---
 ### Node js is used in
@@ -13,6 +14,36 @@ Node js is a **Runtime environment for executing javacsript code outside of a br
 * Responsive web apps
 * Distributed computing
 * Network application
+
+
+## When to use Node js 
+* Web Servers   
+Web servers are a perfect use case that benefits from Node’s inherent features. Node’s event-driven implementation can be used to trigger events in the server every time a request from the client-side is received. The single-threaded and asynchronous features ensure that the server can serve a large number of requests at a given time using callbacks. Sending responses back to the client-side is handled by these callbacks while the event loop keeps accepting and passing the receiving requests to event handlers without much delay.
+
+* Real-Time Applications   
+Real-time applications, like chat applications, video conferencing, and online-gaming, benefit from Node’s inherent set of features. These data-intensive applications require the use of websockets and push technology to establish two-way communication between the server and the client. Node’s ability to handle I/O-intensive tasks and its high scalability are the main reasons why the language is being commonly used for real-time applications
+
+* Command-line Applications   
+Building command-line applications are another common application of Node.js. The simple syntax, fast development, and the number of packages available for this purpose
+
+* Creating APIs   
+The language’s ability to integrate well with NoSQL databases, Node becomes a good fit for creating API fronts for NoSQL databases
+
+## When to not use Node js 
+* Heavy Computational Applications   
+If your application is likely to run tasks that involve heavy computing and number crunching, like running the Fibonacci algorithm   
+the heavy computation blocks the single-thread running in the application and halts the progress of the event loop until the computation is finished. And it delays serving the requests still in the queue, which may not take as much time   
+The best solution is to implement heavy computational tasks as background processes in another appropriate language   
+> Using microservices architecture and separating heavy computational tasks from Node implementation is the best solution.
+
+* A CPU-Heavy Application   
+The very benefits of its event-driven, non-clocking I/O model would get practically... nullified in the context of CPU-intensive operations.
+
+* A Simple CRUD (or HTML) Application   
+Using Node.js in this case would be like driving a Formula 1 car while... stuck in rush hour traffic. 
+
+* Backends with Relational Databases   
+Node’s relational database support tools are not up to the expected level when compared to other languages. This makes Node an undesirable for use cases with relational databases
 
 ---
 ### Core Modules of Node js
@@ -72,7 +103,13 @@ throw new Error('Test Error');
 ```
 
 ---
+### Global Objects
+
+> In Browsers we have Document and Window object, in node we have Global scope
+
+Can be accessed anywhere in any file
 * In Node Console is a Global Object
+* eg - setTimeout(), setInterval(), process.exit()
 
 ---
 ### Process Object
