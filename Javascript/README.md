@@ -106,32 +106,51 @@ console.log('age:', age);               // age: 23
 <br/>
 
 ### <ins>Clousre</ins>
-JavaScript variables can belong to the local or global scope.   
+In JavaScript variables can belong to the local or global scope.   
 Global variables can be made local (private) with closures.   
 
-> Global and local variables with the same name are different variables. Modifying one, does not modify the other.   
-> Variables created without the keyword var, are always global, even if they are created inside a function.
+> To use a closure, simply define a function inside another function and expose it. To expose a function, return it or pass it to another function.
+   
+> The inner function will have access to the variables in the outer function scope, even after the outer function has returned
+   
+> A closure is a function having access to the parent scope, even after the parent function has closed.
 
 ```javascript
-/*To use a closure, simply define a function inside another function and expose it. To expose a function, return it or pass it to another function.
+function outer(outerVariable){
+  return function inner(innerVariable){
+    console.log('outerVariable:', outerVariable);
+    console.log('innerVariable:', innerVariable);
+  }
+}
 
-The inner function will have access to the variables in the outer function scope, even after the outer function has returned.*/
+const newFunction = outer('a');
 
+console.log('outerVariable:', outerVariable);   // outerVariable is not defined
+// since outerVariable has a function scope, and the function is done executing, it does not exist anymore
+
+newFunction('b');  // outerVariable: a innerVariable: b
+// the inner function is still able to access the outerVariable, even after it has gone out of scope
+// Closure, the inner function is inside the outer function so it saves the outerVariable and keeps track of it
+```
+
+
+```javascript
 var add = (function () {
   var counter = 0;
   return function () {counter += 1; return counter}
 })();
+
+add();
+add();
+add();
+
+// the counter is now 3
 ```
-The variable add is assigned the return value of a self-invoking function.
-
-The self-invoking function only runs once. It sets the counter to zero (0), and returns a function expression.
-
-This way add becomes a function. The "wonderful" part is that it can access the counter in the parent scope.
-
-This is called a JavaScript closure. It makes it possible for a function to have "private" variables.
-
-The counter is protected by the scope of the anonymous function, and can only be changed using the add function.
-> A closure is a function having access to the parent scope, even after the parent function has closed.
+* The self-invoking function only runs once. It sets the counter to zero (0), and returns a function expression.
+* var add is assigned the return value of the IFFE ie `var add = function () {counter += 1; return counter}`.
+* it can access the counter in the parent scope
+* This is called a JavaScript closure. It makes it possible for a function to have "private" variables.
+* The counter is protected by the scope of the anonymous function, and can only be changed using the add function.
 
 <br/>
 
@@ -526,9 +545,107 @@ console.log(Book.topBookStore());
 ```
 ---
 
+## Spread Operator
 
+* Copy an array
+    ```javascript
+    const arr1 [1,2,3];
+    const arr2 [...arr1];
+    console.log(arr2); // [ 1, 2, 3 ]
+    ```
+* Combine arrays
+    ```javascript
+    const arr1 [1,2,3];
+    const arr2 [4,5,6];
+    const arr3 [...arr1, ...arr2];
+    console.log(arr3); // [ 1, 2, 3, 4, 5, 6 ]
+    ```
+* Add an item to an array
+    ```javascript
+    let arr1 = ['this', 'is', 'an'];
+    arr1 = [...arr1, 'array', 'cool'];
+    console.log(arr1);
+    // [ 'this', 'is', 'an', 'array', 'cool' ]
 
+    ```
+* Adding a property to an object
+    ```javascript
+    const user = {
+    firstname: 'Chris',
+    lastname: 'Bongers'
+    };
+    const output = {...user, age: 31};
+    console.log(output);
+    // { firstname: 'Chris', lastname: 'Bongers', age: 31 }
 
+    ```
+* Use Math() functions
+    ```javascript
+    const arr1 = [1, -1, 0, 5, 3];
+    const max = Math.max(...arr1);
+    console.log(max); // 5
+    ```
+* Spread array as function arguments
+
+    ```javascript
+    const myFunc = (x1, x2, x3) => {
+    console.log(x1);
+    console.log(x2);
+    console.log(x3);
+    };
+    const arr1 = [1, 2, 3];
+    myFunc(...arr1);
+    // 1
+    // 2
+    // 3
+
+    ```
+* Pass unlimited arguments to a function
+    ```javascript
+    const myFunc = (...args) => {
+    console.log(args);
+    };
+    myFunc(1, 'a', new Date());
+    ```
+* Converting a nodeList into an array
+    ```javascript
+    const el = [...document.querySelectorAll('div')];
+    el.forEach(item => {
+    console.log(item);
+    });
+    // <div></div>
+    // <div></div>
+    // <div></div>
+
+    ```
+* Destructuring an object
+    ```javascript
+    const user = {
+    firstname: 'Chris',
+    lastname: 'Bongers',
+    age: 31
+    };
+
+    const {firstname, ...rest} = user;
+    console.log(firstname);
+    console.log(rest);
+    // 'Chris'
+    // { lastname: 'Bongers', age: 31 }
+
+    ```
+* Exploding a string
+    ```javascript
+    const str = 'Hello';
+    const arr = [...str];
+    console.log(arr);
+    // [ 'H', 'e', 'l', 'l', 'o' ]
+
+    ```
+---
+
+## Generators (Yield)
+
+* https://blog.evelynstender.com/javascript-what-are-generators-yield
 
 ## Fetch, I/O, APIs
 
@@ -835,4 +952,5 @@ Jest is testing framework
 
 blanket and jscoverage , instanbul - for code coverage
 
-closure
+> Global and local variables with the same name are different variables. Modifying one, does not modify the other.   
+> Variables created without the keyword var, are always global, even if they are created inside a function.
