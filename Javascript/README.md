@@ -647,6 +647,126 @@ console.log(Book.topBookStore());
 
 * https://blog.evelynstender.com/javascript-what-are-generators-yield
 
+---
+
+## Optimization techniques
+* If with multiple conditions
+```javascript
+if (x === 'abc' || x === 'def' || x === 'ghi' || x ==='jkl') {
+    //logic
+}
+
+if (['abc', 'def', 'ghi', 'jkl'].includes(x)) {
+   //logic
+}
+```
+* Assigning values to multiple variables
+```javascript
+let test1, test2, test3;
+test1 = 1;
+test2 = 2;
+test3 = 3;
+
+let [test1, test2, test3] = [1, 2, 3];
+```
+* Short Function Calling
+```javascript
+// Longhand
+function test1() {
+  console.log('test1');
+};
+function test2() {
+  console.log('test2');
+};
+var test3 = 1;
+if (test3 == 1) {
+  test1();
+} else {
+  test2();
+}
+// Shorthand
+(test3 === 1? test1:test2)();
+```
+* Switch Shorthand
+```javascript
+// Longhand
+switch (data) {
+  case 1:
+    test1();
+  break;
+  case 2:
+    test2();
+  break;
+  case 3:
+    test();
+  break;
+}
+
+// Shorthand
+var data = {
+  1: test1,
+  2: test2,
+  3: test
+};
+
+data[something] && data[something]();
+```
+* Default Parameter Values
+```javascript
+//Longhand
+function add(test1, test2) {
+  if (test1 === undefined)
+    test1 = 1;
+  if (test2 === undefined)
+    test2 = 2;
+  return test1 + test2;
+}
+//shorthand
+add = (test1 = 1, test2 = 2) => (test1 + test2);
+```
+* Lookup Conditions Shorthand
+```javascript
+// Longhand
+if (type === 'test1') {
+  test1();
+}
+else if (type === 'test2') {
+  test2();
+}
+else if (type === 'test3') {
+  test3();
+}
+else if (type === 'test4') {
+  test4();
+} else {
+  throw new Error('Invalid value ' + type);
+}
+// Shorthand
+var types = {
+  test1: test1,
+  test2: test2,
+  test3: test3,
+  test4: test4
+};
+ 
+var func = types[type];
+(!func) && throw new Error('Invalid value ' + type); func();
+```
+* Repeat a string multiple times
+```javascript
+//longhand 
+let test = ''; 
+for(let i = 0; i < 5; i ++) { 
+  test += 'test '; 
+} 
+console.log(str); // test test test test test 
+
+//shorthand 
+'test '.repeat(5);
+```
+
+---
+
 ## Fetch, I/O, APIs
 
 <details>
