@@ -166,6 +166,25 @@ Horizontal scaling is almost always more desirable than vertical scaling because
 
 ---
 
+## Race Conditions and Deadlock
+
+### Dekker's Algorithm
+[Race Conditions and How to Prevent Them - A Look at Dekker's Algorithm](https://www.youtube.com/watch?v=MqnpIwN7dz0)
+
+---
+
+## Pigeon Hole Principle
+
+[What Is the Pigeonhole Principle?](https://www.youtube.com/watch?v=B2A2pGrDG8I)
+
+---
+
+## Bloom Filters
+
+[What Are Bloom Filters?](https://www.youtube.com/watch?v=kfFacplFY4Y)
+
+---
+
 ## PWA - Progressive Web Apps
 
 * 

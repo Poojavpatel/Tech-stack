@@ -25,7 +25,7 @@ A system may or may not have presentation layer (eg - logger system)
 Clarify all these
    
 * ### Functional Requirements
-  what features are expected - upload video, show feed etc
+  what features are expected - upload video, show feed, cater to multiple resolutions, cater to different internet speeds etc
    
 * ### Non Functional requirements
   What non functional requirements are expected - high availability, low latency, consistency vs performance, fault tolerence et
@@ -53,17 +53,17 @@ Ask yourself
 
 ## Step 5 - Identifying and resolving bottlenecks
 
-* Is there any single point of failure in our system? What are we doing to mitigate it?
-* Do we have enough replicas of the data so that we can still serve our users if we lose a few servers?
-* Do we have enough copies of different services running such that a few failures will not cause a total system shutdown?
-* How are we monitoring the performance of our service? Do we get alerts whenever critical components fail or their performance degrades?
+* Is there any **single point of failure** in our system? What are we doing to mitigate it?
+* Do we have enough **replicas** of the data so that we can still serve our users if we lose a few servers?
+* Do we have enough **copies of different services running** such that a few failures will not cause a **total system shutdown**?
+* How are we **monitoring the performance** of our service? Do we get **alerts** whenever critical components fail or their performance degrades?
 
 # System design basics 
 
 ### Key Characteristics of Distributed Systems
 * Scalability  -   capability of a system, process, or a network to grow and manage increased demand
 * Reliability
-* Availability
+* Availability - 
 * Efficiency
 * Serviceability or Manageability
 
