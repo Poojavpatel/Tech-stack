@@ -185,7 +185,7 @@ select MAX(b) from a;
 
 ## Concepts 
 
-### Single vs Composite Indexes 
+### <ins>Single vs Composite Indexes</ins> 
 https://user3141592.medium.com/single-vs-composite-indexes-in-relational-databases-58d0eb045cbe
 
 An index, or more specifically, an index on a column is an additional data structure of the table’s records sorted (typically via b-tree) only on that column. 
@@ -223,14 +223,135 @@ Disadvantages of index
 2. Indexes also need to be updated when state-changing queries like CREATE UPDATE and DELETE are made
 As such, adding unnecessary indexes can actually degrade performance overall
 
+<br/>
+<br/>
+
+### <ins>Soft delete vs Hard delete</ins>
+
+```
+Soft deletes: marking data as deleted
+Hard deletes: performing a DELETE on a table
+```
+
+Soft delete - implemented by adding a Boolean column 'deleted' in the DB and a timestamp of when it was “deleted”
+
 ---
 
 ## SQL Joins
 
+<img src="https://i.stack.imgur.com/4zjxm.png" width="75%">
+
+* **JOIN is same as INNER JOIN**
+* We can also use LEFT OUTER JOIN instead of LEFT JOIN, both are same.
+* RIGHT JOIN is also known as RIGHT OUTER JOIN
+
+### Cross Join
+* CROSS JOIN is used to generate a paired combination of each row of the first table with each row of the second table. This join type is also known as cartesian join
+* The Cartesian Product is a multiplication operation in the set theory that generates all ordered pairs of the given sets. Suppose that, A is a set and elements are {a,b} and B is a set and elements are {1,2,3}. The Cartesian Product of these two A and B is denoted AxB and the result will be like the following.
+* **Unlike the INNER JOIN, LEFT JOIN and FULL OUTER JOIN, the CROSS JOIN does not require a joining condition.**
+* The SQL queries which contain the CROSS JOIN keyword can be **very costly**. We try to say that these queries have a high potential to consume more resources and can cause performance issues. 
+* CROSS JOIN are implemented with **Nested Loops**,
+* When WHERE condition is used, **this type of JOIN behaves as an INNER JOIN**, and when the WHERE condition is not present, it behaves like a CARTESIAN product
+* syntax 
+```sql
+SELECT ColumnName_1, 
+       ColumnName_2, 
+       ColumnName_N
+FROM [Table_1]
+     CROSS JOIN [Table_2]
+
+SELECT ColumnName_1, 
+       ColumnName_2, 
+       ColumnName_N
+FROM [Table_1],[Table_2]
+```
+
+* What is a Natural Join and in which situations is a natural join used
 
 
+```sql
+-- create a table
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  customer_id INTEGER
+);
+CREATE TABLE customers (
+  customer_id INTEGER PRIMARY KEY,
+  name TEXT
+);
+
+-- insert some values
+INSERT INTO orders VALUES (1, 'one', 5);
+INSERT INTO orders VALUES (2, 'two', 10);
+INSERT INTO orders VALUES (3, 'three', 15);
+INSERT INTO orders VALUES (4, 'four', 50);
+INSERT INTO orders VALUES (5, 'five', 60);
+INSERT INTO orders VALUES (6, 'six', 100);
+INSERT INTO customers VALUES (5, 'mayur');
+INSERT INTO customers VALUES (10, 'pooja');
+INSERT INTO customers VALUES (15, 'bhai');
+INSERT INTO customers VALUES (20, 'jay');
+INSERT INTO customers VALUES (25, 'sumeet');
+
+-- fetch some values
+SELECT * FROM orders left join customers on orders.customer_id = customers.customer_id;
+SELECT * FROM orders right join customers on orders.customer_id = customers.customer_id;
+SELECT * FROM orders inner join customers on orders.customer_id = customers.customer_id;
+SELECT * FROM orders full outer join customers on orders.customer_id = customers.customer_id;
+SELECT * FROM orders left join customers on orders.customer_id = customers.customer_id where customers.customer_id is null;
+SELECT * FROM orders right join customers on orders.customer_id = customers.customer_id where orders.customer_id is null;
+SELECT * FROM orders full outer join customers on orders.customer_id = customers.customer_id where customers.customer_id is null or orders.customer_id is null;
+
+```
 
 ---
+
+* TCL stands for Transaction Control Commands used for managing the changes made by DML commands like INSERT, DELETE, and UPDATE. The TCL commands are automatically committed in the database; that's why we cannot use them directly while creating tables or dropping them
+
+* DELETE -
+-DML COMMAND
+-Delete Rows from the table one by one
+-We can use where clause with Delete to delete single row
+-Delete is slower than truncate
+-ROLLBACK is possible with DELETE
+
+DROP-
+-DDL COMMAND
+-Delete the entire structure or schema
+-We can't use where clause with drop
+-Drop is slower than DELETE & TRUNCATE
+-ROLLBACK IS NOT POSSIBLE WITH DROP
+
+TRUNCATE-
+-DDL COMMAND
+-Truncate deletes rows at a one goal
+-We can't use where clause with Truncate
+-Truncate faster than both DELETE & DROP
+-Rollback is not possible with Truncate
+
+The TRUNCATE statement in SQL removes all data from the table and free the table's space.
+SQL's DELETE statement removes all data from the table but does not free the table's space.
+
+* RAW datatype can store unstructured data in a column
+RAW datatype stores variable-length binary data that can be queried and inserted but not manipulated. Its maximum length is 32767 bytes.
+
+* In which of the following cases a DML statement is not executed
+The DML statement is used to access and manipulate the data in an existing table. Therefore, it cannot be used in table deletion
+
+* The INSTR function searches the string for substring and returns the numeric value of the specified character's first occurrence.
+
+* The HAVING clause is Similar to WHERE clause but is used for groups rather than rows
+
+* The COMMIT statement is a transactional command used to end the current transaction and make all changes performed in the transaction permanent.
+
+The ROLLBACK statement is a transactional command used to back out or cancels the current transaction changes and restores changed data in its previous state.
+
+*  A CASE statement is one of the control flow function that allows us to write an if-else or if-then-else logic in a SQL query. This expression validates various conditions and shows the output when the first condition is true, and stops traversing. If any condition is not true, it executes the else block. It shows a null value if the else block is not found.
+
+* Routines, also known as subroutines, are the group of multiple commands that can be called whenever required.
+
+Triggers are a special type of stored procedure containing a set of SQL statements that will be fired automatically whenever any database event occurs. It always resides in the system catalog.
 
 <!-- ## SQL queries dump
 
