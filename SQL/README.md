@@ -1,22 +1,5 @@
 # SQL
 
-### Some of The Most Important SQL Commands
-* CREATE DATABASE - creates a new database
-* ALTER DATABASE - modifies a database
-* INSERT INTO - inserts new data into a database
-
-* CREATE TABLE - creates a new table
-* ALTER TABLE - modifies a table
-* DROP TABLE - deletes a table
-
-* SELECT - extracts data from a database
-* UPDATE - updates data in a database
-* DELETE - deletes data from a database
-
-* CREATE INDEX - creates an index (search key)
-* DROP INDEX - deletes an index
-
----
 ## Data Query Language
 * It is used to extract the data from the relations. e.g.; SELECT
 * A generic query to retrieve from a relational database is:
@@ -38,14 +21,14 @@ Count no of employees working in dept 'IT'
 SELECT Conut(*) FROM Employees WHERE dept_name='IT';
 ```
 
----
+
 ### FIND Queries
 
 Find details of employees whose salary is in between 10000 50000
 ```sql
 SELECT * FROM Employees WHERE salary BETWEEN 10000 AND 50000;
 ```
----
+
 ### LIKE Queris (REGEX)
 
 Find Names of employees starting with a
@@ -59,7 +42,7 @@ Find details of employees whose first_name end in 'A' and has 6 letters
 SELECT first_name FROM Employees WHERE first_name LIKE '_____A';
 /* Here _ means exactly one characters */
 ```
----
+
 ### UPDATE Queries
 
 Increase income of all employees by 5%
@@ -197,3 +180,619 @@ select MAX(b) from a;
   ```
 
 * 
+
+--- 
+
+## Concepts 
+
+### Single vs Composite Indexes 
+https://user3141592.medium.com/single-vs-composite-indexes-in-relational-databases-58d0eb045cbe
+
+An index, or more specifically, an index on a column is an additional data structure of the table’s records sorted (typically via b-tree) only on that column. 
+Each record in the index also includes a pointer to the original record in the table, 
+such that finding records in the index is equivalent to finding records in the original table.
+
+For example, suppose we had the following users table.
+
+```sql
+ID | first_name | last_name    | Class      | Position |  ssn | 
+---------------------------------------------------------------
+ 1 | Teemo      | Shroomer     | Specialist | Top      | 2345 |
+ 2 | Cecil      | Heimerdinger | Specialist | Mid      | 5461 |
+ 3 | Annie      | Hastur       | Mage       | Mid      | 8784 |
+```
+
+If we create an index on users.first_name, CREATE INDEX first_name_index ON users (first_name) USING BTREE;
+
+it would create a sorting of the users by their first_name with a pointer to their primary key, something like this:
+Annie    -> 3
+Cecil    -> 2
+Teemo    -> 1
+
+Then a query like
+```sql
+SELECT * FROM users WHERE first_name = 'Teemo';
+```
+would take only O(log_2(n)) // reads since the database can perform a binary search on this index, since it is sorted by first_name
+ 
+O(n) to O(log base 2 (n))
+
+
+Disadvantages of index
+1. Additional storage space to store indexes
+2. Indexes also need to be updated when state-changing queries like CREATE UPDATE and DELETE are made
+As such, adding unnecessary indexes can actually degrade performance overall
+
+---
+
+## SQL Joins
+
+
+
+
+---
+
+<!-- ## SQL queries dump
+
+///////// sequlize 
+https://stackoverflow.com/questions/35445849/sequelize-findone-latest-entry
+https://stackoverflow.com/questions/46380563/get-only-datavalues-from-sequelize-orm
+
+
+// javascript array as a list of strings (preserving quotes)
+
+var arr = ['item1','item2','item3','item4'];
+
+var quotedAndCommaSeparated = "'" + arr.join("','") + "'";
+
+// quotedAndCommaSeparated === "'item1','item2','item3','item4'"
+
+// conversions
+
+comma-separated string to an array
+var array = string.split(',');
+
+
+
+// update multiple rows 
+update doctor_schedule set order_placed=1 where id in (${source_ids.join(',')})
+
+
+
+
+//////// drawbacks
+* ids are sequential, if i get one (1160) next ones can be predicted (1161,1162,1163)
+in mongo its a 16 digit unique id
+* arrays, objects,json not saved....save as '4,5,6,7' and '{a:b,c:d}'
+* 
+
+https://www.imaginarycloud.com/blog/mongodb-vs-mysql/
+
+
+
+
+////////// FIND most common entries
+
+// day on which most appointments were booked
+SELECT *, COUNT(appointment_date) as mydate
+FROM `doctor_schedule`
+GROUP BY appointment_date
+ORDER BY mydate DESC
+LIMIT 1
+
+// 2021-02-19, 2020-09-14, 2020-10-30
+
+select * from doctor_schedule where appointment_date="2021-02-19".  // 53 entries
+select * from doctor_schedule where appointment_date="2020-09-14".  // 32 entries
+
+
+
+///////// Find rows that have the same value on a column in MySQL
+// no unique constraint was set on this column. Now I need to find these rows and see if they should be removed
+
+// This query will give you a list of email addresses and how many times they're used, with the most used addresses first.
+
+SELECT email,
+       count(*) AS c
+FROM TABLE
+GROUP BY email
+HAVING c > 1
+ORDER BY c DESC
+
+// If you want the full rows:
+
+select * from table where email in (
+    select email from table
+    group by email having count(*) > 1
+)
+
+
+select * from doctor_products where pid in (select pid from doctor_products group by pid having count(*) > 1)
+
+
+
+
+
+
+
+///////////////////////////////////// QUERIES /////////////////////////////////////////
+
+select cd.duration,a.doctor_id,a.doctor_name, b.appointment_date,b.nps_score,b.nps_irrelevant,b.on_time,b.reschedule_sent,b.prescription_generated,b.image_uploaded,b.image_upload_requested,b.from_time,b.to_time,b.email,b.phone,b.brand,b.id,b.category,b.source,b.confirmed,b.cancelled,b.prescription_order_ids,b.slot_start_time,b.slot_end_time,b.status,b.order_placed
+case
+  when source='performance_form' then 'SH'
+  when source='hair_form' then 'HC'
+  when source='order' then 'OF'
+  when source='F' then 'F'
+  when source='O' then 'O'
+  when source='FU' then 'FU'
+  ELSE source
+  end as source,
+
+  b.source_id,b.patient_name,
+  b.status,
+  b.prescription_order_ids,
+  b.form_order_placed,b.order_id,
+  case
+  when rescheduled=1 then 'Priority'
+  when rescheduled=0 then 'Normal'
+  end as Rescheduled,
+  b.schedule_token
+  from doctor as a
+  inner join
+  doctor_schedule as b
+  on a.doctor_id = b.doctor_id
+  left join call_details as cd 
+  on b.id= cd.appointment_id
+  WHERE
+  b.appointment_date between '2021-02-04' and '2021-02-04'
+  and b. delete_flag = 0
+  and a.doctor_id in (1,2,3,4,5,6,7,32,33,34,35,36)
+  order by b.appointment_date,b.from_time,b.id;
+
+
+
+////////////////////
+
+
+UPDATE doctor_schedule set order_placed=1 where id ='1580'
+select * from prescription where source_id='1582'
+select prescription_id,pdf_key,source,source_id from prescription where patient_email ='pooja.patel@mosaicwellness.com' or patient_phone='8149878029' and created_dttm BETWEEN NOW() - INTERVAL 180 DAY AND NOW() order by prescription_id desc
+
+
+
+
+SELECT * FROM doctor_schedule WHERE id IN ('1547', '1546')
+
+
+SELECT * FROM prescription WHERE created_dttm between '2021-02-09 10:07:51'
+SELECT CONVERT(date, GETDATE())
+SELECT GETDATE();
+SELECT CURRENT_TIMESTAMP;
+SELECT CURDATE()
+select NOW()
+SELECT * FROM prescription WHERE created_dttm BETWEEN DATE_SUB(NOW(), INTERVAL 3 DAY) AND NOW();
+SELECT source,mail_sent FROM prescription WHERE (created_dttm BETWEEN DATE_SUB(NOW(), INTERVAL 3 DAY) AND DATE_SUB(NOW(), INTERVAL 2 DAY)) AND source <> 'O' AND mail_sent <> 'no' ;
+
+
+
+
+SELECT * from prescription,doctor_schedule where prescription.source_id=doctor_schedule.id
+AND (prescription.created_dttm BETWEEN DATE_SUB(NOW(), INTERVAL 3 DAY) AND DATE_SUB(NOW(), INTERVAL 2 DAY))
+AND prescription.source <> 'O'
+AND doctor_schedule.order_placed = '1'
+AND prescription.mail_sent <> 'no';  
+
+
+SELECT prescription_id from prescription,doctor_schedule where prescription.source_id=doctor_schedule.id
+AND (prescription.created_dttm BETWEEN DATE_SUB(NOW(), INTERVAL 3 DAY) AND DATE_SUB(NOW(), INTERVAL 2 DAY))
+AND prescription.source <> 'O'
+AND doctor_schedule.order_placed = '0'
+AND prescription.mail_sent <> 'no';  
+
+select * from doctor_schedule where id in (select source_id from prescription where prescription_id in (1696,1699,1705,1706,1708,1711,1720,1722,1723,1724,1725,1730,1734,1735,1737))
+
+UPDATE doctor_schedule SET order_placed = '0' WHERE id in (select source_id from prescription where prescription_id in (1696,1699,1705,1706,1708,1711,1720,1722,1723,1724,1725,1730,1734,1735,1737))
+
+
+
+SELECT DISTINCT prescription.source_id,prescription_id,prescription.patient_name,patient_email,patient_phone,mail_sent,prescription.source,order_placed,doctor_name,doctor_email from prescription,doctor_schedule,doctor where prescription.source_id=doctor_schedule.id AND prescription.doctor_id=doctor.doctor_id
+  AND (prescription.created_dttm BETWEEN DATE_SUB(NOW(), INTERVAL 3 DAY) AND DATE_SUB(NOW(), INTERVAL 2 DAY))
+  AND prescription.source <> 'O'
+  AND doctor_schedule.order_placed = '0'
+  AND prescription.mail_sent <> 'no';
+
+
+SELECT DISTINCT prescription.source_id,prescription_id,prescription.patient_name,patient_email,patient_phone,mail_sent,prescription.source,order_placed,doctor_name,doctor_email
+FROM prescription,doctor_schedule,doctor
+WHERE prescription.source_id=doctor_schedule.id AND prescription.doctor_id=doctor.doctor_id
+AND (prescription.created_dttm BETWEEN DATE_SUB(NOW(), INTERVAL 4 DAY) AND DATE_SUB(NOW(), INTERVAL 3 DAY))
+AND prescription.source <> 'O'
+AND doctor_schedule.order_placed = '0'
+AND prescription.mail_sent <> 'no'
+GROUP BY prescription.source_id;
+
+
+select prescription_items.prescription_items_id,prescription_items.prescription_id,prescription_items.product_id,prescription_items.product_name,prescription_items.unit,prescription_items.no_of_days,prescription_items.quantity,prescription_items.cart_quantity,prescription_items.fulfilled,prescription_items.invalidated,prescription_items.order_id from prescription_items,doctor_schedule,prescription
+WHERE prescription_items.prescription_id=prescription.prescription_id AND prescription.source_id=doctor_schedule.id
+AND doctor_schedule.brand = "MM"
+AND prescription_items.prescription_id in ('1696','1708')
+
+
+
+
+
+
+//////////
+
+select count(doctor_id) from doctor_schedule where doctor_id=3
+
+select appointment_date,id,duration,source from doctor_schedule where doctor_id=3 order by created_dttm desc
+
+select appointment_date,id,duration,source from doctor_schedule where doctor_id=3 and source="F" order by created_dttm desc
+
+
+select a.doctor_name, b.doctor_consulted, b.nps_score, b.source, b.brand, b.nps_irrelevant, b.duration,b.id from doctor as a 
+      inner join
+      doctor_schedule as b
+      on a.doctor_id = b.doctor_consulted
+      where b.appointment_date between '2021-01-01' and '2021-02-19' and b.doctor_consulted=2;
+      
+      
+select * from doctor_schedule where appointment_date > NOW() AND phone = 9619550147 ORDER BY appointment_date DESC LIMIT 1
+
+select * from doctor_schedule where phone =9619550147 
+
+select * from doctor_schedule where appointment_date > "2021-02-19 12:43:16" AND phone = 9619550147 ORDER BY appointment_date DESC LIMIT 1
+
+select * from doctor_schedule where appointment_date >= "2021-02-19" AND from_time>"12:43:16" AND phone = 9619550147
+
+
+
+
+select * from prescription_remarks where created_dttm >="2020-05-19 00:00:00" AND created_dttm <="2020-05-19 23:55:55" 
+
+
+
+
+SELECT *
+FROM prescription_remarks,doctor_schedule
+WHERE prescription_remarks.doctor_schedule_id=doctor_schedule.id
+
+
+
+SELECT prescription_remarks.created_dttm,prescription_remarks.id,prescription_remarks.doctor_schedule_id,doctor_schedule.id
+FROM prescription_remarks,doctor_schedule
+WHERE prescription_remarks.doctor_schedule_id=doctor_schedule.id
+
+
+
+SELECT *  FROM prescription_remarks,doctor_schedule WHERE prescription_remarks.doctor_schedule_id=doctor_schedule.id AND prescription_remarks.created_dttm >="2021-02-06 00:00:00" AND prescription_remarks.created_dttm <="2021-02-19 23:55:55" 
+
+
+SELECT prescription_remarks.created_dttm,prescription_remarks.id,prescription_remarks.doctor_schedule_id,doctor_schedule.id,doctor_schedule.appointment_date,doctor_schedule.brand
+FROM prescription_remarks,doctor_schedule
+WHERE prescription_remarks.doctor_schedule_id=doctor_schedule.id
+AND prescription_remarks.created_dttm >="2021-02-19 00:00:00" AND prescription_remarks.created_dttm <="2021-02-19 23:55:55" 
+AND appointment_date < "2021-02-19 00:00:00"
+GROUP by doctor_schedule_id
+
+
+/////// create table
+
+doctor_on_time with columns doctor_id,appointment_id,appointmen_date,on_time,brand
+
+CREATE TABLE doctor_on_time (
+  id int(11) NOT NULL,
+  doctor_id int(11),
+  appointment_id int(11),
+  appointmen_date DATE,
+  on_time TINYINT(2),
+  brand TEXT,
+  PRIMARY KEY (id)
+);
+
+
+SELECT * FROM doctor_schedule 
+WHERE id="10199" AND doctor_id = "2" AND appointment_date = "2021-02-19"
+
+
+SELECT * FROM doctor_on_time WHERE appointment_id="${appointment_details["id"]}"
+AND doctor_id = "${appointment_details["doctor_id"]}" AND appointment_date = "${appointment_details["appointment_date"]}"
+
+
+insert into doctor_on_time (doctor_id,appointment_id,appointmen_date,on_time,brand) values("2","1008","2021-02-19","0","MM")
+
+
+insert into doctor_on_time (doctor_id,appointment_id,appointmen_date,on_time,brand) values("5","10202","2021-02-22","-1","BW")
+
+
+and a.doctor_id in (${doctor_id_requested.join(",")})
+
+
+
+SELECT doctor_id,appointment_date,brand,phone,id,source,status FROM doctor_schedule WHERE id="10090" 
+
+select * from doctor_schedule where phone = "8149878029"
+
+INSERT INTO prescription_remarks(doctor_schedule_id, doctor_id, status, remarks) VALUES (10090,3,"rs","Appointment rescheduled")
+
+select * from prescription_remarks
+
+
+
+SELECT * FROM doctor_schedule WHERE id="10214" 
+AND doctor_id = "2" AND appointment_date = "2021-02-19"
+
+SELECT doctor_id,appointment_date,brand,phone,id,source,status FROM doctor_schedule WHERE id="10090" 
+
+select * from doctor_schedule where phone = "8149878029"
+
+INSERT INTO prescription_remarks(doctor_schedule_id, doctor_id, status, remarks) VALUES (10090,3,"rs","Appointment rescheduled")
+
+select * from prescription_remarks
+
+select * from doctor_schedule where id="10219"
+
+select * from prescription where source_id="10219"
+
+select * from doctor where doctor_id="3"
+
+
+SELECT * FROM doctor_on_time WHERE appointment_id="${appointment_details["id"]}" AND doctor_id = "${appointment_details["doctor_id"]}" AND appointment_date = "${appointment_details["appointment_date"]}"
+
+insert into doctor_on_time (doctor_id,appointment_id,appointment_date,on_time,brand) values("${appointment_details["doctor_id"]}","${appointment_details["id"]}","${appointment_details["appointment_date"]}","${on_time}","${appointment_details["brand"]}")
+
+insert into doctor_on_time (doctor_id,appointment_id,appointment_date,on_time,brand) values("${customer.doctor_id}","${customer.id}","${customer.appointment_date}","0","${customer.brand}")
+
+
+
+
+readTable = `select * from prescription_items where prescription_id = '${prescriptionId}' and product_id!="new";`;
+select * from doctor_schedule where id="10219"
+select prescription_id from prescription where source_id="10219" 
+
+select * from prescription_items where prescription_id in ('10','15')
+select * from prescription_items where prescription_id in (select prescription_id from prescription where source_id="10219" )
+
+
+
+(appointment_id | recommended_products (1605,1420,5431) | recommended_quantity(2,1,3) | prescribed_products | prescribed_quantity | final_order)
+
+CREATE TABLE doctor_products_meta (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  appointment_id int(11),
+  recommended_products VARCHAR(255),
+  recommended_quantity VARCHAR(255),
+  prescribed_products VARCHAR(255),
+  prescribed_quantity VARCHAR(255),
+  final_order VARCHAR(255),
+  PRIMARY KEY (id)
+);
+
+select * from doctor_schedule where id="10219"
+select * from doctor_schedule where appointment_date >= "2021-02-25" and appointment_date <= "2021-02-26"
+select * from doctor_products_meta where appointment_id in (10219)
+select * from doctor_products_meta where appointment_id in (select id from doctor_schedule where appointment_date >= "2021-02-25" and appointment_date <= "2021-02-26")
+
+select * from doctor_products_meta,doctor_schedule
+where doctor_products_meta.appointment_id = doctor_schedule.id
+and doctor_schedule.appointment_date >= "2021-02-25" and doctor_schedule.appointment_date <= "2021-02-26"
+and doctor_schedule.brand = "MM"
+
+
+select * from wp_usermeta where meta_value="9039824590"
+select * from wp_users where id="455"
+select * from wp_usermeta where user_id="489"
+DELETE FROM wp_usermeta WHERE user_id="489"
+
+
+
+const sourceIds = prescription_id.map(prescription => prescription.source_id);
+const uniquesourceIds = [...new Set(sourceIds)];
+console.log('---uniquesourceIds----', uniquesourceIds);
+const updatedocProducts = `update doctor_products_meta set ordered_products="${orderedProducts.join(",")}",ordered_quantity="${orderedQuantity.join(",")}" where ordered_products is null and appointment_id in (${uniquesourceIds.join(",")})`;
+
+
+
+
+update prescription_items set fulfilled= (fulfilled + 1) where product_id='1605'and prescription_id='1668';
+update prescription_items set fulfilled= (fulfilled + 1) where product_id='1613'and prescription_id='1668';
+
+
+update prescription set patient_email =null, patient_phone=null where (patient_email ='pooja@mosaicwellness.in' or patient_phone='8149878029') and prescription_id not in (1668,1695);
+
+
+select
+    doctor_schedule.id,doctor_schedule.appointment_date,doctor_schedule.schedule_token,doctor_schedule.slot_start_time,doctor_schedule.slot_end_time,doctor_schedule.brand,doctor_schedule.source,
+    doctor.doctor_name,doctor.doctor_id,doctor.doctor_qualifications,
+    prescription_remarks.created_dttm
+    from doctor_schedule,doctor,prescription_remarks
+    where doctor_schedule.doctor_id = doctor.doctor_id 
+    and doctor_schedule.id=prescription_remarks.doctor_schedule_id
+    and doctor_schedule.email = '${req.body.email}' or doctor_schedule.phone = '${req.body.phone}'
+    GROUP by prescription_remarks.doctor_schedule_id
+    order by doctor_schedule.appointment_date desc
+// this query causes issues as  the or is not in brackets  (doctor_schedule.email = '${req.body.email}' or doctor_schedule.phone = '${req.body.phone}')
+
+
+
+select   doctor_schedule.id,doctor_schedule.appointment_date,doctor_schedule.schedule_token,doctor_schedule.slot_start_time,doctor_schedule.slot_end_time,doctor_schedule.brand,doctor_schedule.source,doctor_schedule.status,
+    doctor.doctor_name,doctor.doctor_id,doctor.doctor_qualifications
+    from doctor_schedule,doctor
+    where doctor_schedule.doctor_id = doctor.doctor_id 
+    and (doctor_schedule.email = 'yash.bhardwaj@mosaicwellness.in' or doctor_schedule.phone = '8386915333') order by doctor_schedule.appointment_date desc 
+
+
+INSERT INTO doctor_overbooked_appointment (id, req_data, booking_token)
+VALUES
+  (2, '{\"date\":\"Monday, 29 March 21\",\"slot\":\"11:00 AM-11:30 AM\",\"brand\":\"MM\",\"email\":\"cron.test@mosaicwellness.in\",\"phone\":\"8149878029\",\"category\":[\"is_hc\"],\"slot_time_period\":10,\"source\":\"O\",\"patient_name\":\"cron Test\",\"source_id\":\"454\"}', 'de3496e8-edac-4ced-8d7a-2ccde3db4b08');
+
+INSERT INTO doctor_overbooked_appointment (req_data)
+VALUES
+  ('{\"date\":\"Monday, 29 March 21\",\"slot\":\"11:00 AM-11:30 AM\",\"brand\":\"MM\",\"email\":\"cron.test@mosaicwellness.in\",\"phone\":\"8149878029\",\"category\":[\"is_hc\"],\"slot_time_period\":10,\"source\":\"O\",\"patient_name\":\"cron Test\",\"source_id\":\"454\"}');
+
+
+select * from doctor_schedule where phone='9873311623' or email = 'vibhor.sharma@mosaicwellness.in';
+
+select * from doctor_schedule where email="cron.test@mosaicwellness.in";
+
+select
+doctor_schedule.id,doctor_schedule.appointment_date,doctor_schedule.schedule_token,doctor_schedule.slot_start_time,doctor_schedule.slot_end_time,doctor_schedule.brand,doctor_schedule.source,doctor_schedule.status,doctor_schedule.category,
+    doctor.doctor_name,doctor.doctor_id,doctor.doctor_qualifications,created_dttm,doctor.doctor_img
+    from doctor_schedule,doctor where doctor_schedule.doctor_id = doctor.doctor_id and (doctor_schedule.email = '${req.body.email}' or doctor_schedule.phone = '${req.body.phone}') order by doctor_schedule.appointment_date desc;
+    
+select * from doctor_hours where       doctor_id in (1,3,5,80) and brand = 'MM' and       weekday=4 and       from_time <= '11:30:00'  and       to_time >= '12:00:00';
+
+INSERT INTO `doctor_hours` (`weekday`, `from_time`, `to_time`, `doctor_id`, `brand`)
+VALUES (4, '10:00:10', '12:00:00', 3, 'MM');
+
+select * from doctor_schedule where appointment_date="2021-03-25" and doctor_id=3;
+
+update doctor_overbooked_appointment set booking_token=null where id=53;
+
+select * from doctor_schedule where prescription_order_ids like "%,%";
+select pid from doctor_products group by pid having count(*) > 1;
+
+select * from doctor_products where pid in (select pid from doctor_products group by pid having count(*) > 1);
+
+select * from doctor_schedule where phone="8149878029" and brand="MM" and prescription_order_ids is null and source="F";
+
+
+select * from partners_links_earnings,partners_coupons_earnings where partners_links_earnings.orderDate >="2021-05-01" and partners_links_earnings.orderDate<="2021-05-30" GROUP BY partners_links_earnings.partnerId;
+
+
+select partners_links_earnings.partnerId,
+sum(partners_links_earnings.earning) as linkEarnings,
+sum(partners_coupons_earnings.earning) as couponEarnings
+from partners_links_earnings,partners_coupons_earnings
+where partners_links_earnings.brand='MM'
+and partners_links_earnings.orderDate >="2021-05-01" and partners_links_earnings.orderDate<="2021-05-30"
+and partners_coupons_earnings.orderDate >="2021-05-01" and partners_coupons_earnings.orderDate<="2021-05-30"
+group by partners_links_earnings.partnerId;
+    
+   
+    
+ select * from partners_links_earnings where brand="MM"
+ group by partnerId;
+ 
+ select * from partners_coupons_earnings where brand="MM"
+ group by partnerId;
+
+
+
+
+select partners_links_earnings.partnerId,firstName,lastName,
+sum(partners_links_earnings.earning) as linkEarnings,
+sum(partners_coupons_earnings.earning) as couponEarnings,
+sum(partners_links_earnings.orderUnits) as linkOrderUnits,
+sum(partners_coupons_earnings.orderUnits) as couponOrderUnits,
+sum(partners_links_earnings.orderAmount) as linkOrderAmount,
+sum(partners_coupons_earnings.orderAmount) as couponOrderAmount
+from partners_links_earnings,partners_coupons_earnings,partners
+where partners.id = partners_links_earnings.partnerId or partners.id=partners_coupons_earnings.partnerId
+and partners_links_earnings.brand='MM'
+and partners_coupons_earnings.brand = "MM"
+and partners_links_earnings.orderDate >="2021-05-01" and partners_links_earnings.orderDate<="2021-05-30"
+and partners_coupons_earnings.orderDate >="2021-05-01" and partners_coupons_earnings.orderDate<="2021-05-30"
+group by partners_links_earnings.partnerId;
+
+
+
+
+
+
+select *
+from partners_links_earnings,partners_coupons_earnings,partners
+where partners.id = partners_links_earnings.partnerId or partners.id=partners_coupons_earnings.partnerId
+and partners_links_earnings.brand='MM'
+and partners_coupons_earnings.brand = "MM"
+and partners_links_earnings.orderDate >="2021-05-01" and partners_links_earnings.orderDate<="2021-05-30"
+and partners_coupons_earnings.orderDate >="2021-05-01" and partners_coupons_earnings.orderDate<="2021-05-30";
+group by partners_links_earnings.partnerId;
+
+
+
+select partners_links_earnings.partnerId,firstName,lastName,
+sum(partners_payout.payoutAmount) as totalPayout,
+sum(partners_links_earnings.earning) as linkEarnings,
+sum(partners_coupons_earnings.earning) as couponEarnings,
+sum(partners_links_earnings.orderUnits) as linkOrderUnits,
+sum(partners_coupons_earnings.orderUnits) as couponOrderUnits,
+sum(partners_links_earnings.orderAmount) as linkOrderAmount,
+sum(partners_coupons_earnings.orderAmount) as couponOrderAmount
+from partners_links_earnings,partners_coupons_earnings,partners,partners_payout
+where partners.id = partners_links_earnings.partnerId or partners.id=partners_coupons_earnings.partnerId
+and partners.id=partners_payout.partnerId
+and partners_links_earnings.brand='MM'
+and partners_coupons_earnings.brand = "MM"
+and partners_links_earnings.orderDate >="2021-05-01" and partners_links_earnings.orderDate<="2021-05-30"
+and partners_coupons_earnings.orderDate >="2021-05-01" and partners_coupons_earnings.orderDate<="2021-05-30"
+group by partners_links_earnings.partnerId;
+
+
+select *
+from partners_links_earnings,partners_coupons_earnings,partners,partners_payout
+where partners.id = partners_links_earnings.partnerId or partners.id=partners_coupons_earnings.partnerId
+and partners.id=partners_payout.partnerId
+and partners_links_earnings.brand='MM'
+and partners_coupons_earnings.brand = "MM"
+and partners_links_earnings.orderDate >="2021-05-01" and partners_links_earnings.orderDate<="2021-05-30"
+and partners_coupons_earnings.orderDate >="2021-05-01" and partners_coupons_earnings.orderDate<="2021-05-30";
+group by partners_links_earnings.partnerId;
+
+
+select * from partners where brand="MM" and id in (2, 4, 7, 137);
+
+select * from partners_payout where brand="MM" and partnerId in (2, 4, 7, 137);
+
+select * from partners_payout where brand="MM" and partnerId in (4);
+
+select partners.id,active,firstName,lastName,instagram,youtube,sum(payoutAmount) as totalPayout from partners
+left join partners_payout on partners.id = partners_payout.partnerId
+where partners.brand = "MM" and partners.id in (2, 4, 7, 137)
+group by partners.id;
+
+
+select partners.id,active,firstName,lastName,instagram,youtube,sum(payoutAmount) as totalPayout from partners
+left join partners_payout on partners.id = partners_payout.partnerId
+where partners.brand = "MM" 
+group by partners.id;
+
+///// regex in sql 
+
+select count(referral_id) as no_of_friends_referred,sum(points_amount) as referral_earnings from mst_rewards_referral where customer_id="808" and points_amount is not null;
+
+select * from mst_rewards_referral where customer_id="808" and points_amount is not null;
+select count(referral_id) as no_of_friends_referred from mst_rewards_referral where customer_id="808" and points_amount is not null;
+
+select * from mst_rewards_transaction where customer_id="808" and amount > 0;
+select * from mst_rewards_transaction where customer_id="808" and code REGEXP '^referred_customer_order' and amount > 0;
+select sum(amount) as referral_earnings from mst_rewards_transaction where customer_id="808" and code REGEXP '^referred_customer_order' and amount > 0;
+
+select count(referral_id) as no_of_friends_referred from mst_rewards_referral where customer_id="808" and points_amount is not null;
+select sum(amount) as referral_earnings from mst_rewards_transaction where customer_id="808" and code REGEXP '^referred_customer_order' and amount > 0;
+
+
+
+
+
+
+INSERT INTO doctor_out_of_clinic (doctor_id,date_time_from,date_time_to,approved_flag) VALUES
+        (123,"2021-11-04T10:00:00","2021-11-04T10:30:00",2);
+
+INSERT INTO doctor_out_of_clinic (doctor_id,date_time_from,date_time_to,approved_flag) VALUES
+        (123,"2021-11-04T10:00:00","2021-11-04T10:30:00",2), (85,"2021-11-04T10:00:00","2021-11-04T10:30:00",2), (86,"2021-11-04T10:00:00","2021-11-04T10:30:00",2);
+        
+select * from doctor_out_of_clinic where doctor_id in ("123", "85", "86");
+        
+select * from doctor_schedule where doctor_id =123 AND CONCAT(appointment_date,"T",from_time) >= '2021-11-04T10:00:00' and CONCAT(appointment_date,"T",to_time) <= '2021-11-04T10:30:00' and status not in ("ni","ns","t","c","op","na","cn","otc","rf") and delete_flag=0;
+
+
+
+if(bulkOoc && data.doctor_id && data.doctor_id.length){
+          query = `INSERT INTO doctor_out_of_clinic (doctor_id,date_time_from,date_time_to,approved_flag) VALUES `
+          data.doctor_id.forEach(() => {
+
+          })
+        }
+        // (123,"2021-11-04T10:00:00","2021-11-04T10:30:00",2), (85,"2021-11-04T10:00:00","2021-11-04T10:30:00",2), (86,"2021-11-04T10:00:00","2021-11-04T10:30:00",2); -->
