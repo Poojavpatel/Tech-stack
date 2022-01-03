@@ -149,6 +149,21 @@ Can be accessed anywhere in any file
 * Asynchronous literally means not synchronous. We are making HTTP requests which are asynchronous, means we are not waiting for the server response. We continue with other block and respond to the server response when we received.
 
 * The term Non-Blocking is widely used with IO. For example non-blocking read/write calls return with whatever they can do and expect caller to execute the call again. Read will wait until it has some data and put calling thread to sleep.
+* Nonblocking immediately responses with whatever data available. Moreover, it does not block any execution and keeps on running as per the requests. If an answer could not be retrieved than in those cases API returns immediately with an error. 
+* Nonblocking is mostly used with I/O(input/output). Node.js is itself based on nonblocking I/O model. 
+* There are few ways of communication that a nonblocking I/O has completed. The callback function is to be called when the operation is completed. Nonblocking call uses the help of javascript which provides a callback function.
+
+<br/>
+
+* Asynchronous does not respond immediately, While Nonblocking responds immediately if the data is available and if not that simply returns an error
+* Asynchronous calls usually involve a callback or an event, to signal that the response is available, while in the case of non-blocking the call returns with whatever is available and the caller might have to try again to get the rest of the data
+* Suppose you are reading a book meanwhile waiting for a call from your friend.   
+<ins>Synchronous</ins>   
+    <ins>Blocking</ins>: You don’t start reading until you get the call.   
+    <ins>Non-blocking</ins> : You read the book at the beginning but every time period you pause and have a glance at your phone.   
+<ins>Asynchronous</ins>   
+    <ins>Based on interruption</ins>: You read the book and leave your phone alone. If it rings, you are interrupted. Then you answer it, and after that you come back to your book. This only works if the phone has a function of ringing (event interruption runtime).   
+    <ins>Based on thread</ins>: You read the book and have your phone answered by someone else. This only works if you can find someone to help you (multi-thread runtime).   
 
 ---
 ### How to serve static files
@@ -311,6 +326,14 @@ immediate
 ---
 ### Difference between readFile and createReadStream 
 
+| readFile | createReadStream  | 
+| :-----: | :-: | 
+| fs module contains the readFile method. It is used to read a file by bringing it into the buffer | fs module contains the inbuilt API createReadStream.It allows us to open a file/stream and reads the data present inside it. | 
+| It reads the file into the memory before making it available to the user. | It reads the file in chunks according to a need by the user. | 
+| It is slower due to read of whole file.	 | It is faster due to its property of bringing in chunks. | 
+| It will not scale in case of too many requests as it will try to load them all at the same time. | It is scalable as it pipes the content directly to the HTTP response object | 
+| Due to its property, it is easier for nodejs to handle cleaning of memory in this case. | In this case memory cleaning by nodejs is not easy. | 
+
 ---
 ### EventEmitter
   * Node.js allows us to create and handle custom events easily by using events module. Event module includes EventEmitter class which can be used to raise and handle custom events.   
@@ -368,6 +391,13 @@ server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 ```
+
+```javascript
+http.createServer(function (req, res) {
+  console.log('hello world');
+}).listen(8080);
+```
+
 ---
 ### Setup a Node Express server and connect to mlab database
 ```javascript

@@ -188,13 +188,38 @@ function saySomething(color){
 
 ---
 
+## JavaScript Engine
+<br/>
+
+https://dev.to/lydiahallie/javascript-visualized-the-javascript-engine-4cdf
+
+---
+
+## Prototypal Inheritance
+<br/>
+
+https://dev.to/lydiahallie/javascript-visualized-prototypal-inheritance-47co
+
+---
+
+## Generators and Iterators
+<br/>
+
+https://dev.to/lydiahallie/javascript-visualized-generators-and-iterators-e36
+
+https://blog.evelynstender.com/javascript-what-are-generators-yield
+
+---
+
 ## Asynchronous JS
 <br/>
 
 ### Understanding how asynchronus calls work
 
-Refer Video - Loupe - Philip Roberts http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!
+Refer Video - Loupe - Philip Roberts http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!   
 
+
+https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif   
 
 * The browser has 4 main compoments - **Call Stack, Web APIs, Callback Queue, Event loop**
 * Code lines get added to the **call stack** as they appear
@@ -203,6 +228,25 @@ Refer Video - Loupe - Philip Roberts http://latentflip.com/loupe/?code=JC5vbignY
 * Asynchronous types (like setTimeout, fetch, await), gets poped of the stack and is moved on to the **Web APIs**
 * The asynchronous code runs and once it finishes running, it is passed to the **Call back Queue**
 * **The Event loop** takes the first item from the Call back Queue, and pushes it up to the call stack **only if it is EMPTY**
+
+
+```javascript
+
+// Pseudo code of how js event loop works
+
+read a line of code, add it to the call stack
+if (its an web api, eg setTimeout) pop it and move it to web apis
+
+continue reading lines of code, and adding to call stack
+
+when (setTimeout waiting is completed) move it to callback queue
+
+if(call stack is empty) {
+  take first item from call back queue, push it up to call stack
+}
+
+```
+
 
 ```javascript
 console.log('Hi');
@@ -643,11 +687,6 @@ console.log(Book.topBookStore());
     ```
 ---
 
-## Generators (Yield)
-
-* https://blog.evelynstender.com/javascript-what-are-generators-yield
-
----
 
 ## Optimization techniques
 * If with multiple conditions
