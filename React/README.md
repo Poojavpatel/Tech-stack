@@ -725,7 +725,131 @@ Redux follows three fundamental principles:
 1. Changes are made with pure functions: To specify how the state tree is transformed by actions, you write reducers. Reducers are just pure functions that take the previous state and an action as parameters, and return the next state.
 
 ```jsx
-// using connect
+// Redux folder structure
+redux -> store.js, actions, reducers
+reducers -> index.js, userReducer.js, cartReducer.js, ...
+actions -> types.js, addUser.js, ...
+```
+
+```jsx
+// redux/store.js
+import { createStore, applyMiddleware } from "redux";
+import thunkMiddleware from "redux-thunk";
+import rootReducer from "./reducers";
+import { createWrapper, HYDRATE } from "next-redux-wrapper";
+
+const initialState = {};
+
+const SET_CLIENT_STATE = 'SET_CLIENT_STATE';
+const bindMiddleware = (middleware) => {
+  return applyMiddleware(...middleware);
+};
+
+export const makeStore = ({ isServer }) => {
+  if (isServer) {
+    //If it's on server side, create a store
+    return createStore(rootReducer, bindMiddleware([thunkMiddleware]));
+  }
+  else {
+    const { persistStore, persistReducer } = require("redux-persist");
+    const storage = require("redux-persist/lib/storage").default;
+    const persistConfig = {
+      key: "nextjs",
+      whitelist: ["cartStore", "userStore"],
+      storage, // if needed, use a safer storage
+    };
+    const persistedReducer = persistReducer(persistConfig, rootReducer); // Create a new reducer with our existing reducer
+
+    const store = createStore(
+      persistedReducer,
+      bindMiddleware([thunkMiddleware])
+    ); // Creating the store again
+
+    store.__persistor = persistStore(store); // This creates a persistor object & push that persisted object to .__persistor, so that we can avail the persistability feature
+
+    return store;
+  }
+}
+
+// export an assembled wrapper
+export const wrapper = createWrapper(makeStore);
+export const withRedux = wrapper.withRedux;
+```
+
+```jsx
+// redux/reducers/index.js
+import { combineReducers } from "redux";
+import cartReducer from "./cartReducer";
+import userReducer from "./userReducer";
+
+export default combineReducers({
+  cartStore: cartReducer,
+  userStore: userReducer
+});
+```
+
+```jsx
+// redux/reducers/userReducer.js
+import {
+  ADD_USER,
+  LOGIN_USER
+} from "./../actions/types";
+
+const initialState = {
+  customer: {},
+  token: "",
+  isLoggedIn: false
+};
+
+let addUser = (state, action) => {
+  let stateObj = { ...state };
+  stateObj.customer = action.payload;
+  stateObj.isLoggedIn = true;
+  return stateObj;
+};
+
+let loginUser = (state, action) => {
+  let stateObj = { ...state };
+  let token = action.payload;
+  stateObj.token = token;
+  stateObj.isLoggedIn = true;
+  return stateObj;
+};
+
+const userReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_USER:
+      return addUser(state, action);
+    case LOGIN_USER:
+      return loginUser(state, action);
+    default:
+      return state;
+  }
+};
+export default userReducer;
+```
+
+```jsx
+// redux/actions/types.js
+export const ADD_USER = "ADD_USER";
+export const LOGIN_USER = "LOGIN_USER";
+```
+
+```jsx
+// redux/actions/addUser.js
+import { ADD_USER } from "./types";
+export const addUser = (addData) => {
+  return (dispatch) => {
+    dispatch({
+      type: ADD_USER,
+      payload: addData,
+    });
+  };
+};
+```
+
+```jsx
+// access redux store into components using connect
 import React from 'react'
 import { connect } from 'react-redux'
 
