@@ -67,3 +67,17 @@ for foo in links:
     s7 = getData(soup2, "faq")
     writer.writerow([foo.text.strip(),link,'',s2,s3,s4,s5,s6,s7])
 ```
+
+## Using Starlette
+https://github.com/jordaneremieff/starlette-svelte-example   
+https://github.com/Poojavpatel/fabio-tests-nisargatman
+
+To run the project 
+```bash
+python3 -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt
+python init_db.py
+
+uvicorn app:app
+```
