@@ -1291,3 +1291,22 @@ The splice() method returns the removed items in an array. The slice() method re
 
 * Temporal Dead Zone   
 The let and const variables are not accessible before they are initialized with some value, and the phase between the starting of the execution of block in which the let or const variable is declared till that variable is being initialized is called Temporal Dead Zone for the variable
+
+* Null vs Undefined    
+  Null is the intentional absence of the value. It is one of the primitive values of JavaScript. `typeof null => object`    
+  Undefined: It means the value does not exist in the compiler `typeof undefined => undefined`
+```js
+console.log(null === null);  // true
+console.log(undefined === undefined);  // true
+console.log(null + undefined === null + undefined); // false  //null + undfined equals NaN, and NaN isn't equal to itself
+
+null == undefined    // true  ( null => 0 , undefined => NAN)
+null === undefined   // false  (typeof null => object , typeof undefined => undefined)
+null !== undefined   // true   (typeof null => object , typeof undefined => undefined) 
+
+undefined + 1;      // NaN
+null + 1;           // 1
+
+!!undefined;        //false
+!!null;             //false
+```

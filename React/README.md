@@ -203,9 +203,45 @@ This significantly improves the performance and is the main reason why React and
 * Eg - 
 ```
 render() { return ( <div> <h1>Hello World</h1> </div> ); }, 
-<!-- <h1> element will be converted using React.createElement() like this. -->
+<h1> element will be converted using React.createElement() like this.
 React.createElement("h1", {}, "Hello, World");
 ```
+
+<br/>
+<br/>
+
+### Event Delegation in React
+
+> Event delegation is a method of attaching event handlers not to the elements from which you actually want to handle events, but to a higher-level element.
+
+Perhaps the key points of delegation:
+
+* Centralization (which makes it possible to monitor events)
+* Tracking (from whom the event came)
+* Filtering (decide to react or not)
+
+Let's say you have an unordered list \<ul> with 1000 list items, and you want to do something each time a list item is clicked.    
+With event delegation approach, instead of adding one event listener to each of the child items, you only add 1 event listener to the parent \<ul>. 
+
+Should I use event delegation in React - The short answer is "No". It does not give you any noticeable performance benefit. The reason is that React already does this performance optimization internally
+
+
+
+
+<br/>
+<br/>
+
+### 
+
+<br/>
+<br/>
+
+### 
+
+<br/>
+<br/>
+
+### 
 
 <br/>
 <br/>
@@ -739,6 +775,8 @@ export default connect(mapStateToProps, {})(ReviewQuestions);
 
 ## Redux
 
+> Redux is an open-source JavaScript library for managing and centralizing application state
+
 Redux is a predictable state container for JavaScript apps based on the Flux design pattern. Redux can be used together with React, or with any other view library. It is tiny (about 2kB) and has no dependencies.
 
 Redux follows three fundamental principles:
@@ -746,6 +784,17 @@ Redux follows three fundamental principles:
 1. Single source of truth: The state of your whole application is stored in an object tree within a single store. The single state tree makes it easier to keep track of changes over time and debug or inspect the application.
 1. State is read-only: The only way to change the state is to emit an action, an object describing what happened. This ensures that neither the views nor the network callbacks will ever write directly to the state.
 1. Changes are made with pure functions: To specify how the state tree is transformed by actions, you write reducers. Reducers are just pure functions that take the previous state and an action as parameters, and return the next state.
+
+```jsx
+// A very simplified eg for very small project
+
+const redux = require('redux');
+const rootReducer = ( currentState = 0, action ) => { 
+  return currentState;
+};
+const store = redux.createStore( rootReducer );
+console.log(store.getState());
+```
 
 ```jsx
 // Redux folder structure
@@ -887,4 +936,20 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(App)
+```
+
+```jsx
+// Dispatching an action
+import { connect, useDispatch } from "react-redux";
+
+const MyComponent = props => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({
+      type: SELECT_ADDRESS,
+      address: props.customer.addresses[0],
+    });
+  }, [address]);
+}
 ```
