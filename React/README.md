@@ -176,13 +176,36 @@ class MyComponent extends React.Component {
 <br/>
 <br/>
 
-### Virtual DOM
+### Virtual DOM, Reconciliation, Diffing
 
 * The Virtual DOM (VDOM) is an in-memory representation of Real DOM. The representation of a UI is kept in memory and synced with the "real" DOM. It's a step that happens between the render function being called and the displaying of elements on the screen. This entire process is called reconciliation.
 * The Virtual DOM works in three simple steps.
 1. Whenever any underlying data changes, the entire UI is re-rendered in Virtual DOM representation.
 1. Then the difference between the previous DOM representation and the new one is calculated.
 1. Once the calculations are done, the real DOM will be updated with only the things that have actually changed.
+
+Virtual DOM: React uses Virtual DOM exists which is like a lightweight copy of the actual DOM(a virtual representation of the DOM). So for every object that exists in the original DOM, there is an object for that in React Virtual DOM. It is exactly the same, but it does not have the power to directly change the layout of the document. Manipulating DOM is slow, but manipulating Virtual DOM is fast as nothing gets drawn on the screen. So each time there is a change in the state of our application, virtual DOM gets updated first instead of the real DOM. You may still wonder, “Aren’t we doing the same thing again and doubling our work? How can this be faster?” Read below to understand how things will be faster using virtual DOM.
+
+How Virtual DOM actually make the things faster: When anything new is added to the application, a virtual DOM is created and it is represented as a tree. Each element in the application is a node in this tree. So, whenever there is a change in state of any element, a new Virtual DOM tree is created. This new Virtual DOM tree is then compared with the previous Virtual DOM tree and make a note of the changes. After this, it finds the best possible ways to make these changes to the real DOM. Now only the updated elements will get rendered on the page again.
+
+How Virtual DOM helps React: In react, everything is treated as a component be it a functional component or class component. A component can contain a state. Each time we change something in our JSX file or let’s put it in simple terms, whenever the state of any component is changed react updates it’s Virtual DOM tree. Though it may sound that it is ineffective but the cost is not much significant as updating the virtual DOM doesn’t take much time. React maintains two Virtual DOM at each time, one contains the updated Virtual DOM and one which is just the pre-update version of this updated Virtual DOM. Now it compares the pre-update version with the updated Virtual DOM and figures out what exactly has changed in the DOM like which components have been changed. This process of comparing the current Virtual DOM tree with the previous one is known as ‘diffing’. Once React finds out what exactly has changed then it updated those objects only, on real DOM. React uses something called as batch updates to update the real DOM. It just mean that the changes to the real DOM are sent in batches instead of sending any update for a single change in the state of a component. We have seen that the re-rendering of the UI is the most expensive part and React manages to do this most efficiently by ensuring that the Real DOM receives batch updates to re-render the UI. This entire proces of transforming changes to the real DOM is called Reconciliation
+
+This significantly improves the performance and is the main reason why React and it’s Virtual DOM is much loved by developers all around.
+
+
+<br/>
+<br/>
+
+
+### What is JSX, How does JSX work
+* JSX syntax is different than JavaScript, but while we write anything in JSX, at last, it will be converted into JavaScript using Babel. 
+* When we create any component, at that time every element into the component will be transpired into a React.createElement () call. It means that every element should be converted into the React element before rendering
+* Eg - 
+```
+render() { return ( <div> <h1>Hello World</h1> </div> ); }, 
+<!-- <h1> element will be converted using React.createElement() like this. -->
+React.createElement("h1", {}, "Hello, World");
+```
 
 <br/>
 <br/>

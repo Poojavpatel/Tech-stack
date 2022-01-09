@@ -186,7 +186,131 @@ function saySomething(color){
 }
 ```
 
----
+<br/>
+<br/>
+
+### Memorization in JavaScript
+
+* Memoizing in simple terms means memorizing or storing in memory. 
+* A memoized function is usually faster because if the function is called subsequently with the previous value(s), then instead of executing the function, we would be fetching the result from the cache.
+* A memoized function should be a pure function. This means the function execution does not mutate. When called with a certain input, it should always returns the same value regardless of how many times the function will be called.
+
+<br/>
+<br/>
+
+### Currying in JavaScript
+* Currying is an advanced technique of working with functions. It’s used not only in JavaScript, but in other languages as well.
+
+* Currying is a transformation of functions that translates a function from callable as f(a, b, c) into callable as f(a)(b)(c).
+
+* Currying doesn’t call a function. It just transforms it.
+```js
+function curry(f) { // curry(f) does the currying transform
+  return function(a) {
+    return function(b) {
+      return f(a, b);
+    };
+  };
+}
+
+// usage
+function sum(a, b) {
+  return a + b;
+}
+
+let curriedSum = curry(sum);
+
+alert( curriedSum(1)(2) ); // 3
+```
+* The result of curry(func) is a wrapper function(a).
+* When it is called like curriedSum(1), the argument is saved in the Lexical Environment, and a new wrapper is returned function(b).
+* Then this wrapper is called with 2 as an argument, and it passes the call to the original sum.
+* Currying allows us to easily get partials. As we’ve seen in the logging example, after currying the three argument universal function log(date, importance, message) gives us partials when called with one argument (like log(date)) or two arguments (like log(date, importance)).
+
+<br/>
+<br/>
+
+### Yield in JavaScript
+
+* yield keyword is used to resume or pause a generator function asynchronously. A generator function is just like a normal function but the difference is that whenever the function is returning any value, it does it with the help of ‘yield’ keyword instead of return it. Yield can’t be called from nested functions or from callbacks.
+
+* The yield expression returns an object with two properties, “value” which is the actual value and “done” which is a boolean value, it returns true when generator function is full completed else it returns false.
+
+```js
+function* showPrices(i) {
+  while (i < 3) {
+    yield i++;
+  }
+}
+
+const gfg = showPrices(0); 
+console.log(gfg);                 // Object [Generator] {}
+console.log(gfg.next());          // { value: 0, done: false }
+console.log(gfg.next());          // { value: 1, done: false }
+console.log(gfg.next());          // { value: 2, done: false }
+console.log(gfg.next());          // { value: undefined, done: true }
+```
+
+<br/>
+<br/>
+
+### Call Apply Bind
+* Call invokes the function and allows you to pass in arguments one by one.
+* Apply invokes the function and allows you to pass in arguments as an array.
+* Bind returns a new function, allowing you to pass in a this array and any number of arguments.
+
+```js
+// Call
+var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
+var person2 = {firstName: 'Kelly', lastName: 'King'};
+
+function say(greeting) {
+    console.log(greeting + ' ' + this.firstName + ' ' + this.lastName);
+}
+
+say.call(person1, 'Hello'); // Hello Jon Kuperman
+say.call(person2, 'Hello'); // Hello Kelly King
+```
+```js
+// Apply
+var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
+var person2 = {firstName: 'Kelly', lastName: 'King'};
+
+function say(greeting) {
+    console.log(greeting + ' ' + this.firstName + ' ' + this.lastName);
+}
+
+say.apply(person1, ['Hello']); // Hello Jon Kuperman
+say.apply(person2, ['Hello']); // Hello Kelly King
+```
+```js
+// Bind
+var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
+var person2 = {firstName: 'Kelly', lastName: 'King'};
+
+function say() {
+    console.log('Hello ' + this.firstName + ' ' + this.lastName);
+}
+
+var sayHelloJon = say.bind(person1);
+var sayHelloKelly = say.bind(person2);
+
+sayHelloJon(); // Hello Jon Kuperman
+sayHelloKelly(); // Hello Kelly King
+```
+
+* binds obj's 'this' context to foo, but doesn't call it
+* call/apply - binds obj's 'this' context to foo, then calls it
+* Only difference between call/apply is argument passing - ',' vs '[]'
+
+<br/>
+
+Diffing - The process of checking the difference between the new VDOM tree and the old VDOM tree is called "diffing". Diffing is accomplished by a heuristic O(n) algorithm.    
+During this process, React will deduce the minimum number of steps needed to update the real DOM, eliminating unnecessary costly changes
+
+
+<br/>
+<br/>
 
 ## JavaScript Engine
 <br/>
@@ -349,6 +473,17 @@ We deal with this using
 Here we pass the getPosts as a callback to createPost    
 ie. getPost will run once createPost is done
 
+```js
+function createPost(post, cb = () => {}){
+  setTimeout(() => {
+    posts.push(post);
+    cb();
+  },2000)
+}
+
+createPost({ title:"Post 3", body:"This is Post 3" }, getPosts)
+```
+
 ### Promise
 
 >Promise constructor takes only one argument,a callback function.\
@@ -364,6 +499,23 @@ Let the createPost return a promise
 If the promise is "resolved" , "then" call the getPosts   
 else if the promise is "rejected" , "catch" and display the error msg
 
+```js
+function createPost(post){
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      posts.push(post);
+      resolve();
+    },2000)
+  })
+}
+
+createPost({ title:"Post 3", body:"This is Post 3" })
+.then((response) => {
+  getPosts();
+})
+.catch(() => {})
+```
+
 ### Async-await
 > Async-await is a special syntax to work with promises in a more comfortable fashion   
 Async functions are created by prepending the word async before the function declaration   
@@ -371,6 +523,23 @@ Asynchronous functions can be paused with await, the keyword that can only be us
 
 we declare an async function a and inside the function await for the promise   
 after that we call the getPosts
+
+```js
+function createPost(post){
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      posts.push(post);
+      resolve();
+    },2000)
+  })
+}
+
+async function a () {
+  await createPost({ title:"Post 3", body:"This is Post 3" });
+  getPosts();
+}
+a();
+```
 
 ---
 
@@ -644,7 +813,7 @@ console.log(Book.topBookStore());
     // 3
 
     ```
-* Pass unlimited arguments to a function
+* Rest Parameter - Pass unlimited arguments to a function
     ```javascript
     const myFunc = (...args) => {
     console.log(args);
@@ -1113,3 +1282,12 @@ blanket and jscoverage , instanbul - for code coverage
 
 > Global and local variables with the same name are different variables. Modifying one, does not modify the other.   
 > Variables created without the keyword var, are always global, even if they are created inside a function.
+
+--- 
+## Interview Questions
+
+* Slice vs Splice
+The splice() method returns the removed items in an array. The slice() method returns the selected element(s) in an array, as a new array object. The splice() method changes the original array and slice() method doesn't change the original array
+
+* Temporal Dead Zone   
+The let and const variables are not accessible before they are initialized with some value, and the phase between the starting of the execution of block in which the let or const variable is declared till that variable is being initialized is called Temporal Dead Zone for the variable
