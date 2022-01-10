@@ -44,6 +44,34 @@ const age = 23;
 
 // only vars are hoisted and not let or const
 ```
+
+```js
+console.log('---a--', a);       // undefined
+console.log('---b--', b);       // undefined
+console.log('---c--', c);       // Cannot access 'c' before initialization, process exits
+console.log('---d--', d);       // Cannot access 'd' before initialization, process exits
+console.log('---e--', e);       // undefined
+console.log('---f--', f);       // undefined
+console.log('---e()--', e());   // e is not a function, process exits
+console.log('---f()--', f());   // f is not a function, process exits
+console.log('---g--', g);       // [Function: g]
+console.log('---g()--', g());   // 30
+
+var a;
+var b = 5;
+const c = 3;
+let d = 10
+var e = function () {
+  return 100;
+}
+var f = () => {
+  return 50;
+}
+function g () {
+  return 30;
+}
+```
+
 <br/>
 <br/>
 
@@ -60,8 +88,37 @@ const age = 23;
 })();
 
 console.log(name);   // ReferenceError: name is not defined
-
 ```
+
+### Practical Use Cases for IIFEs
+1. Combine with closure to make variables local
+1. Consider we have 2 libraries, both exporting \$, To makesure we are referencing jquery as $ we can use IIFE
+   ```js
+   (
+     function($){
+       // Inside here $ will always reference to jquery
+     }
+   )(jquery)
+   ```
+1. 
+   ```js
+   for(var i=0; i<3; i++){
+     setTimeout(() => {console.log(i)}, 1000)
+   }
+   // 3
+   // 3
+   // 3
+
+   // This can be fixed using IIFE
+   for(var i=0; i<3; i++){
+     (function(i){
+       setTimeout(() => {console.log(i)}, 1000)
+     })(i)
+   }
+   // 0
+   // 1
+   // 2
+   ```
 
 <br/>
 <br/>
@@ -303,10 +360,6 @@ sayHelloKelly(); // Hello Kelly King
 * call/apply - binds obj's 'this' context to foo, then calls it
 * Only difference between call/apply is argument passing - ',' vs '[]'
 
-<br/>
-
-Diffing - The process of checking the difference between the new VDOM tree and the old VDOM tree is called "diffing". Diffing is accomplished by a heuristic O(n) algorithm.    
-During this process, React will deduce the minimum number of steps needed to update the real DOM, eliminating unnecessary costly changes
 
 
 <br/>

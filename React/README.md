@@ -192,6 +192,10 @@ How Virtual DOM helps React: In react, everything is treated as a component be i
 
 This significantly improves the performance and is the main reason why React and it’s Virtual DOM is much loved by developers all around.
 
+<br/>
+
+Diffing - The process of checking the difference between the new VDOM tree and the old VDOM tree is called "diffing". Diffing is accomplished by a heuristic O(n) algorithm.
+During this process, React will deduce the minimum number of steps needed to update the real DOM, eliminating unnecessary costly changes
 
 <br/>
 <br/>
