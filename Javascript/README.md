@@ -360,7 +360,65 @@ sayHelloKelly(); // Hello Kelly King
 * call/apply - binds obj's 'this' context to foo, then calls it
 * Only difference between call/apply is argument passing - ',' vs '[]'
 
+<br/>
+<br/>
 
+### THIS
+
+> Unlike regular functions, arrow functions do not have their own this. 
+The value of this inside an arrow function remains the same throughout the lifecycle of the function and is always bound to the value of this in the closest non-arrow parent function.
+
+```js
+// when run from an empty index.js file using node
+function a () {
+  console.log('-a--', this);
+}
+const b = () => {
+  console.log('-b--', this);
+}
+a();
+b();
+
+// -a-- Object [global] {
+//   global: [Circular],
+//   clearInterval: [Function: clearInterval],
+//   clearTimeout: [Function: clearTimeout],
+//   setInterval: [Function: setInterval],
+//   setTimeout: [Function: setTimeout] {
+//     [Symbol(nodejs.util.promisify.custom)]: [Function]
+//   },
+//   queueMicrotask: [Function: queueMicrotask],
+//   clearImmediate: [Function: clearImmediate],
+//   setImmediate: [Function: setImmediate] {
+//     [Symbol(nodejs.util.promisify.custom)]: [Function]
+//   }
+// }
+
+// -b-- {}
+```
+
+```js
+let me = { 
+ name: "Ashutosh Verma", 
+ thisInArrow:() => { 
+ console.log("My name is " + this.name); // My name is
+ }, 
+ thisInRegular(){ 
+ console.log("My name is " + this.name); // My name is Ashutosh Verma
+ } 
+};
+me.thisInArrow(); 
+me.thisInRegular();
+```
+
+```js
+var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
+function a() {
+  console.log(this);        // { firstName: 'Jon', lastName: 'Kuperman' }
+}
+const p = a.bind(person1);
+p();
+```
 
 <br/>
 <br/>

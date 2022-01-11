@@ -229,13 +229,24 @@ With event delegation approach, instead of adding one event listener to each of 
 
 Should I use event delegation in React - The short answer is "No". It does not give you any noticeable performance benefit. The reason is that React already does this performance optimization internally
 
-
-
-
 <br/>
 <br/>
 
-### 
+### React Children
+```jsx
+<Button>
+  <Icon name="dollars"/>            // passing children to a Button component:
+  <span>BUY NOW</span>
+</Button>
+
+function Button(props) {
+  return (
+    <button>
+      {props.children}              // Access in button component
+    </button>
+  );
+}
+```
 
 <br/>
 <br/>
