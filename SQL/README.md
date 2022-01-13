@@ -12,7 +12,7 @@ SELECT [DISTINCT] Attribute_List FROM R1,R2….RM
 [ORDER BY(Attributes)[DESC]];
 ```
 ---
-## Basic SQL Queries
+## SQL Queries
 
 ### COUNT Queries
 
@@ -50,8 +50,6 @@ Increase income of all employees by 5%
 UPDATE Employees SET income = income + (income * 5/100);
 ```
 
----
-## Complex SQL commands
 Query an alphabetically ordered list of all names in OCCUPATIONS, immediately followed by the first letter of each profession as a parenthetical (i.e.: enclosed in parentheses)
 For example: AnActorName(A), ADoctorName(D), AProfessorName(P), and ASingerName(S). Eg Ariel(A) Samantha(D)
 ```sql
@@ -61,6 +59,23 @@ select CONCAT(Name,"(",LEFT(Occupation,1),")") from Occupations order by name;
 Query the number of ocurrences of each occupation in OCCUPATIONS. Sort the occurrences in ascending order, and output them in the following format: There are total 2 doctors
 ```sql
 select CONCAT("There are total ", Count(Occupation), " ", LOWER(occupation), "s.") from Occupations Group by Occupation order by  Count(Occupation)
+```
+
+### UPDATE multiple rows with different values in one query
+
+```sql
+UPDATE table SET Col1 = CASE id 
+                WHEN 1 THEN 1 
+                WHEN 2 THEN 2 
+                WHEN 4 THEN 10 
+                ELSE Col1 
+              END, 
+        Col2 = CASE id 
+                WHEN 3 THEN 3 
+                WHEN 4 THEN 12 
+                ELSE Col2 
+              END
+    WHERE id IN (1, 2, 3, 4);
 ```
 
 ---
