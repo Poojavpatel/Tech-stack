@@ -313,7 +313,62 @@ function Button(props) {
   ```
 
 
+---
 
+## React Hooks
+
+1. useEffect
+  ```jsx
+  useEffect(() => {}, [])
+  ```
+
+1. useInterval()
+
+  This useInterval isn’t a built-in React Hook; it’s a custom Hook (https://overreacted.io/making-setinterval-declarative-with-react-hooks/)
+
+  Use setInterval in functional React component with the same API. Set your callback function as a first parameter and a delay (in milliseconds) for the second argument. You can also stop the timer passing null instead the delay.   
+
+  The main difference between the setInterval you know and this useInterval hook is that its arguments are "dynamic"
+
+  ```jsx
+  // declare it in hooks/useInterval.js
+  import { useEffect, useRef } from 'react';
+
+  function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  }
+  export default useInterval;
+  ```
+
+  ```jsx
+  function CardList() {
+    const callMyApi = () => {
+      console.log('----------HEYYY-------');
+    }
+  
+    useInterval(() => {
+      callMyApi()
+    }, 5000);
+
+    return(<>Hello world</>)
+  }
+  ```
 
 
 ---

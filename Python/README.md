@@ -41,6 +41,15 @@ sentence = ['this','is','a','sentence']
 # {1: "gbh", 2: "tgyh", 3: "kjh"} ----->  1, 2, 3
 ', '.join([str(x) for x in list])
 ```
+
+### Array to comma seperated values
+
+```python
+', '.join([str(element) for element in payload])
+
+# [6, 7, 8, 9, 10, 11] -> 6, 7, 8, 9, 10, 11
+```
+
 ---
 
 ## Codes
