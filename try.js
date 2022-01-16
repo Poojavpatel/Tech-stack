@@ -314,3 +314,22 @@ function a() {
 const p = a.bind(person1);
 p();
 // -a-- {}
+
+
+///TODO 
+// normalization in sql
+// react use effect when exactly it runs
+// react all hooks 
+// react lifecycle methods
+
+
+// TODO system design
+// CAP 
+// PACEL db examples
+// All examples in grokking pdf
+// read fundamentals from https://github.com/donnemartin/system-design-primer
+// Read difference between HTTP and FTP
+// Online softwares of drawing diagram
+// Design Patterns
+// Message queue 
+// Distributed message queue

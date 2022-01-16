@@ -27,18 +27,17 @@ A system may or may not have presentation layer (eg - logger system)
 # System design basics 
 
 ## Key Characteristics of Distributed Systems
-### Scalability     
-* Capability of a system, process, or a network to grow and manage increased demand
+### 1. Scalability     
+* Capability of a system, process, or a network <ins>to grow and manage increased demand</ins>
 * **Horizontal Scaling - Adding more servers into your pool of resources**
 * **Vertical Scaling - Increasing capacity of a server (adding more ram, cpu, memory)**   
 scaling beyond that capacity often involves downtime and comes with an upper limit
 
 <br/>
 
-### Reliability    
+### 2. Reliability    
 
-  * Reliability is the probability that a product will continue to work normally over a specified interval of time, under specified conditions
-  * Considered reliable if it keeps delivering its services even when one or several of its software or hardware components fail
+  * Considered reliable if it keeps <ins>delivering its services even when one or several of its software or hardware components fail</ins>
   * If a user has added an item to their shopping cart, the system is expected not to lose it.    
   A reliable distributed system <ins>**achieves this through redundancy**</ins> of both the software components and data.    
   If the server carrying the user’s shopping cart fails, another server that has the exact replica of the shopping cart should replace it   
@@ -46,7 +45,7 @@ scaling beyond that capacity often involves downtime and comes with an upper lim
 
 <br/>
 
-### Availability    
+### 3. Availability    
   * System should be always available to the end user irrespective of location, network failure, etc
   * Availability is the time a system remains operational to perform its required function in a specific period
   * Availability takes into account maintainability, repair time, spares availability, and other logistics considerations
@@ -61,7 +60,7 @@ scaling beyond that capacity often involves downtime and comes with an upper lim
 
 <br/>
    
-### Efficiency    
+### 4. Efficiency    
   System should fullfill requirements in terms of speed, accuracy, memory
   * Two standard measures of its efficiency are
     1. Response time (latency) - the delay to obtain the first item
@@ -73,7 +72,7 @@ scaling beyond that capacity often involves downtime and comes with an upper lim
 <br/>
 
   
-### Serviceability or Manageability    
+### 5. Serviceability or Manageability    
   * How easy it is to operate and maintain
   * Repair and Maintainece should be quick, accesible and affordable
    
@@ -190,6 +189,9 @@ available.
 If it isn’t available, the CDN will query the back-end servers for the
 file, cache it locally, and serve it to the requesting user.
 * 
+* CDN works because network latency plays a huge role
+* CDN serves file from a region physically/geographically closer to them
+* Since Data is replicated in CDN it prevents a single point of failure
 
 <br/>
 <br/>
@@ -247,7 +249,7 @@ Eg photos, user data etc
 
 * Intermediate server between the client and the back-end server
 * Clients connect to proxy servers to request for a service like a web page, file, connection, etc.
-* Proxies are used to filter requests, log requests, or sometimes transform requests (by adding/removing headers, encrypting/decrypting, or compressing a resource)
+* Proxies are used to <ins>filter requests, log requests, or sometimes transform requests (by adding/removing headers, encrypting/decrypting, or compressing a resource)</ins>
 
 Proxy Server Types
 * Open Proxy
@@ -330,6 +332,15 @@ system up through intermittent outages.
 
 ## PACELC Theorem 
 
+* 
+  ```js
+  if(partition P){
+    choose between availability A and consistency C
+  } else {
+    choose between latency L and consistency C
+  }
+  ```
+
 * We cannot avoid partition in a distributed system, therefore, according to the CAP theorem, a distributed system should choose between consistency or availability. 
 
 * ACID (Atomicity, Consistency, Isolation, Durability) databases, such as RDBMSs like MySQL, Oracle, and Microsoft SQL Server, chose consistency (refuse response if it cannot check with peers)
@@ -402,15 +413,106 @@ When a customer asks for a book, pass the book title through the hash function a
 
 ## Checksum
 
+* In a distributed system, while moving data between components, it is possible that the data fetched from a node may arrive corrupted. This corruption can occur because of faults in a storage device, network, software, etc. How can a distributed system ensure data integrity, so that the client receives an error instead of corrupt data?
+
+* Calculate a checksum and store it with data.
+To calculate a checksum, a cryptographic hash function like MD5, SHA-1, SHA-256, or SHA-512 is used. The hash function takes the input data and produces a string (containing letters and numbers) of fixed length; this string is called the checksum.
+* When a system is storing some data, it computes a checksum of the data and stores the checksum with the data. When a client retrieves data, it verifies that the data it received from the server matches the checksum stored. If not, then the client can opt to retrieve that data from another replica.
+
 <br/>
 <br/>
 
+## SLI, SLO, and SLA
+
+* SLA or Service Level Agreement is a contract that the service provider promises customers on service availability, performance, etc.
+* SLO or Service Level Objective is a goal that service provider wants to reach.
+* SLI or Service Level Indicator is a measurement the service provider uses for the goal.
+
+<br/>
+
+
+## Message Queue
+
+<br/>
+
+## Distributed message queue
 
 <br/>
 <br/>
 <br/>
 
 ---
+
+# Technologies & Frameworks
+
+<br/>
+<br/>
+
+## Kafka
+6 scenarios/areas that Kafka is commonly referenced in system design interviews (https://levelup.gitconnected.com/6-things-you-need-to-know-about-kafka-before-using-it-in-a-system-design-interview-1fc31451732c)
+1. Async Processing and Decoupling   
+* Kafka models a distributed messaging queue with message producers on one end and message consumers on the other. It’s a form of asynchronous processing. The producers need not wait for the messages to be consumed. That’s the first design pattern of Kafka we should recognize in a system design interview. It’d be awkward to use Kafka in a synchronous setting where the producers need to block-wait for the consumers’ responses.
+* In theory, we could achieve the same async effect if we have the producers send a RPC directly to the consumers, expecting only an ACK as the response; or have the consumers fetch directly via an endpoint exposed by the producers. The advantage of using kafka is that it decouples the producers and consumers so that they can be developed, deployed, and managed separately. Once a common message contract is agreed upon, the producers will keep generating the messages and send them to Kafka. Interested consumers will pull from Kafka to retrieve the messages. Producers and consumers don’t need to know about each other’s address. They both only talk to a logically centralized service — kafka. Neither do they need to care about each other’s capacity. They can be monitored and scaled separately. In a system design review, in addition to development, it’s often a bonus point to call out operation and maintenance, which many candidates neglect.
+
+<br/>
+
+2. Persistent Message Store
+* Now that the producers and consumers are out of sync, it’s easy for the producers to create an excessive amount of messages that the consumers can not process in time. This is another design pattern we need to highlight for Kafka in a system design interview. 
+The message retention in Kafka is configurable, making it adaptive to a wide variety of requirements
+
+> It’s effectively a durable cache that buffers the unprocessed messages, providing a cushion for our system to handle bursty load or consumer failure.
+
+* Kafka’s persistent message store is also highly efficient. It embraces a log-based structure and only appends messages to the end of a file. In case the interviewer questions its efficiency, load tests have shown that it can be as fast as the network [2]. In addition, Kafka employs a standardized binary message format for both communication and storage, which reduces the processing overhead, and often enables using the sendfile [3] system call to transfer bytes between the network and disk directly.
+
+* A desired side-effect of the log-based store is that it preserves ordering of the messages (see the fine print in the next section). The state of consumption can be captured in a simple offset variable that points to the next to-be-consumed message. Consumers advance the offset as they consume messages and can even rewind it to replay the history. This largely simplifies the retry logic, which provides a higher level of primitives for us to answer questions in the system design interview.
+
+3. Message Routing and Load Sharding
+* Kafka supports topic-based message routing. Both producers’ and consumers’ interactions with Kafka pertain to specific topics. Topics logically separate and categorize messages. Kafka makes sure that the right messages are delivered to the consumers which subscribe to the respective topics. In a system design interview, Kafka topics can be used as a routing mechanism. For example, all the user click activities go to one topic and all the system logs go to another. It simplifies our system design diagrams because the upstream systems only need to talk to a unified messaging endpoint. Kafka takes care of multiplexing the messages to the appropriate downstream systems.
+* Kafka also supports partitions inside a topic. Producers send messages directly to the corresponding topic partitions. A message’s partition is determined by the message partition key. Messages in the same topic partition are stored together and in the same order as they’re sent in. Messages from one topic partition can only be consumed by one consumer instance at any given time. A consumer instance is allowed to consume messages from multiple topic partitions in parallel. If a consumer instance dies, a different one will need to stand in. This can be done manually or automatically via consumer groups. The concept of partition effectively shards the load inside a topic because different partitions inside a topic operate in parallel.
+The combination of topic and partitions can also be used as a shuffling mechanism. This system design interview post [4] uses Kafka to organize and count streaming updates.
+
+<br/>
+
+4. Replication and Resilience
+* So far, we’ve referred to Kafka as a centralized service. The interviewer may ask <ins>if that creates a single point of failure</ins>. It doesn’t. But in order to answer the question well, we need to know what safeguards Kafka has to defend itself in the event of failure.
+* The typical deployment of Kafka involves multiple machines. Clients are provided with multiple Kafka server addresses in configuration as a bootstrap, through which they’ll discover all the Kafka servers. Clients can switch to a different server if a particular one fails. All Kafka servers have the ability to provide clients with the latest metadata so that clients know which servers to talk to for their intended functionality and data requests.
+* Internally, Kafka uses Zookeeper to coordinate controller election and store information such as cluster membership, access control, and topic configs. Zookeeper itself is a distributed system that’s resilient to partial failures. Of course we’ll need to deploy Zookeeper in a distributed fashion. The naive single Zookeeper instance setup is not going to withstand failures.
+* Each topic partition is replicated across Kafka servers. One server will be the leader of that topic partition. It can also lead other topic partitions at the same time. All reads/writes of the topic partition go through the leader. A set of followers passively replicate the leader’s copy of the topic partition. The followers of this topic partition can be leaders of other topic partitions. Some number of the followers can be configured to run in sync mode, which means that a message is only committed when safely replicated in all sync followers. If the leader fails, a sync follower will pick up the duty.
+* The interviewer probably won’t ask you to explain the full solution to a distributed log replication problem, as it’s very complex and too domain specific. But if you do want to be fully prepared, you can check out this blog post series [5] that goes in depth about the area.
+
+<br/>
+
+5. Client Failure and Message Delivery Semantics
+* System design interviewers love to ask about the failure scenarios. A producer could fail before or after the message is committed. It has no way of knowing but to retry, which generates duplicates if the message is already committed. To fence off duplicates, the producer includes a Kafka-assigned ID and a monotonically increasing sequence number when sending messages. Kafka rejects the message if there is already a committed message from the same producer (identified by the Kafka-assigned ID) that has an equal or higher sequence number. Obviously, it’s the producer’s responsibility to keep track of the ID and sequence number.
+* A consumer could fail after processing the message but before persisting the offset, in which case retry reprocesses the message. If it chooses to persist the offset first, it could fail after persisting the offset but before processing the message, in which case retry leads to a skipped message. So it looks like it’s either at-least-once or at-most-once. What about the widely acclaimed exactly-once? Well, it turns out exactly-once is only possible in a very limited scenario, i.e, the message processing and offset storage need to happen in the same transaction. The transaction can be a traditional database transaction that stores both the output of the message and the updated offset in the same commit. Kafka also has a transaction semantics in publishing to multiple topics, which allows consumers to store the output and offset atomically in two recipient Kafka topics. This blog post [6] has a more elaborate explanation about how Kafka transactions work, though it’s highly unlikely that the interviewer would require those specific details.
+
+<br/>
+
+6. Scalability Characteristics
+* Another common Kafka gotcha in system design interviews is that people don’t pay attention to its scalability characteristics. Even though Kafka does not impose any hard limit on the number of topics and partitions, there are some internal constraints. Kafka stores the topics and partitions information in Zookeeper. Zookeeper’s availability can be enhanced by adding more instances, but its capacity is bottlenecked by individual nodes. In addition, Kafka assigns one server to act as the controller to manage the topics and partitions metadata. The controller needs to keep track of the partition leaders, and handle leader changes. And when the controller itself fails, the cluster needs to elect a new controller and transfer the metadata management to the newly elected controller. The controller role is crucial in a Kafka cluster. Increasing the cardinality of topics and partitions leads to higher overhead that may overwhelm the controller. Another aspect to take into consideration is that each partition is a physical file folder, within which there are multiple data files and index files for various log segments. * So there is also the filesystem overhead in managing a large number of partitions. Finally, don’t forget that all the partitions are replicated, which multiplies the overhead.
+* Thousands of topics and tens of thousands of partitions are definitely on the large end of the spectrum. The typical Kafka paradigm is fewer and larger topics with a reasonable amount of partitions. So the design of one Kafka topic per user and even one partition per user in a system design interview may be frowned upon. If you find yourselves heading to that rabbit hole, you may want to step back and consider whether a distributed key-value store like Cassendra is more appropriate.
+
+<br/>
+
+
+<br/>
+<br/>
+
+<br/>
+<br/>
+
+
+<br/>
+<br/>
+
+
+<br/>
+<br/>
+
+---
+
+<br/>
+<br/>
 
 # System Design Interviews - Step by step
 
@@ -437,6 +539,9 @@ Clarify all these
   **Consider Bandwidth estimation, Read/Write ratio, Cache memory estimation too with Traffic estimation, Memory estimation**   
   For traffic estimation, calculate Reads/second, Writes/second
 
+* ### Write conclusions
+  Write to read ratio consider when data storage
+
 <br/>
 
 ## Step 2 - Defining data model
@@ -456,6 +561,8 @@ Clarify all these
 ```
 
 <br/>
+
+## DESIGN A MONOLITH FIRST AND THEN TRY TO BREAK IT
 
 ## Step 3 - High-level design
 * Design monolith first and then try to break it 
@@ -502,9 +609,56 @@ Ask yourself
 
 <br/>
 <br/>
-<br/>
 
 ---
+# Random Notes
+
+### Why choose S3
+* Backed by AWS
+* Reliable
+* SLA 
+* Can hook up S3 to CDN
+* Since Data is replicated in CDN it prevents a single point of failure
+* Note - S3 is not mutable
+
+### Always save meta data of media in NOSQL databases, as it is more flexible, fast for analysis, Horizontal scalable and you dont have joins
+
+### For media, check if we need to support different resolutions and devices
+
+### Akamai - Akamai is the leading content delivery network (CDN) services provider for media and software delivery, and cloud security solutions.
+Amazon CloudFront is a global content delivery network (CDN) service built for high-speed, low-latency performance, security, and developer ease-of-use.
+
+### Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine
+
+### Think about Security and Permission
+
+### In a system design review, in addition to development, it’s often a bonus point to call out operation and maintenance, which many candidates neglect
+
+<br/>
+
+
+
+---
+
+# Architecture
+
+* Client side interface (usually web app, app, website, etc)
+   
+* Client server communication (usually REST, long polling, web sockets, server side if two way communication)
+* Server and its microservices
+* Introduce queues if req for processing user requests
+* Client server communication protocol (usually HTTP over TCP/IP or UDP, FTP)
+* Databases   
+(Database Partitioning)
+* S3 for static media storage 
+* Databases replica 
+* Server to server communication (message queue or REST)
+* Load balancers 
+* Cache 
+
+<br/>
+<br/>
+
 
 # System Design Examples
 
@@ -518,3 +672,11 @@ Ask yourself
 
 <br/>
 <br/>
+
+## Design a WhatsApp Chat messaging system design
+
+https://leetcode.com/discuss/interview-question/system-design/1588415/WhatsAppMessaging-Chat-System-Design
+
+
+
+---
