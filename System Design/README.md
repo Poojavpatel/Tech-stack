@@ -281,32 +281,35 @@ successfully, thus allowing the sending of subsequent updates.
 <br/>
 <br/>
 
+## Horizontal vs Vertical Scaling
 
-## SQL vs. NoSQL
+The heart of the difference is the approach to adding computing resources to your infrastructure
+> With vertical scaling (scaling up), you’re adding more power to your existing machine
 
-#### SQL Advantages
-* Structured Data
-* ACID Compliant
-* Joins etc supported
-   
-#### SQL Disadvantages
-* Scale vertically
-* Adding a property is expensive (unecessary space taken by columns with no entries)
-
-#### NoSQL Advantages
-* Unstructured
-* Adding or removing properties is very easy
-* Scale horizontally
-
-#### NoSQL Disadvantages
-* Not easily ACID complient, has BASE properties
-
+> In horizontal scaling (scaling out), you get the additional resources into your system by adding more machines to your network, sharing the processing and memory workload across multiple devices.
 
 <br/>
+
+### Why Horizontal scaling Is Better Than Vertical Scaling
+Horizontal scaling is almost always more desirable than vertical scaling because you don’t get caught in a resource deficit. Instead of taking your server offline while you’re scaling up to a better one, horizontal scaling lets you keep your existing pool of computing resources online while adding more to what you already have. When your app is scaled horizontally, you have the benefit of elasticity.
+
+* Instant and continuous availability
+* No limit to hardware capacity
+* Cost can be tied to use
+* You’re not stuck always paying for peak demand
+* Built-in redundancy
+* Easy to size and resize properly to your needs
+
 <br/>
+
+---
 
 
 ## CAP Theorem
+
+https://www.youtube.com/watch?v=8UryASGBiR4    
+https://www.youtube.com/watch?v=k-Yaq8AHlFA   
+
 * CAP theorem states that it is impossible for a distributed software system to
 simultaneously provide more than two out of three of the following
 guarantees (CAP)   
@@ -324,7 +327,9 @@ network failure that doesn’t result in a failure of the entire network. Data i
 sufficiently replicated across combinations of nodes and networks to keep the
 system up through intermittent outages.
 
-* Image todo
+* TODO : Inser image
+
+* TODO : Take notes from both youtube videos
 
 <br/>
 <br/>
@@ -424,18 +429,251 @@ To calculate a checksum, a cryptographic hash function like MD5, SHA-1, SHA-256,
 
 ## SLI, SLO, and SLA
 
+https://www.youtube.com/watch?v=LKpIirL8f-I&t=790s   
+
 * SLA or Service Level Agreement is a contract that the service provider promises customers on service availability, performance, etc.
 * SLO or Service Level Objective is a goal that service provider wants to reach.
 * SLI or Service Level Indicator is a measurement the service provider uses for the goal.
+
+TODO : notes from video
 
 <br/>
 
 
 ## Message Queue
 
+TODO : notes
+
 <br/>
 
 ## Distributed message queue
+
+TODO : notes
+
+<br/>
+
+## Logging Monitoring Alerting
+
+
+
+<br/>
+<br/>
+<br/>
+
+---
+# System Design - Choosing database 
+
+<br/>
+<br/>
+
+## When to choose which database
+
+<br/>
+
+
+* Caching - Use Key Value store - Redis, MemeCache 
+* Image/Video - Use Blob Storage - Amazon S3 (+ CDN)
+* Text searching - Text Search Engine - Elastic search, Solr (Both are build on Lucene)
+* Application Metrics tracking system - Time series Database - Influx DB, Open TSDB 
+* Analytics - Data warehouse - Hadoop
+* Structured Data and Need ACID - SQL
+* Unstructured Data, no/less relations, No ACID needed - Mongo DB, Couch base
+* Unstructured Data, Ever Increasing data - Cassandra DB, HBase
+* Social network Graphs, Recommendation Engine & Product Recommendation System, Knowledge Graph - Graph databases - Neo4j
+
+
+<br/>
+
+## Time series Database 
+https://www.youtube.com/watch?v=cODCpXtPHbQ
+
+TODO - Notes from video
+
+<br/>
+<br/>
+
+## File Storage vs Blob Storage
+
+https://www.youtube.com/watch?v=tndzLznxq40
+
+TODO - Notes from video
+
+<br/>
+<br/>
+
+## Data warehouse, Database for analytics - Hadoop
+
+Dump all data with querying capabilities on top of it to support reports 
+
+<br/>
+<br/>
+
+### RDBMS advantages:
+
+* <ins>Simple structure</ins>   
+  It has a simple structure that matches most kinds of data you normally have in a program.
+* <ins>Ideal for consistent data systems</ins>   
+  If you don't need a dynamic information system for massive amounts of data and you're not dealing with numerous data types, an RDBMS offers great speed and stability.
+* <ins>JOIN operations</ins>   
+  It uses SQL, which is commonly used and inherently supports JOIN operations.
+* <ins>ACID compliance</ins>   
+  Atomicity, Consistency, Isolation, and Durability of database systems.   
+  Serves validity of database transactions, reduce anomalies, safeguard data integrity, and create stable database systems.    
+* <ins>Allows fast data updating</ins>   
+  All the DB is saved on one machine, and relations between records are used as pointers, this means you can update a record once and all its related records will update immediately.
+* <ins>Better support options</ins>  
+  Because RDBMS databases have been around for over 40 years, it's easier to get support, add-on products, and integrate data from other systems.
+
+
+<br/>
+<br/>
+
+### RDBMS disadvantages:
+
+* <ins>No support for objects, arrays, etc</ins>  
+  Relational does not support OOP based objects, even representing simple lists is very complicated.
+* <ins>Less efficient with NoSQL formats</ins>   
+  Most RDBMSs are now compatible with NoSQL data formats, but they don't work with them as efficiently as non-relational databases.
+* <ins>Query execution time depends on the size of the table</ins>   
+  Since each query is done on a table — the query execution time depends on the size of the table. This is a significant limitation that requires us to keep our tables relatively small and perform optimizations on our DB in order to scale.
+* <ins>Scalability challenges</ins>   
+  RDBMSs have a more difficult time scaling up in response to massive growth compared to NoSQL databases.
+* <ins>Sharding difficulties</ins>   
+  Sharding is the process of dividing a large database into smaller parts for easier management.
+* <ins>Vertical Scaling</ins>   
+  In relational DBs scaling is done by adding more computing power to the machine that holds your DB (Vertical Scaling).Since there is a limit for the computing power machines can provide and since adding resources to your machine can require some downtime.
+
+<br/>
+<br/>
+
+### Non-relational DBMS advantages:
+
+* <ins>Store diverse types of data</ins>   
+  NoSQL databases give you unlimited freedom to store diverse types of data in the same place. This offers the flexibility to add new and different types of data to your database at any time.
+* <ins>Represent all data structures</ins>   
+  You can represent almost all data structures including OOP based objects, lists, and dictionaries using good old JSON.
+* <ins>No data preparation required</ins>   
+  When there isn't time to design a complex model, and you need to get a database running fast, non-relational databases save a lot of time.
+* <ins>Querying is very fast</ins>   
+  each record is independent and therefore the query time is independent of the DB’s size and supports parallelity.
+* <ins>Supports schema validation</ins>   
+  Although NoSQL is unschematized by nature, it often supports schema validation, meaning you can make a collection schematized, the schema won’t be as simple as a table, it will be a JSON schema with specific fields.
+* <ins>Excellent for handling "big data" analytics</ins>   
+  The main reason why NoSQL databases are becoming more popular is that they remove the bottleneck of needing to categorize and apply strict structures to massive amounts of information. NoSQL databases like HBase, Cassandra, and CouchDB support the speed and efficiency of server operations while offering the capacity to work with large amounts of data.
+* <ins>Easier to scale</ins>   
+  NoSQL databases are easier to scale. They're designed to be fragmented across multiple data centers without much difficulty.
+* <ins>Horizontal Scaling</ins>   
+  In NoSQL, scaling the DB is done by adding more machines and distributing your data between them (Horizontal Scaling). This allows us to automatically add resources to our DB when needed without causing any downtime.
+
+<br/>
+<br/>
+
+### Non-relational DBMS disadvantages:
+
+* <ins>Atomic transactions are not inherently supported</ins>   
+  you can add it yourself in code by using verification and revert mechanism, but since the records are divided between machines it cannot be an atomic process and race conditions can occur.
+* <ins>JOIN operations are not inherently supported</ins>
+* <ins>Compatibility and standardization challenges</ins>   
+  Newer NoSQL database systems also lack the high degree of compatibility and standardization offered by SQL-based alternatives. You may find that the data in your non-relational database management system doesn't readily integrate with other products and services.
+* <ins>Updating the data is a slow process</ins>   
+  Since the data can be divided between machines and can be duplicated.
+* <ins>Lack of tools</ins>   
+  Since the system is relatively new compared to SQL-based RDBMS solutions, there aren't as many tools to assist with performance testing and analysis.
+
+<br/>
+<br/>
+
+### How to Choose the Right Type of Database
+Here are some factors you should keep in mind when selecting a database management system:
+
+1. Atomicity
+
+If atomicity is a top priority for you, stick to a relational database. Atomicity in database management promotes consistency in a database. It rests on the principle of atomic transactions. These are series of operations that are considered as a composite operation. In other words, either all operations in an atomic transaction occur, or none at all. The simplest example of an atomic transaction is transferring money from account A to account B. Balance from account A should be deducted and the requisite number should be added to account B. Both the operations need to be successful for the transaction to be successful.
+
+2. Vertical or horizontal scaling
+
+If your data strategy rests on vertical scaling, a relational database is fine. Vertical scaling adds more compute power to a sever instead of adding more servers to the system. It is preferred when there are limited number of users and not a lot of querying involved. In that sense, vertical scaling might be suitable for business-facing startups. The basic advantages of vertical scaling are speed and simplicity.
+
+On the other hand, if you are expecting higher loads in terms of users or querying, horizontal scaling is a much cheaper solution. NoSQL databases employ horizontal scaling. Instead of adding more compute power to a server, they distribute the load across servers, and hence, the name. Horizontal scaling, and in turn, NoSQL databases, give businesses more elasticity. However, running join operations is difficult on these systems.
+
+3. Speed
+
+If speed is more important than ACID compliance, a non-relational database, such as a document database, is a better bet. For instance, in the case of real-time data, such as sensor data, some compromise in data integrity can be tolerated in favour of speed. In a non-relational database, each record is an independent entity. Thus, it is possible to run multiple queries simultaneously irrespective of the size of the database.
+
+<br/>
+
+References
+* [Which Modern Database Is Right for Your Use Case] (https://www.xplenty.com/blog/which-database/)
+* [How to Choose the Right Database] (https://towardsdatascience.com/how-to-choose-the-right-database-afcf95541741)
+
+<br/>
+<br/>
+
+---
+
+## Databases and Analogies with SQL 
+
+| Name                  | Database         | Table         | Row           | Column          | Index        | Query language                                     | |
+| :---:                 | :-:              | :-:           |:-:            |:-:              |:-:           | :-:                                                |:-:     |
+| SQL                   | Database         | Table         | Row           | Column          | Index        | SQL                                                |
+| MongoDB               | Database         | Collection    | Document      | Fields          | Index        | MQL                                                | Aggregations          
+| Elastic search        | Cluster/Instance | Index         | Document      | Fields          | -            | Query DSL (Domain Specific Language) based on JSON |
+| Cassandra             | Key spaces       | Table         |               |                 |              | Cassandra Query Language (CQL) |
+| Neo4j                 | Database         | Labels        | Node          | Properties      |              | Cypher Query Language (CQL)|
+
+<br/>
+<br/>
+
+## Databases according to CAP theorem
+
+In terms of partition, database can be PA - PARTITION AVAILABLE or PC - PARTITION CONSISTENT
+If no partition, database can be EL - ELSE LATENCY or EC - ELSE CONSISTENT
+
+SQL - PC EC
+   
+HBase - PC EC   
+Big Table - PC EC   
+   
+Dynamo DB - PA EL   
+Cassandra - PA EL   
+Redis - PA EL   
+
+Mongo DB - PA EC (default config), PC EC (if configured to write on majority replicas)
+
+<br/>
+<br/>
+
+---
+
+# API Design
+
+## Desiging a good API
+
+https://www.youtube.com/watch?v=_YlYuNMTCc8
+
+TODO - Notes from video
+
+<br/>
+<br/>
+
+## API rate limiting 
+
+https://www.youtube.com/watch?v=YSW3UE5AFD4
+
+TODO - Notes from video
+
+### 4 Ways to implement API rate limiting
+1. Token Bucket
+1. Leaky Bucket
+1. Fixed Window
+1. Sliding Window
+
+<br/>
+<br/>
+
+## Put vs Patch
+
+https://www.youtube.com/watch?v=LJajkjI5RHE
 
 <br/>
 <br/>
@@ -677,6 +915,92 @@ Amazon CloudFront is a global content delivery network (CDN) service built for h
 
 https://leetcode.com/discuss/interview-question/system-design/1588415/WhatsAppMessaging-Chat-System-Design
 
+<br/>
+<br/>
 
+## Design TikTok
+
+https://www.youtube.com/watch?v=07BVxmVFDGY
+
+
+<br/>
+<br/>
+
+## Design a B2B application used by Retail stores
+   
+
+```json
+retail store B2B
+offline stores
+  
+any size (local retailer to Dmart, reliance fresh etc)
+  
+  
+product catelogue
+Inventory management 
+ordering products from vendors
+users & their purchases, payment record 
+Invoice 
+company structure 
+  
+customer -> service -> vendors
+  
+  
+company 
+id : 
+name ,
+prime location 
+locations
+no of outlets 
+active 
+  
+  
+product 
+name 
+price
+selling price 
+discount
+features
+SKU 
+images 
+url 
+company_id : ''
+  
+customer 
+name 
+address
+phone
+order total : 
+  
+
+payment 
+amount : 
+customer id : 
+company id : 
+order id : 
+payment date : ''
+  
+order items 
+123 : 
+123 : '', name: , price, disc
+date : ''
+  
+  
+
+  
+POST /payment/
+{
+	"orderItems": [],
+  "customerId": "",
+  "comapany id" : "",
+}
+```
+
+### Notes from this design
+* For B2B consider Both perspective, To Consumer as well as to bussiness
+* When defining schema, specially mention the foreign keys and relations, Eg - product belongs to a company
+* When saving payments data / order data, Instead of using product_id forign key, dump product data, as price may change and we want an entry of older price at which it was purchased
+* For tables like Order, Payment etc Date Time of transaction is a MUST
+* 
 
 ---

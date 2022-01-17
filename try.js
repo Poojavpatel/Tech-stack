@@ -317,19 +317,40 @@ p();
 
 
 ///TODO 
-// normalization in sql
 // react use effect when exactly it runs
 // react all hooks 
 // react lifecycle methods
+// DSA approaches note down
+// interview notes in notion
 
-
-// TODO system design
-// CAP 
-// PACEL db examples
-// All examples in grokking pdf
+// normalization in sql
 // read fundamentals from https://github.com/donnemartin/system-design-primer
 // Read difference between HTTP and FTP
-// Online softwares of drawing diagram
 // Design Patterns
 // Message queue 
 // Distributed message queue
+// PUT vs PATCH 
+// Elastic search 
+// Kafka 
+// Network protocols and proxies
+
+
+// System design examples
+// TinyURL
+// Pastebin
+// Instagram, Twitter
+// Dropbox
+// Facebook messanger, Whatsapp
+// Youtube, Netflix
+// Typeahead
+// API Rate limiter
+// Twitter search 
+// Web crawler
+// Yelp, Nearby friends
+// Tinder 
+// Uber, Ola
+// book my show, ticket master
+// Online softwares of drawing diagram - https://app.creately.com/diagram/WKZaAqxAYyL/edit
+
+
+
