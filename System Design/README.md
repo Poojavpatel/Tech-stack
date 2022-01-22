@@ -617,7 +617,7 @@ References
 | :---:                 | :-:              | :-:           |:-:            |:-:              |:-:           | :-:                                                |:-:     |
 | SQL                   | Database         | Table         | Row           | Column          | Index        | SQL                                                |
 | MongoDB               | Database         | Collection    | Document      | Fields          | Index        | MQL                                                | Aggregations          
-| Elastic search        | Cluster/Instance | Index         | Document      | Fields          | -            | Query DSL (Domain Specific Language) based on JSON |
+| Elastic search        | Index            | Types/Patterns| Document      | Fields          | -            | Over RESTful APIs Query DSL (Domain Specific Language) |
 | Cassandra             | Key spaces       | Table         |               |                 |              | Cassandra Query Language (CQL) |
 | Neo4j                 | Database         | Labels        | Node          | Properties      |              | Cypher Query Language (CQL)|
 
@@ -674,6 +674,13 @@ TODO - Notes from video
 ## Put vs Patch
 
 https://www.youtube.com/watch?v=LJajkjI5RHE
+
+* PUT request performs UPSERT query, ie If resource exists {update it} else {create it}
+* For PUT requests, client is suposed to send user_id in req body, and it would upsert it
+* user_id cannot be send in url as users/123, as if 123 does not exist it would give a 404
+* PUT req <ins>replaces the entire entry with req body sent</ins>, eg you sent req without age, so age would get blank in entry 
+* PATCH is used when you want to just update a few attributes, Only the fields to be updated are to be sent in req body
+* PATCH reduces overhead as client does not have to send all fields in req body
 
 <br/>
 <br/>

@@ -353,4 +353,98 @@ p();
 // Online softwares of drawing diagram - https://app.creately.com/diagram/WKZaAqxAYyL/edit
 
 
+// Design Custom Quora
+// 1. Users should be able to post, delete or Update questions
+// 1a. Users can tag topics to the questions.
+// 2. User can answer to question
+// 2a. Users can reply to answers in threads
+// 3. Upvote or downvote questions or answers
 
+// Q1: DB choices?
+// Q2: Database or class design
+
+// -------------------------------------
+
+// q: aaa
+//  a: aaaa
+//   r1 : b
+//    r2: b1
+//     r3: 
+//   r: r2
+//  a: bbb
+// CODE BELOW
+
+// -------
+
+
+// question  
+// text : 
+// author : 
+
+
+// response (answer/reply)
+// id: 123
+// question_id : 
+// parent_id: response_id / null
+
+
+// vote 
+// id : 
+// entity_id : response_id / question_id
+//  +1
+//  author : 
+ 
+//  123-456
+
+// Q.Given an array of integers and a number k, write a function that returns true if the given array can be divided into pairs such that the sum of every pair is divisible by k.
+
+// Input: arr = [9, 7, 5, 3], k = 6 
+// Output: true 
+// We can divide the array into (9, 3) and 
+// (7, 5). Sum of both of these pairs 
+// is a multiple of 6.
+
+// Input: arr = [1,2,3,4,5,6], k = 10
+// [‘v’,’v’,’v’,v,v,1]
+// Output: false 
+
+// Input: arr =[1,2,3,4,5,10,6,7,8,9], k = 5
+
+// Output: true 
+
+// Input: arr = [9, 7, 5, 3, 1], k = 6 
+// Output: false 
+
+// Input: arr = [-1,1,-2,2,-3,3,-4,4], k = 3
+// Output: true
+
+
+
+
+// function isDivisible(numbers, k) {
+//   let i = 0;
+//   let j = i+1;
+//   let marked = 0;
+//   while(i < numbers.length && j < numbers.length){
+//     if(numbers[i] == 'v'){
+//       i++;
+//     }
+//     if(numbers[j] == 'v'){
+//       j++;
+//     }
+//     if((numbers[j] + numbers[i]) > 0 && (numbers[j] + numbers[i] + k) % k == 0){
+//       numbers[i] = 'v';
+//       numbers[j] = 'v';
+//       marked+= 2;
+//       i++;
+//       j = i + 1;
+//     } else {
+//       j++;
+//     }
+//     console.log('numbers', numbers);
+//   }
+//   console.log('numbers', numbers);
+//   return marked == numbers.length;
+// }
+
+// console.log(isDivisible([-1,1,-2,2,-3,3,-4,4], 3))
