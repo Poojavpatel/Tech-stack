@@ -139,6 +139,13 @@ const Button = ({ onLogin }) => React.createElement(
 
 ### What are Pure Components
 
+TODO 
+
+https://medium.com/technofunnel/working-with-react-pure-components-166ded26ae48
+
+https://www.youtube.com/watch?v=X94LfGK7I9Y
+
+
 <br/>
 <br/>
 

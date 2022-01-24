@@ -448,3 +448,8 @@ p();
 // }
 
 // console.log(isDivisible([-1,1,-2,2,-3,3,-4,4], 3))
+
+const myFunc = (...args) => {
+  console.log('args', args);
+  };
+  myFunc(1, 'a', new Date());

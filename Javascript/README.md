@@ -930,6 +930,8 @@ console.log(Book.topBookStore());
     console.log(args);
     };
     myFunc(1, 'a', new Date());
+
+    // [ 1, 'a', 2022-01-24T07:23:14.293Z ]
     ```
 * Converting a nodeList into an array
     ```javascript
@@ -1399,6 +1401,8 @@ blanket and jscoverage , instanbul - for code coverage
 
 * Slice vs Splice
 The splice() method returns the removed items in an array. The slice() method returns the selected element(s) in an array, as a new array object. The splice() method changes the original array and slice() method doesn't change the original array
+
+TODO - code example here
 
 * Temporal Dead Zone   
 The let and const variables are not accessible before they are initialized with some value, and the phase between the starting of the execution of block in which the let or const variable is declared till that variable is being initialized is called Temporal Dead Zone for the variable

@@ -196,6 +196,24 @@ file, cache it locally, and serve it to the requesting user.
 <br/>
 <br/>
 
+
+
+---
+## Implementation of Cache eviction policies
+
+### LRU 
+
+* Basically your node (object) should contain a field to mark its position in the LRU queue and whenever the node is accessed, it will be moved to the queue head, which means it was used recently. You might have guessed the eviction process: iterating objects from the tail of queue and free some of them
+
+* LRU in redis - https://tokers.github.io/posts/lru-and-lfu-in-redis-memory-eviction/
+
+* TODO 
+https://www.interviewcake.com/concept/java/lru-cache
+
+
+<br/>
+<br/>
+
 ---
 
 ## Data Partitioning (Sharding)

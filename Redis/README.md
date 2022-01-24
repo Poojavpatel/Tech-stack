@@ -33,3 +33,5 @@ Redis can be used for
 > publish "myStream" "Hello world"    # send message to the channel from different redis cli in different bash
 (integer) 1                           # denotes one message got published, "Hello world" is recieved by the channel
 ```
+
+## Redis LRU (Cache Eviction Policy)
