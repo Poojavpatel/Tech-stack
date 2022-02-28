@@ -27,6 +27,18 @@
 * Seperate build for each application
 
 ---
+
+## Brownfield vs. Greenfield
+
+### Brownfield software development 
+Refers to the development and deployment of a new software system in the presence of existing or legacy software systems. This implies that any new software architecture must take into account and coexist with previously created code
+
+
+### Greenfield software development 
+Refers to developing a system for a totally new environment and requires development from a clean slate – no legacy code around. It is an approach used when you're starting fresh and with no restrictions or dependencies.
+
+---
+
 ## When to choose which database
 
 <br/>
@@ -188,3 +200,16 @@ Horizontal scaling is almost always more desirable than vertical scaling because
 ## PWA - Progressive Web Apps
 
 * 
+
+--- 
+
+### 
+
+
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
