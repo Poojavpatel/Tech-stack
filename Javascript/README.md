@@ -325,6 +325,7 @@ function say(greeting) {
     console.log(greeting + ' ' + this.firstName + ' ' + this.lastName);
 }
 
+say('Hey There'); // Hey There undefined undefined
 say.call(person1, 'Hello'); // Hello Jon Kuperman
 say.call(person2, 'Hello'); // Hello Kelly King
 ```

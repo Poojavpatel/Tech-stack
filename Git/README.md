@@ -63,5 +63,5 @@ git reset origin/APP-5525-tagged-member-in-private-post --hard
 git pull origin master --rebase  
 // after resolving merge conflicts
 git rebase --continue
-git push origin APP-5525-tagged-member-in-private-post -f
+git push origin your_branch -f
 ```

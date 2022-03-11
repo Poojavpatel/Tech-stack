@@ -307,12 +307,12 @@
 
 // -b-- {}
 
-var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
-function a() {
-  console.log(this);
-}
-const p = a.bind(person1);
-p();
+// var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
+// function a() {
+//   console.log(this);
+// }
+// const p = a.bind(person1);
+// p();
 // -a-- {}
 
 
@@ -449,7 +449,43 @@ p();
 
 // console.log(isDivisible([-1,1,-2,2,-3,3,-4,4], 3))
 
-const myFunc = (...args) => {
-  console.log('args', args);
-  };
-  myFunc(1, 'a', new Date());
+// const myFunc = (...args) => {
+//   console.log('args', args);
+//   };
+//   myFunc(1, 'a', new Date());
+
+// var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
+// var person2 = {firstName: 'Kelly', lastName: 'King'};
+
+// function say(greeting) {
+//     console.log(greeting + ' ' + this.firstName + ' ' + this.lastName);
+// }
+
+// say('Hey There'); // Hey There undefined undefined
+// say.call(person1, 'Hello'); // Hello Jon Kuperman
+// say.call(person2, 'Hello'); // Hello Kelly King
+
+class Book{
+  #cost
+  constructor(title,author,year,cost){
+    this.title=title;
+    this.author=author;
+    this.year=year;
+    this.#cost = cost;
+  }
+  setCost(newCost) {
+    this.#cost = newCost;
+  }
+  #updateAuthor(author) {
+    this.author=author;
+  }
+}
+
+const book1 = new Book('murder','bella','2002', 500);
+console.log(book1); // Book { title: 'murder', author: 'bella', year: '2002' }
+console.log(book1.cost); // undefined
+// console.log(book1.#cost); // SyntaxError: Private field '#cost' must be declared in an enclosing class
+book1.setCost(700);
+// book1.#updateAuthor('elle');
+
+// vscode on hover shows - Property '#cost' is not accessible outside class 'Book' because it has a private identifier
