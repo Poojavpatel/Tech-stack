@@ -1,3 +1,30 @@
+# Typescript 
+
+* Typescript is a super set of javascript 
+* Browsers donot understand typescript, Typescript files are **transpiled** into javascript 
+
+## Advantages of typescript over javascript
+1. Strong typing 
+1. OOP support - private, interface, abstract 
+1. Compile time errors
+1. Intellisence support
+## Running Typescript files
+```bash
+sudo npm install -g typescript
+tsc -v
+tsc index.ts    # transpiles and creates a js file
+node index.js
+
+# To transpile and run
+tsc index.ts | node index.js
+
+# To transpile using ES6 
+tsc --target ES6 index.ts
+```
+
+
+
+---
 ### Use TypeScript to Build a Node API with Express
 
 Setup - https://developer.okta.com/blog/2018/11/15/node-express-typescript

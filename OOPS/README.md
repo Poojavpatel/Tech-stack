@@ -1,5 +1,4 @@
 # Object oriented programming basics
-[Object oriented programming in javascript](https://gist.github.com/Poojavpatel/48e17c3ecd47a01836fd3e520874fe7c)
 
 ### Object literal
 
@@ -98,6 +97,8 @@ console.log(book1);
 <br/>
 
 ### Inheritance
+
+> Inheritance is implemented in functions using .call(this, params)
 
 ```javascript
 //Construtor for book
@@ -203,6 +204,8 @@ book1.#updateAuthor('elle'); // SyntaxError: Private field '#updateAuthor' must 
 ```
 
 ###  Subclasses
+
+> when we use `new` the constructor of the class is called, when we use `super` constructor of parent class is called
 
 ```javascript
 class Book{
@@ -396,7 +399,7 @@ Function overloading is not supported in JavaScript because if you create functi
 
 ---
 
-# Clean Architecture: A Craftsman's Guide to Software Structure and Design (Robert C. Martin Series)
+<!-- # Clean Architecture: A Craftsman's Guide to Software Structure and Design (Robert C. Martin Series)
 432 Pages
 
 https://www.amazon.in/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164 
@@ -409,4 +412,35 @@ online pdf - http://prof.mau.ac.ir/images/Uploaded_files/Clean%20Architecture_%2
 <img src="https://cdn-media-1.freecodecamp.org/images/YsN6twE3-4Q4OYpgxoModmx29I8zthQ3f0OR" />
 <img src="https://cdn-media-1.freecodecamp.org/images/lbexLhWvRfpexSV0lSIWczkHd5KdszeDy9a3" />
 <img src="https://cdn-media-1.freecodecamp.org/images/YIABVRTHRz58ZiT6W-emBkfNIQUHBelp8t6U" />
-<img src="https://cdn-media-1.freecodecamp.org/images/TmSQbZOg5bxn0cRXxIrRUd2zhqeDAXTe8ni5" />
+<img src="https://cdn-media-1.freecodecamp.org/images/TmSQbZOg5bxn0cRXxIrRUd2zhqeDAXTe8ni5" /> -->
+
+---
+## How to build Classes in Object Oriented Design
+https://www.youtube.com/watch?v=_wmyYdOkCo4
+
+### Classes and objects
+
+#### NVP Technique
+N - Noun   
+V - Verb   
+
+
+### Relation among classes 
+1. Has a relation
+    1. **Composition relationship**  
+    Consider relation of a customer and a credit card    
+    Customer has a credit card    
+    Credit card cannot exist in the system without existance of a related customer, Credit card belongs to a customer, this is called a **composition relationship**
+    1. **Aggregation relationship**
+    Consider relation of a cart and product (1:N)
+    Cart has a product
+    But product can exist without cart, this is called as Aggregation
+2. Is a relation (Inheritance)
+    Shampoo is a product, face wash is a product
+
+* There can exist relations between classes which are not 'has-a' or 'is-a', eg relation of a credit card and payment   
+  Credit card creates payment
+  For these kind if relations, we have to think about real world and model accordingly    
+
+### Assigning responsibilities to classes
+
