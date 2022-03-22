@@ -444,3 +444,12 @@ V - Verb
 
 ### Assigning responsibilities to classes
 
+<br/>
+<br/>
+
+---
+
+## OOP in Typescript
+
+https://github.com/Poojavpatel/Tech-stack/tree/master/Typescript
+

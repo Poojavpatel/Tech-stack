@@ -286,6 +286,113 @@ console.log(q.X);        // 6
 
 ---
 
+## Abstract class
+* Prefixed with abstract keyword
+* Does not have a constructor, as you cannot instanciate it
+* Abstract class can have abstract methods and public methods
+* Abstract methods cannot have implementation and logic inside abstract class
+* Classes that extend abstract class should implement all abstract methods
+* Even though abstract class does not have a constructor, Classes that extend abstract class must call super() in their constructor
+* Abstract classes are used to clearly express your intent that these method needs to be implemented by all sub classes
+* With Abstract classes we can have a lot of implementation thats shared but some methods that compulsarily should be overwritten in any subclasses
+
+```typescript
+abstract class Shape {
+	abstract draw() { // Method 'draw' cannot have an implementation because it is marked abstract
+
+	}
+}
+
+const shape = new Shape(); // Cannot create an instance of an abstract class
+```
+
+```typescript
+class Circle extends Shape{ // Non-abstract class 'Circle' does not implement inherited abstract member 'draw' from class 'Shape'
+	constructor() { // Constructors for derived classes must contain a 'super' call
+
+	}
+}
+```
+
+```typescript
+class Circle extends Shape{ 
+	constructor() { 
+		super()
+	}
+	draw(): void {
+		// draw a circle
+	}
+}
+```
+
+
+
+<br/>
+
+---
+## Inheritance in TypeScript (extends vs implements)
+
+* We can extend only once class, we can implement multiple interfaces
+* When implementing an interface, all properties and methods defined in the interface needs to be defined in the subclass
+* When extending a class, use super.parentMethod() to call parent method
+
+```typescript
+//// implements
+interface IHuman {
+	breath() : void;
+	name : string;
+}
+
+interface IAthelete {
+	run(): void;
+}
+
+class Student implements IHuman, IAthelete { // Property 'run' is missing in type 'Student' but required in type 'IAthelete'
+	name: string;
+	breath(): void {
+		console.log('Student Breathing')
+	}
+	run(): void {
+		console.log('Student running')
+	}
+}
+
+const pooja = new Student();
+pooja.breath();
+pooja.run();
+console.log(pooja.name);
+```
+
+```typescript
+class Human {
+	breath () {
+		console.log('Human Breathing')
+	}
+	walk () {
+		console.log('Human walking')
+	}
+}
+
+class Student2 extends Human{
+	learn () {
+		console.log('Student2 learning');
+	}
+	walk() {
+		super.walk();
+		console.log('Walk completed');
+	}
+}
+
+const swati = new Student2();
+swati.learn();
+swati.breath();
+swati.walk();
+```
+
+<br/>
+
+---
+
 ### Use TypeScript to Build a Node API with Express
 
 Setup - https://developer.okta.com/blog/2018/11/15/node-express-typescript
