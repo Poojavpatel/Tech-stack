@@ -34,4 +34,19 @@ Redis can be used for
 (integer) 1                           # denotes one message got published, "Hello world" is recieved by the channel
 ```
 
+## Redis commands
+
+```bash
+KEYS *                        # list all keys
+FLUSHALL                      # delete all keys
+CONFIG GET databases          # list total no of dbs, dbs are named as db0 db1 db2 ..
+INFO keyspace                 # list all dbs that have atleast one key
+```
+
 ## Redis LRU (Cache Eviction Policy)
+
+
+<!-- ## To connect with redis on local
+REDIS_CONNECTION_URI=default:4o43434345556534332mzQLiE805uIgPfb2Le1SnR@redis-14119.c57.us-east-1-4.ec2.cloud.redislabs.com:14119
+REDIS_CONNECTION_URI=default:4o43434345556534332mzQLiE805uIgPfb2Le1SnR@127.0.0.1:6379 -->
+
