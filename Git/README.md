@@ -65,3 +65,27 @@ git pull origin master --rebase
 git rebase --continue
 git push origin your_branch -f
 ```
+
+## Choose current or incoming when merging branches 
+
+https://stackoverflow.com/questions/16825849/choose-git-merge-strategy-for-specific-files-ours-mine-theirs
+
+**Git Rebase**
+theirs is actually the current branch in the case of rebase.     
+So the below set of commands are actually accepting your current branch changes over the remote branch.
+
+```bash
+# accept your current branch changes over the remote branch
+# ours: branch-a, theirs: branch-b
+git rebase -X theirs branch-b
+```
+
+**Git Merge**
+For merge, the meaning of theirs and ours is reversed. So, to get the same effect during a merge,    
+i.e., keep your current branch changes (ours) over the remote branch being merged (theirs).
+
+```bash
+# assuming branch-a is our current version
+# ours: branch-a, theirs: branch-b
+$ git merge -X ours branch-b  
+```
