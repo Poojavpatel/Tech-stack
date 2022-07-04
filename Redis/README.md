@@ -1,3 +1,9 @@
+## GUI for redis
+
+Medis - Modern GUI for Redis     
+https://getmedis.com/
+
+---
 ## Message Queues (Message Brokers)
 
 Architecture of a message queue
@@ -50,3 +56,21 @@ INFO keyspace                 # list all dbs that have atleast one key
 REDIS_CONNECTION_URI=default:4o43434345556534332mzQLiE805uIgPfb2Le1SnR@redis-14119.c57.us-east-1-4.ec2.cloud.redislabs.com:14119
 REDIS_CONNECTION_URI=default:4o43434345556534332mzQLiE805uIgPfb2Le1SnR@127.0.0.1:6379 -->
 
+---
+
+## TTL in redis
+
+
+
+---
+
+## Hash sets 
+
+Updating a record using redis set method resets the TTL     
+To avoid this use Hash sets in redis
+
+```redis
+HSET myhash field1 "Hello"
+
+HGET myhash field1
+```

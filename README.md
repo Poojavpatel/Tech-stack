@@ -213,3 +213,9 @@ Horizontal scaling is almost always more desirable than vertical scaling because
       B-->D;
       C-->D;
 ```
+
+---
+
+### Breaking the Myth - Disk access is slow as compared to memory access
+
+https://www.youtube.com/watch?v=UNUz1-msbOM
