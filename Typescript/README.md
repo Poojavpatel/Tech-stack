@@ -461,3 +461,15 @@ export const authCheckMiddleware = (req: Request, res: Response, next: NextFunct
 import { authCheckMiddleware } from './middleware/authCheck';
 app.use('/api', authCheckMiddleware);
 ```
+
+---
+
+# Common errors
+
+### Declare type and provide default initial value 
+
+A type literal property cannot have an initializer in TS
+
+```ts
+options: { initialRespondentsSize: number } = { initialRespondentsSize: 5 },
+```
