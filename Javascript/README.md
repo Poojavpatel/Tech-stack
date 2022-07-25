@@ -1426,3 +1426,26 @@ null + 1;           // 1
 !!undefined;        //false
 !!null;             //false
 ```
+
+
+* Nullish Coalescing Operator (??)
+
+The JavaScript double question mark (??) operator is called the nullish coalescing operator and it provides a default value when a variable or an expression evaluates to null or undefined.
+
+```js
+const favoriteFruit = null;
+const result = favoriteFruit ?? 'You did not tell me';
+console.log(result); // "You did not tell me"
+```
+
+It is important to remember that null and undefined are the only two cases that will prompt the use of the default value! Whenever you use the nullish coalescing operator an empty string like “” or a 0 will not trigger the default value.
+
+```js
+const emptyString = ''; 
+const result = emptyString ?? 'You did not tell me, again!';
+console.log(result); // ""
+
+const numberZero = 0;
+const result = numberZero ?? 'You did not tell me, again!';
+console.log(result); // 0
+```

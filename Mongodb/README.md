@@ -1235,3 +1235,6 @@ Error - Failed to parse Unrecognized field 'snapshot'.
 ```bash
 $ mongodump --forceTableScan --host 11.234.251.185 --port 27017 --db db_users --out output 
 ```
+
+
+lean() is not needed on an aggregate function as the documents returned are plain JavaScript objects, and not Mongoose objects. This is because any shape of document can be returned

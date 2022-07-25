@@ -90,6 +90,53 @@ message2.endsWith('d');
 (message2 as String).endsWith('d');
 ```
 
+### Partial<T> Type
+
+* The partial utility type was introduced in TypeScript release 2.1 and it is designed to make all of the properties of a type optional. This means developers will no longer have to provide values to all properties of a type. In fact, it opens the possibility of not providing any property.
+
+```typescript
+Partial<MyType>
+Partial<MyInterface>
+Partial<{}>
+```
+
+* let’s take a look at the following example where we have the Blog interface. Notice the Blog interface is composed of six property keys, which all except by featureImageUrl are required.
+
+```ts
+interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  categories: string[];
+  tags: string[];
+  featureImageUrl?: string;
+  content: string;
+}
+```
+
+* However, it is common during the development to not know all the values of a Blog, especially when we have a draft of a blog. However, failing to pass all the property keys will lead to a TypeScript error
+* An alternative solution is to make all of the properties optional using the question mark ? However, it is not always possible to make all of the property keys optional. Besides, it will prevent from enforcing property values in certain types. 
+* That’s when the partial type becomes useful as it makes all these properties optional without the need of modifying the requirement of the properties of the type like in the following example.
+```ts
+// Partial<Blog> generates a new type based on Blog with all the property
+// keys being optional
+const draft: Partial<Blog> = {
+  title: 'What kind of title should I type?'
+}
+```
+
+* Make a property required and the rest optional - There are special scenarios where we would want to keep certain properties required, but let the rest be optional. For example, assume we must update the title of a Blog type every time we trigger the updateBlog function.
+Unfortunately, using the Partial type with not work as you know by now, it will make all the properties optional.
+
+* However, we can use Partial in combination with Pick utility type to enforce the property title. to be passed as part of the blog parameter.
+```ts
+async function updateBlog(id: string, blog: Partial<Blog> & Pick<Blog, 'title'>) {
+  await db.Blog.save(id, {
+    ...blog
+  });
+}
+```
+
 ---
 
 ### Interface
