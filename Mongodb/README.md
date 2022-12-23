@@ -1236,5 +1236,55 @@ Error - Failed to parse Unrecognized field 'snapshot'.
 $ mongodump --forceTableScan --host 11.234.251.185 --port 27017 --db db_users --out output 
 ```
 
+---
 
 lean() is not needed on an aggregate function as the documents returned are plain JavaScript objects, and not Mongoose objects. This is because any shape of document can be returned
+
+---
+
+### $pull
+The 
+$pull
+ operator removes from an existing array all instances of a value or values that match a specified condition.
+
+Create the stores collection:
+```js
+db.stores.insertMany( [
+   {
+      _id: 1,
+      fruits: [ "apples", "pears", "oranges", "grapes", "bananas" ],
+      vegetables: [ "carrots", "celery", "squash", "carrots" ]
+   },
+   {
+      _id: 2,
+      fruits: [ "plums", "kiwis", "oranges", "bananas", "apples" ],
+      vegetables: [ "broccoli", "zucchini", "carrots", "onions" ]
+   }
+] )
+```
+
+The following operation removes   
+"apples" and "oranges" from the fruits array
+"carrots" from the vegetables array
+
+```js
+db.stores.updateMany(
+    { },
+    { $pull: { fruits: { $in: [ "apples", "oranges" ] }, vegetables: "carrots" } }
+)
+```
+
+After 
+
+```js
+{
+  _id: 1,
+  fruits: [ 'pears', 'grapes', 'bananas' ],
+  vegetables: [ 'celery', 'squash' ]
+},
+{
+  _id: 2,
+  fruits: [ 'plums', 'kiwis', 'bananas' ],
+  vegetables: [ 'broccoli', 'zucchini', 'onions' ]
+}
+```

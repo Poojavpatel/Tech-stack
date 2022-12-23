@@ -1449,3 +1449,82 @@ const numberZero = 0;
 const result = numberZero ?? 'You did not tell me, again!';
 console.log(result); // 0
 ```
+
+--- 
+## Code Dump 
+
+Lodash _.template() Method
+The _.template() method is used to create a template function that is compiled and can interpolate properties of data in interpolate delimiters, execute JavaScript in evaluate delimiters, and HTML-escape interpolated properties of data in escape delimiters. Moreover, data properties are retrieved in the template as free variables. 
+
+`_.template( string, options )`
+
+string: It is a string that would be used as the template. It is an optional value.
+options: It is an object that can be used to modify the behavior of the method. It is an optional value.
+The options field has the following optional arguments:
+
+options.interpolate: It is a regular expression that specifies the HTML interpolate delimiter.
+options.evaluate: It is a regular expression that specifies the HTML evaluate delimiter.
+options.escape: It is a regular expression that specifies the HTML escape delimiter.
+options.imports: It is an object which is to be imported as free variables into the template.
+options.sourceURL: It is a string that denotes the source URL of the compiled template.
+options.variable: It is a string that denotes the variable name of the data object.
+
+```js
+// Requiring lodash library
+const _ = require('lodash');
+  
+// Using the _.template() method to
+// create a compiled template using 
+// the "interpolate" delimiter
+var comptempl =
+  _.template('Hi <%= author%>!');
+  
+// Assigning the value to the  
+// interpolate delimiter
+let result =
+  comptempl({ 'author': 'Nidhi' });
+  
+// Displays output
+console.log(result);
+
+Hi Nidhi!
+```
+
+```js
+// Requiring lodash library
+const _ = require('lodash');
+  
+// Using the _.template() method to 
+// create a compiled template using 
+// the internal print function in
+// the "evaluate" delimiter
+var comptempl = _.template(
+  '<% print("hey " + geek); %>...'
+);
+  
+// Assigning value to the evaluate delimiter
+let result =
+  comptempl({ 'geek': 'Nisha' });
+  
+// Displays output
+console.log(result);
+
+hey Nisha...
+```
+
+```js
+// Requiring lodash library
+const _ = require("lodash");
+  
+// Using the template() method with
+// additional parameters
+let compiled_temp = _.template(
+  "<% _.forEach(students, function(students) " +
+    "{ %><li><b><%- students %></b></li><% }); %>"
+)({ students: ["Rahul", "Rohit"] });
+  
+// Displays the output
+console.log(compiled_temp);
+
+<li><b>Rahul</b></li><li><b>Rohit</b></li>
+```
