@@ -1,94 +1,74 @@
-/*
-Commands to run this script
-For a specific image key : AWS_PROFILE=assembly-duplo-dev node build/run.js misc.ResizeProfileImages --imageKey '638738c818d0f1e0ff4e4cfb/638ee667b18043847dd64f9f/e8390bae-ccee-4ab3-a41c-7b191f895588.jpg' --dryRun on
-For all profile images : AWS_PROFILE=assembly-duplo-dev node build/run.js misc.ResizeProfileImages --dryRun on
-Dry run off : AWS_PROFILE=assembly-duplo-dev node build/run.js misc.ResizeProfileImages --dryRun off
-*/
-
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /*
 This runner script will fetch all leaf nodes from s3 bucket where original profile images are stored
 For each image key, it will call a lambda function that resizes the image and saves it to another s3 bucket
 */
 
-import * as AWS from "aws-sdk";
-import { Runner } from "../Runner";
+/*
+Commands to run this script
+For a specific image key : AWS_PROFILE=_-duplo-dev node build/run.js misc.createProfileThumbnails.ResizeProfileImages --imageKey '638738c818d0f1e0ff4e4cfb/638ee667b18043847dd64f9f/e8390bae-ccee-4ab3-a41c-7b191f895588.jpg' --dryRun on
+For all profile images : AWS_PROFILE=_-duplo-dev node build/run.js misc.createProfileThumbnails.ResizeProfileImages --dryRun on
+Dry run off : AWS_PROFILE=_-duplo-dev node build/run.js misc.createProfileThumbnails.ResizeProfileImages --dryRun off
 
-const s3 = new AWS.S3();
-const lambda = new AWS.Lambda({ region: "us-east-1" });
-const bucketName = "duploservices-dev02-assembly-profile-image-333387423585";
-const thumbnailLambda = "duploservices-dev02-thumbnail-creation-333387423585";
+refer - https://join_.atlassian.net/wiki/spaces/TKBP/pages/763887882/Execute+runners+via+postman
+API [POST]: <host>/api/v2/superadmin/run
+API Body:
+{
+  name: "misc.createProfileThumbnails.ResizeProfileImages"
+  "options": {
+    "imageKey": '638738c818d0f1e0ff4e4cfb/638ee667b18043847dd64f9f/e8390bae-ccee-4ab3-a41c-7b191f895588.jpg',
+    "dryRun": "on | off"
+  }
+}
+*/
+
+import AppConfig from "../../../config/AppConfig";
+import { Runner } from "../../Runner";
+import { GetBucketObjectsJob } from "./executors/GetBucketObjectsJob";
+import { TriggerProfileThumbnailLambdaJob } from "./executors/TriggerProfileThumbnailLambdaJob";
+
+const bucketName = AppConfig.AWS.S3.PROFILE_BUCKET;
 
 export class ResizeProfileImages extends Runner {
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<void> {
     this.log("Running ResizeProfileImages runner");
+
     this.log(`options dryRun: ${this.options.dryRun} imageKey ${this.options.imageKey}`);
 
-    let allImages;
-
     if (this.options?.imageKey) {
-      allImages = [{ Key: this.options?.imageKey }];
-    } else {
-      allImages = await this.getObjectsInBucket(bucketName);
+      await this.submitProfileThumbnailLambdaJob(this.options?.imageKey);
+      return;
     }
 
-    this.log(`total images found: ${allImages.length}`);
-
-    for (let i = 0; i < allImages.length; i++) {
-      const lambdaPayload = { keys: allImages[i].Key };
-
-      await this.triggerThumbnailLambda(lambdaPayload);
-    }
+    await this.submitGetBucketObjectJob(bucketName);
   }
 
-  private async getObjectsInBucket(bucketName: string): Promise<AWS.S3.Object[]> {
-    try {
-      const objects: AWS.S3.Object[] = [];
+  private async submitProfileThumbnailLambdaJob(imageKey: string): Promise<void> {
+    const hasDoubleSlash = /\/.*\//.test(imageKey);
 
-      let continuationToken: string | undefined = undefined;
-
-      do {
-        const response: AWS.S3.ListObjectsV2Output = await s3
-          .listObjectsV2({
-            Bucket: bucketName,
-            ContinuationToken: continuationToken
-          })
-          .promise();
-
-        response.Contents?.forEach((object) => {
-          if (object.Key && object.Key.match(/\.(jpg|jpeg|png)$/)) {
-            objects.push(object);
-          }
-        });
-
-        continuationToken = response.NextContinuationToken;
-      } while (continuationToken);
-
-      this.log(`Successfully fetched images from bucket ${bucketName}`);
-      return objects;
-    } catch (error) {
-      this.log(error);
-      throw error;
+    if (!hasDoubleSlash) {
+      this.log(`Skipping ${imageKey} as it on wrong path`);
+      return;
     }
+
+    const job = TriggerProfileThumbnailLambdaJob.create({
+      dryRun: this.options.dryRun,
+      imageKey: imageKey
+    });
+
+    await job.submit();
+    this.log(`TriggerProfileThumbnailLambdaJob job submitted for imageKey: ${imageKey}`);
   }
 
-  private async triggerThumbnailLambda(lambdaPayload) {
-    try {
-      this.log(`triggering thumbnail lambda for ${JSON.stringify(lambdaPayload)}`);
+  private async submitGetBucketObjectJob(bucketName: string): Promise<void> {
+    const job = GetBucketObjectsJob.create({
+      dryRun: this.options.dryRun,
+      bucketName: bucketName
+    });
 
-      const params: AWS.Lambda.Types.InvocationRequest = {
-        FunctionName: thumbnailLambda,
-        Payload: JSON.stringify(lambdaPayload)
-      };
+    await job.submit();
 
-      if (this.options.dryRun === "off") {
-        await lambda.invoke(params).promise();
-
-        this.log(`thumbnail lambda successful for ${JSON.stringify(lambdaPayload)}`);
-      } else {
-        this.log("dry run mode");
-      }
-    } catch (error) {
-      this.log(error);
-    }
+    this.log(`GetBucketObjectsJob job submitted for bucketName: ${bucketName}`);
   }
 }

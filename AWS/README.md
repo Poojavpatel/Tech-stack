@@ -203,3 +203,16 @@ kube-proxy is a network proxy that runs on each node in your cluster, implementi
 kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
 
 kube-proxy uses the operating system packet filtering layer if there is one and it's available. Otherwise, kube-proxy forwards the traffic itself.
+
+---
+
+what is aws ecr
+Amazon Elastic Container Registry (Amazon ECR) is an AWS managed container image registry service that is secure, scalable, and reliable.
+
+What is ECR and ECS in AWS?
+
+Amazon ECR is integrated with Amazon ECS, allowing you to easily store, run, and manage container images for applications running on Amazon ECS. All you need to do is specify the Amazon ECR repository in your task definition and Amazon ECS will retrieve the appropriate images for your applications.
+
+What is EC2 and ECR?
+Amazon Elastic Container Registry (Amazon ECR) is an Amazon Web Service (AWS) product that stores, manages and deploys Docker images, which are managed clusters of Amazon EC2 instances.
+
