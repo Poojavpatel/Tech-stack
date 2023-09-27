@@ -453,3 +453,8 @@ V - Verb
 
 https://github.com/Poojavpatel/Tech-stack/tree/master/Typescript
 
+---
+
+## Composition vs inheritance 
+
+https://www.youtube.com/watch?v=hxGOiiR9ZKg
