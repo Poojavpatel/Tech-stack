@@ -152,7 +152,11 @@ class Book{
         this.year = newYear;
         this.revised = true;
     }
-    // Static method - a method that we have in a class which we can use without instantiating an object
+    /*
+        Static method - a method that we have in a class which we can use without instantiating an object
+        It is used for something that is common across all books and not specific to one particular book ie object of a book
+        Static methods can be both public and private (egs of private static function are validateObject, getDefaultRange, defaultLimitStart)
+    */
     static topBookStore(){
         return `Barnes and Nobles`;
     }
@@ -220,29 +224,7 @@ class Book{
 }
 
 // create a subclass magazine that inherits class book
-// simillar to syntax of react
-class Magazine extends Book{
-    constructor(title,author,year,month){
-        super(title,author,year);
-        this.month=month;
-    }
-}
-
-const mag1 = new Magazine('cosmo','amy','2016','feb');
-console.log(mag1);
-console.log(mag1.getSummary());class Book{
-    constructor(title,author,year){
-        this.title=title;
-        this.author=author;
-        this.year=year;
-    }
-    getSummary(){
-        return `${this.title} was written by ${this.author} in year ${this.year}`
-    }
-}
-
-// create a subclass magazine that inherits class book
-// simillar to syntax of react
+// similar to syntax of react
 class Magazine extends Book{
     constructor(title,author,year,month){
         super(title,author,year);
@@ -431,16 +413,16 @@ V - Verb
     Consider relation of a customer and a credit card    
     Customer has a credit card    
     Credit card cannot exist in the system without existance of a related customer, Credit card belongs to a customer, this is called a **composition relationship**
-    1. **Aggregation relationship**
+    1. **Aggregation relationship**   
     Consider relation of a cart and product (1:N)
     Cart has a product
     But product can exist without cart, this is called as Aggregation
-2. Is a relation (Inheritance)
-    Shampoo is a product, face wash is a product
+2. Is a relation (Inheritance)   
+    Shampoo is a product, face wash is a product, Sparrow is a bird
 
 * There can exist relations between classes which are not 'has-a' or 'is-a', eg relation of a credit card and payment   
   Credit card creates payment
-  For these kind if relations, we have to think about real world and model accordingly    
+  For these kind of relations, we have to think about real world and model accordingly    
 
 ### Assigning responsibilities to classes
 

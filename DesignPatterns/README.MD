@@ -20,62 +20,8 @@ Single responsibility principle is violated when
 A class should be open to extension, closed to modification 
 
 **Example**    
-Consider you have an existing error handling class that displays error, now you need to log those errors to datadog by sending to an endpoint
-
-```typescript
-/* Error handling class */
-export class ErrorHandler {
-  private messageBox: any;
-
-  constructor(messageBox){
-    this.messageBox = messageBox;
-  }
-
-  public wrapError(res: any, errorBody: string, statusCode: number) {
-    if(statusCode === 500) {
-      this.critical(res, errorBody)
-    } else {
-      this.clientError(res, errorBody)
-    }
-  }
-
-  private clientError(res: any, body: string): any {
-    this.messageBox.show("Client error", body)
-  }
-
-  private critical(res: any, body: string): any {
-    this.messageBox.show("Internal server error", body)
-  }
-}
-
-/* Another class for error logging to datadog */
-export class ErrorLogger {
-  private datadogClient: any;
-
-  constructor(datadogClient){
-    this.datadogClient = datadogClient;
-  }
-
-  public logError(errorBody: string) {
-    this.datadogClient.post("api/logs", errorBody);
-  }
-}
-
-/* Extending error handling class with error logging class */
-export class ErrorHandlerWithLogging extends ErrorHandler {
-  private logger : ErrorLogger;
-
-  constructor(messageBox, logger: ErrorLogger) {
-    super(messageBox);
-    this.logger = logger
-  }
-
-  public logAndWrapError(res: any, errorBody: string, statusCode: number) {
-    this.logger.logError(errorBody);
-    super.wrapError(res, errorBody, statusCode);
-  }
-}
-```
+Consider you have an existing error handling class that displays error, now you need to log those errors to datadog by sending to an endpoint    
+[openClosedPrinciple/followingPrinciple.ts](openClosedPrinciple/followingPrinciple.ts)
 
 ## Liskov substitution (substitutability) principle 
 
@@ -93,13 +39,26 @@ LSP states that when you pass the objects of derived class to that function, it 
 <br/>
 
 **Examples**
-1. Bird - DesignPatterns/liskovSubstitutionPrinciple/bird.ts
-2. Quiz - DesignPatterns/liskovSubstitutionPrinciple/quizQuestion.ts
+1. Bird - [liskovSubstitutionPrinciple/bird.ts](liskovSubstitutionPrinciple/bird.ts)
+2. Quiz - [liskovSubstitutionPrinciple/quizQuestion.ts](liskovSubstitutionPrinciple/quizQuestion.ts)
 
 **Real world examples for a saas app**
 1. User Authentication and Authorization - you might have different types of users, such as regular users and administrators. These users should be interchangeable when it comes to authentication and authorization
 2. Payment Processors - you may integrate with different payment processors like PayPal, Stripe, and Square. Each payment processor can have its implementation, but they should all adhere to a common interface
 3. Data Storage Abstraction - you may need to store data in various databases, such as MySQL, PostgreSQL, or MongoDB. You can create a common data access interface that all these database-specific classes implement
+
+## Interface segregation principle 
+
+A class should not have to implement methods it does not need
+
+**How to recognize the issue**
+* You don't know how to implement an interface method
+* The interface method does not belong in the class
+* You are forced to leave method empty
+* You are forced to throw a generic exception
+
+**Example**    
+
 
 ---
 <!-- # Design Patterns
