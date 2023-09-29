@@ -238,11 +238,15 @@ a.x = 9
 1. Private
 1. Protected
 
-**Public** - By default, members (properties and methods) of the TypeScript class are public - so you don’t need to prefix members with the public keyword. Public members are accessible everywhere without restrictions even from the multiple level sub-classes without any compile errors.
+**Public**: Members (properties and methods) declared as public are accessible from anywhere, both inside and outside the class.   
+By default, members (properties and methods) of the TypeScript class are public 
 
-**Private** - A private member cannot be accessed outside of its containing class. Private members can be accessed only within the class and even their sub-classes won't be allowed to use their private properties and attributes.
+**Private**: Members declared as private are only accessible from within the class in which they are defined.     
+They cannot be accessed from outside the class.   
+They can't be accessed even from sub-classes.
 
-**Protected** - A protected member cannot be accessed outside of its containing class. Protected members can be accessed only within the class and by the instance of its sub/child class.
+**Protected**: Members declared as protected are accessible within the class and also within its subclasses (derived classes).    
+They cannot be accessed from outside the class or its subclasses.
 
 ```typescript
 class Point {
@@ -264,6 +268,83 @@ class Point {
 const point = new Point(2,3,4);
 point.z = 5; // intelligence only shows z and drawPoint
 ```
+
+
+#### Protected 
+
+* Intended for Subclasses: If a method is meant to be overridden or extended by subclasses but is not meant to be called directly by external code, it should be declared as protected. This restricts access to the method to the class itself and its subclasses.
+
+* Implementation Detail: Protected methods are often used for implementation details that are not part of the public interface. They provide a way for subclasses to customize or extend the behavior of the base class.
+
+* Template Method Pattern: In the Template Method Pattern, you may have a public method in the base class that calls protected methods to implement a certain algorithm. Subclasses then override these protected methods to customize the algorithm's behavior.
+
+```typescript
+/*
+In this example, the name property is marked as protected in the Animal class, so it can be accessed within the Animal class and its subclass Dog, but not from outside these classes. This allows for controlled and safe access to certain class members within an inheritance hierarchy.
+*/
+
+class Animal {
+    protected name: string;
+
+    constructor(name: string) {
+        this.name = name;
+    }
+
+    public makeSound() {
+        console.log(`${this.name} makes a sound`);
+    }
+}
+
+class Dog extends Animal {
+    constructor(name: string) {
+        super(name);
+    }
+
+    public bark() {
+        console.log(`${this.name} barks`);
+    }
+}
+
+const dog = new Dog('Fido');
+dog.makeSound(); // Accessible because it's a public method
+dog.bark();      // Accessible because it's a public method
+console.log(dog.name); // Error: Property 'name' is protected and only accessible within class 'Animal' and its subclasses.
+```
+
+```typescript
+/*
+In this example, calculateArea is marked as protected because it's meant to be customized by subclasses, while printArea is marked as public because it's part of the public interface of the Shape class. 
+*/
+class Shape {
+    protected calculateArea(): number {
+        // Implementation for calculating the area
+        return 0;
+    }
+
+    public printArea(): void {
+        const area = this.calculateArea();
+        console.log(`Area: ${area}`);
+    }
+}
+
+class Circle extends Shape {
+    private radius: number;
+
+    constructor(radius: number) {
+        super();
+        this.radius = radius;
+    }
+
+    protected calculateArea(): number {
+        // Custom implementation for calculating the area of a circle
+        return Math.PI * this.radius * this.radius;
+    }
+}
+
+const circle = new Circle(5);
+circle.printArea(); // Can be called externally
+```
+
 <br/>
 
 ---
@@ -684,11 +765,111 @@ class Helicopter extends Vehicle implements Flyable {
 
 ### Typescript Generics
 
-TODO
-
 https://rossbulat.medium.com/typescript-generics-explained-15c6493b510f
-
 https://levelup.gitconnected.com/using-typescript-extending-generic-types-2c18459934ea
+
+Generics enable you to parameterize types, functions, and classes, making them adaptable to different data types while maintaining type safety.
+
+**Generic Types**
+```typescript
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+const str: string = identity("Hello, TypeScript!");
+const num: number = identity(42);
+```
+
+**Generic Functions**
+```typescript
+function swap<T, U>(tuple: [T, U]): [U, T] {
+    return [tuple[1], tuple[0]];
+}
+
+const swapped = swap([1, "hello"]);
+// swapped is inferred as [string, number]
+```
+
+**Generic Classes**
+```typescript
+class Stack<T> {
+    private items: T[] = [];
+
+    push(item: T) {
+        this.items.push(item);
+    }
+
+    pop(): T | undefined {
+        return this.items.pop();
+    }
+}
+
+const numberStack = new Stack<number>();
+numberStack.push(1);
+numberStack.push(2);
+
+const poppedNumber = numberStack.pop();
+
+const stringStack = new Stack<string>();
+stringStack.push("hello");
+```
+
+**Constraints**
+```typescript
+function logAndReturn<T extends { toString(): string }>(value: T): T {
+    console.log(value.toString());
+    return value;
+}
+
+const strResult = logAndReturn("hello");
+const numResult = logAndReturn(42);
+// Error: number does not have toString method
+
+```
+
+**Default Values**
+```typescript
+function getValue<T = any>(obj: Record<string, T>, key: string): T {
+    return obj[key];
+}
+
+const person = { name: "Alice", age: 30 };
+const age: number = getValue(person, "age");
+const city: string = getValue(person, "city", "Unknown");
+
+```
+
+### Why use generics when you can use "any" ?
+
+```typescript
+/* Using Generics */
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+const str: string = identity("Hello, TypeScript!"); // Correct usage, str is inferred as string
+const num: number = identity(42); // Correct usage, num is inferred as number
+
+// Type safety is maintained at compile-time
+const strLength: number = str.length; // OK
+const numToString: string = num.toString(); // OK
+const invalidOperation: number = str; // Error: Type 'string' is not assignable to type 'number'
+```
+
+```typescript
+/* Using 'any' */
+function identityAny(arg: any): any {
+    return arg;
+}
+
+const str: string = identityAny("Hello, TypeScript!"); // Correct usage, but no type inference
+const num: number = identityAny(42); // Correct usage, but no type inference
+
+// Type safety is compromised because of 'any'
+const strLength: number = str.length; // No type checking, could lead to runtime errors
+const numToString: string = num.toString(); // No type checking, could lead to runtime errors
+const invalidOperation: number = str; // No error at compile-time, potential runtime error
+```
 
 <br/>
 
