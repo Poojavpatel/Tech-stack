@@ -433,7 +433,7 @@ V - Verb
 
 ## OOP in Typescript
 
-https://github.com/Poojavpatel/Tech-stack/tree/master/Typescript
+[OOPS in Typescript](../Typescript/OOPS.md)
 
 ---
 
