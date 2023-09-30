@@ -354,7 +354,7 @@ console.log(q.X);        // 6
 
 ---
 
-# Common errors
+## Common errors
 
 ### Declare type and provide default initial value 
 
@@ -362,4 +362,156 @@ A type literal property cannot have an initializer in TS
 
 ```ts
 options: { initialRespondentsSize: number } = { initialRespondentsSize: 5 },
+```
+
+## Decorators
+
+TODO
+
+## Advance TS tricks
+
+### Mapped types 
+
+```ts
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+interface Point {
+  x : number;
+  y : number; 
+}
+
+type ReadonlyPoint = Readonly<Point>;
+
+const regularPoint : Point = {x : 5, y: 10};
+const readOnlyPoint : Point =  {x: 20, y : 30};
+
+regularPoint.x = 15;
+readOnlyPoint.x = 25 // Error : Cannot assign to x as it is a read-only property
+```
+
+### Conditional types
+
+```ts
+type NonNullable<T> = T extends null | undefined ? never : T;
+```
+
+### Namespaces
+
+Namespaces are a way to organize and group related code     
+They help avoid naming collisions    
+Namespaces can contain variables, functions, classes, interfaces and other namespaces   
+
+```ts
+export namespace NSSlack {
+  export type DTO = {
+    channel: string;
+    memberId: string;
+  };
+
+  export interface IService {
+    sendMessage(message: string): void;
+    submitJob(): Promise<Result<void>>;
+  }
+}
+```
+
+### Mixins
+Mixins are a way to compose classes from multiple smaller parts called mixins classes    
+They allow you to reuse and share behavior between different classes    
+```ts
+// Defining mixins - To define a mixin create a class that extends a generic type parameter with a constructor signature   
+class TimestampMixin<TBase extends new (...args: any[]) => any>(Base: TBase) {
+  constructor(...args: any[]) {
+    super(...args);
+  }
+  getTimestamp() {
+    return new Date();
+  }
+}
+
+// Using Mixins - to use a mixin class, define a base class and apply the mixin class using the extends keyword
+class MyBaseClass {
+  constructor(public value : number) {}
+  displayValue(){
+    console.log(`The value is ${this.value}`);
+  }
+}
+
+class MyMixedClass extends TimestampMixin(MyBaseClass) {
+  constructor(value: number) {
+    super(value);
+  }
+}
+
+// usage
+const instance = new MyMixedClass(42);
+instance.displayValue(); // Output : The value is 42
+console.log(instance.getTimestamp()); // current datetime
+```
+
+### Utility types
+```ts
+interface Person {
+  name : string;
+  age : number;
+  email : string;
+}
+
+type PartialPerson = Partial<Person>;
+type ReadonlyPerson = Readonly<Person>;
+type NameAndAge = Pick<Person, "name" | "age">;
+type withoutEmail = Omit<Person, "email">;
+```
+
+### Nullish coalescing
+
+* The nullish coalescing operator (??) is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined, and otherwise returns its left-hand side operand.
+* The nullish coalescing operator is different from the logical OR (||) operator in that it only considers null and undefined to be falsy values. The logical OR operator considers any falsy value to be falsy, including the empty string (""), the number 0, and false.
+
+```ts
+let value1: string = "hello";
+console.log(value1 ?? "default"); // "hello"
+
+// set props.text as params.text if it is not null or undefined
+this.props.text = params.text ?? this.props.text;
+```
+
+### Discriminated Unions
+
+* A discriminated union in TypeScript is a union type that has a common property that can be used to determine the specific type of the value at runtime.    
+* This common property is called a discriminator, it can be string literals, numeric literals, or even symbols      
+* Discriminated unions can also be used to represent different states of a system. 
+For example, you could use a discriminated union to represent the state of a loading spinner, where the discriminator is the current state (e.g. "idle", "loading", "success", "error").
+
+```ts
+interface Square {
+  kind : 'square';
+  size : number;
+}
+
+interface Circle {
+  kind : 'circle';
+  radius : number;
+}
+
+interface Triangle {
+  kind : 'triangle';
+  base : number;
+  height : number;
+}
+
+type Shape = Square | Circle | Triangle;
+
+function area(shape : Shape) {
+  switch(shape.kind){
+    case 'square':
+      return shape.size * shape.size;
+    case 'circle': 
+      return 3.14 * shape.radius * shape.radius;
+    case 'triangle':
+      return 0.5 * shape.base * shape.height;
+  }
+}
 ```
