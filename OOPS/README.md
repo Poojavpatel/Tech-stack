@@ -369,15 +369,118 @@ Abstraction is defined as showing only the essential things and hiding the inner
 * main advantage of inheritance is reusability
 * The super keyword is a special keyword. Calling super in the child's constructor invokes the parent constructor
 ## Polymorphism 
+
+* Polymorphism is a fundamental concept in object-oriented programming (OOP) that allows objects of different classes to be treated as objects of a common base class
+* It enables you to write code that can work with objects in a more generic and flexible way, without needing to know the specific types of those objects at compile time
+
 Polymorphism has two types.
 1. Compile time Polymorphism
 1. Runtime Polymorphism
 
-* **Function overloading**  is a type of compile-time polymorphism. Here, we are creating more than one function with the same name and different parameters or types.
+### Compile-Time Polymorphism (Function overloading / Static Binding / Early Binding)
+* Occurs when the decision about which method or function to call is made at compile time based on the method's or function's name, number, or types of parameters.
+* It's determined during the code compilation phase.
+* Function overloading is not directly supported in JavaScript and Typescript because if you create functions with the same name, Javascript will override the last defined function with former functions. [discussed here]()
+    ```ts
+    /* 
+      This is not a valid ts code, during compiling you will get an error "Duplicate function implementation." 
+      It is just to show how function definitions would look like
+    */
+    class Calculator {
+      add(x: number, y: number): number {
+        return x + y;
+      }
 
-Function overloading is not supported in JavaScript because if you create functions with the same name, Javascript will override the last defined function with former functions.
+      add(x: string, y: string): string {
+        return x + y;
+      }
+    }
+    ```
 
-* **Method overriding** is a type of runtime polymorphism. You can override the methods of parent class in the child class, That is method overriding.
+### Run-Time Polymorphism (Method overriding / Dynamic Binding / Late Binding)
+* Occurs when the decision about which method to call is made at runtime based on the actual type of the object.
+* It allows a subclass to provide a specific implementation of a method that is already defined in its superclass.
+* Achieved through inheritance and the use of the override keyword (or equivalent) in OOP languages.
+    ```ts
+    class Animal {
+      speak(): void {
+        console.log("Animal makes a sound");
+      }
+    }
+
+    class Dog extends Animal {
+      speak(): void {
+        console.log("Dog barks");
+      }
+    }
+
+    const myAnimal: Animal = new Dog();
+    myAnimal.speak(); // Outputs: "Dog barks" even if type of myAnimal was Animal
+
+    /*
+    In the example above, myAnimal is declared as an Animal type but holds an instance of the Dog class. 
+    When the speak method is called on myAnimal, it executes the speak method from the Dog class because the actual type of the object is determined at runtime. 
+    */
+    /* Incase if there is no speak method in dog, it calls speak method in animal */
+    ```
+
+<br/>
+
+### Function overloading support in JavaScript
+* In statically typed languages, function overloading allows you to define multiple functions with the same name in the same scope, but with different parameter lists. The appropriate function to call is determined at compile time based on the number and types of arguments passed to it.
+* In JavaScript, functions are not directly overloaded in this manner because JavaScript is a dynamically typed language
+* JavaScript functions do not have method signatures that include parameter types, so there's no compile-time type checking based on function signatures.
+* However, In JavaScript you can achieve function overloading by checking the number of arguments or their types *manually* and implementing different behavior accordingly
+
+```ts
+function greet(name) {
+  if (arguments.length === 0) {
+    console.log('Hello, anonymous person!');
+  } else if (typeof name === 'string') {
+    console.log(`Hello, ${name}!`);
+  } else {
+    console.log('Invalid argument type');
+  }
+}
+
+greet(); // Outputs: "Hello, anonymous person!"
+greet('Alice'); // Outputs: "Hello, Alice!"
+greet(42); // Outputs: "Invalid argument type"
+```
+
+* Function overloading is not natively supported in JavaScript, but is kinda supported in TypeScript
+```ts
+/* Error during compilation "Duplicate function implementation." */
+class Calculator {
+  add(x: number, y: number): number {
+    return x + y;
+  }
+
+  add(x: string, y: string): string {
+    return x + y;
+  }
+}
+
+/* This is valid */
+class Calculator {
+  add(x: number, y: number): number;
+  add(x: string, y: string): string;
+  
+  add(x: number | string, y: number | string): number | string {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return x + y;
+    } else if (typeof x === 'string' && typeof y === 'string') {
+      return x + y;
+    } else {
+      throw new Error('Invalid argument types');
+    }
+  }
+}
+
+const calc = new Calculator();
+console.log(calc.add(5, 10)); // 15
+console.log(calc.add("Hello, ", "World!")); // "Hello, World!"
+```
 
 ---
 
