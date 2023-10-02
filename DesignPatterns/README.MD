@@ -1,3 +1,33 @@
+## Table of Contents
+- [Refresh OOPS concepts](#refresh-oops-concepts)
+- [SOLID Principles](#solid-principles)
+  - [Single responsibility principle](#single-responsibility-principle)
+  - [Open-closed principle](#open-closed-principle)
+  - [Liskov substitution (substitutability) principle](#liskov-substitution-substitutability-principle)
+  - [Interface segregation principle](#interface-segregation-principle)
+  - [Dependency inversion principle](#dependency-inversion-principle)
+- [Design Patterns](#design-patterns)
+  - [Creational Patterns](#creational-patterns)
+    - [Factory](#factory)
+    - [Abstract factory](#abstract-factory)
+    - [Builder](#builder)
+    - [Prototype](#prototype)
+    - [Singleton](#singleton)
+  - [Structural Patterns](#structural-patterns)
+    - [Adapter](#adapter)
+    - [Bridge](#bridge)
+    - [Composite](#composite)
+    - [Decorator](#decorator)
+  - [Behavioural Patterns](#behavioural-patterns)
+    - [Chain of responsibility](#chain-of-responsibility)
+    - [Iterator](#iterator)
+    - [Mediator](#mediator)
+    - [State](#state)
+    - [Visitor](#visitor)
+    - [Observer](#observer)
+    - [Strategy](#strategy)
+
+
 ## Refresh OOPS concepts
 
 [OOPS](../OOPS/README.md)    
@@ -25,7 +55,7 @@ Single responsibility principle is violated when
 * you have presentation logic
 * File or database read/write operations
 
-## Open/closed principle 
+## Open-closed principle 
 A class should be open to extension, closed to modification 
 
 * Once a software component (such as a class) is written and considered stable, it should not be modified to add new functionality or features. 
@@ -193,42 +223,21 @@ export class approveRequestUseCase {
 ```
 
 ---
-<!-- # Design Patterns
+# Design Patterns
 
 * Design patterns are typical solutions to common problems in software design
-* Design patterns act as blue prints and can be customised to solve software problems
+* Design patterns act as blue prints and can be customized to solve recurring design problem in your code
 * Design patterns define a common language to helps your team communicate more efficiently
+* While an algorithm always defines a clear set of actions that can achieve some goal, a pattern is a more high-level description of a solution
 
-<br/>
+## Classification of patterns
+All patterns can be categorized by their intent or purpose
 
----
+* **Creational patterns** provide object creation mechanisms that increase flexibility and reuse of existing code.
 
+* **Structural patterns** explain how to assemble objects and classes into larger structures, while keeping these structures flexible and efficient.
 
-
-## Types of design patterns
-
-* [Creational Patterns](#creational-patterns)
-    * [Factory](#factory)
-    * [Abstract factory](#abstract-factory)
-    * [Builder](#builder)
-    * [Prototype](#prototype)
-    * [Singleton](#singleton)
-* [Structural Patterns](#structural-patterns)
-    * [Adapter](#adapter)
-    * [Bridge](#bridge)
-    * [Composite](#composite)
-    * [Decorator](#decorator)
-* [Behavioural Patterns](#behavioural-patterns)
-    * [Chain of responsibility](#chain-of-responsibility)
-    * [Iterator](#iterator)
-    * [Mediator](#mediator)
-    * [State](#state)
-    * [Visitor](#visitor)
-    * [Observer](#observer)
-    * [Strategy](#strategy)
-
-<br/>
-<br/>
+* **Behavioral patterns** take care of effective communication and the assignment of responsibilities between objects.
 
 ---
 
@@ -236,6 +245,109 @@ export class approveRequestUseCase {
 
 > These patterns provide object creation mechanism which maximizes flexibility and reuse of code
 
+
+## Singleton
+
+* Singleton is a creational design pattern that lets you ensure that a class has only one instance throughout the entire application, while providing a global access point to this instance.
+* You have only a single instance of a specific class throughout the entire application
+
+### The problems
+1. You want to ensure your class has only one instance 
+	* The most common reason for this is to control access to some shared resource—for example, a database or a file
+	* Suppose you want to keep a track of your website stats like totalViews, fbShares, etc no matter from which page or file or part of code its updated.    
+	In this case if we do not enforce singleton pattern, there are chances we might create new instances of stats that count from 0
+1. You need global access
+	* There are some properties that we need access to throughout the application, we often use global variables for those.    
+	While they’re very handy, they’re also very unsafe since any code can potentially overwrite the contents of those variables and crash the app.   
+	Just like a global variable, the Singleton pattern lets you access some object from anywhere in the program. However, it also protects that instance from being overwritten by other code.
+
+### Benefits
+* Shared state - You need shared state, this is more common in mobile apps
+* Avoid longer initializations - incase the constructor logic is too complex
+* Cross class communication
+
+### How to implement the solution 
+
+#### Approach 1 - Error from constructor
+Reference : [Design patterns in Typescript](https://www.udemy.com/course/design-patterns-in-typescript/learn/lecture/11677718#overview)   
+With singleton pattern implementation we want to ensure that a class can only be initialized once.   
+Whenever an instance of a class is initialized using the new keyword, the constructor is called   
+We throw an error from the constructor to make sure this does not happen
+
+```ts
+export class StatsTracker {
+  public buttonClicks:number = 0;
+  public facebookShares: number = 0;
+  // 1. A static instance of the same class initialized using the constructor
+  private static _instance : StatsTracker = new StatsTracker();
+
+  constructor(){
+    // 3. Error from constructor if trying to reinitialize
+    if(StatsTracker._instance){
+      throw new Error("Cannot initialize singleton class using new");
+    }
+    StatsTracker._instance = this;
+  }
+
+  // 2. public getter that returns the instance
+  public static get instance(): StatsTracker{
+    return StatsTracker._instance;
+  }
+}
+```
+```ts
+import { StatsTracker } from "./StatsTracker";
+
+// const statsTracker = new StatsTracker(); // Error: Cannot initialize singleton class using new
+const statsTracker = StatsTracker.instance;
+
+statsTracker.buttonClicks += 5;
+console.log(statsTracker.buttonClicks) // 5
+```
+
+#### Approach 2 - Static creation method that acts as constructor
+Reference : [Refactoring Guru](https://refactoring.guru/design-patterns/singleton)   
+
+Steps
+1. Make the default constructor private, to prevent other objects from using the new operator 
+1. Create a static creation method that acts as a constructor.    
+Under the hood, this method calls the private constructor to create an object and saves it in a static field. All following calls to this method return the cached object.
+
+```ts
+export class Database {
+  public buttonClicks:number = 0;
+  // 1. static field for storing the singleton instance
+  private static instance: Database
+
+  // 2. The singleton's constructor should always be private
+  private constructor() {
+  }
+
+  // 3. static method that controls access to the singleton instance
+  public static getInstance() {
+    if(Database.instance === null || Database.instance === undefined){
+      Database.instance = new Database();
+    }
+    return Database.instance
+  }
+}
+```
+```ts
+import { Database } from "./Database";
+
+// const db = new Database() // Constructor of class Database is private and only accessible within the class declaration.
+const db = Database.getInstance();
+db.buttonClicks += 10;
+console.log(db.buttonClicks); // 10
+
+const dbAnotherInstance = Database.getInstance();
+dbAnotherInstance.buttonClicks += 5;
+console.log(dbAnotherInstance.buttonClicks); // 15
+```
+
+Both approach are more or less the same, I like the second one more as we avoid throwing error and making constructor private gives intellisense errors
+
+<br/>
 
 ## Factory
 
@@ -259,9 +371,7 @@ aka Virtual Constructor
 <br/>
 
 
-## Singleton
 
-<br/>
 
 
 
@@ -304,7 +414,7 @@ aka Virtual Constructor
 
 ## Behavioural Patterns
 
-> These patterns are concerned with algorithm and assignment of responsibiliteis between objects
+> These patterns take care of effective communication and the assignment of responsibilities between objects.
 
 
 ## Chain of responsibility
@@ -348,4 +458,4 @@ aka Virtual Constructor
 
 ---
 
-## Relations among patterns -->
+## Relations among patterns
