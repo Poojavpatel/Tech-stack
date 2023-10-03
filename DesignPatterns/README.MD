@@ -8,11 +8,12 @@
   - [Dependency inversion principle](#dependency-inversion-principle)
 - [Design Patterns](#design-patterns)
   - [Creational Patterns](#creational-patterns)
+    - [Singleton](#singleton)
     - [Factory](#factory)
+    - [Object pool](#object-pool)
     - [Abstract factory](#abstract-factory)
     - [Builder](#builder)
     - [Prototype](#prototype)
-    - [Singleton](#singleton)
   - [Structural Patterns](#structural-patterns)
     - [Adapter](#adapter)
     - [Bridge](#bridge)
@@ -222,6 +223,33 @@ export class approveRequestUseCase {
 }
 ```
 
+## Loose Coupling 
+
+* Software parts that communicate with each other have little to no knowledge of each others implementation
+* Eg - FE and BE communicate via API contracts. A get posts API sends posts in a fixed format   
+The BE can keep updating its implementations, sending posts from db, from an AI tool, from some other service, adding scalability, etc as long as the API contract is followed FE does not need to have any knowledge of BE implementation
+* The point is as long as the interfaces match, we do not care about how each individual component is actually implemented
+
+### To achieve loose coupling, follow these practices 
+* Single responsibility principle 
+* Separation of concerns - Use Modules
+* Use Interfaces and Abstractions
+* Factory pattern/object pool
+* Dependency injection
+* Inversion of Control Containers 
+* Avoid Tight Coupling to Frameworks - Keep framework-specific code in separate files or layers
+* Use Event-Based Communication - Implement an event-based communication system, such as the Observer pattern or an event bus, to decouple components that need to communicate. This allows components to publish and subscribe to events without direct dependencies.
+* API Contracts - Clearly define API contracts between different parts of your application. Document the expected input and output for functions and modules to ensure that components can interact without tightly coupling.
+
+### Benefits
+* Easier to work on large projects
+* Swap implementations (even on fly with strategy pattern)
+* Testability
+* Components grow independently
+
+
+<br/>
+
 ---
 # Design Patterns
 
@@ -350,11 +378,124 @@ Both approach are more or less the same, I like the second one more as we avoid 
 <br/>
 
 ## Factory
-
 aka Virtual Constructor
+
+* Combination of single responsibility principle and open-closed principle
+
+### How to implement the solution 
+
+#### Approach 1 - Creator for each type
+Reference : [Design patterns in Typescript](https://www.udemy.com/course/design-patterns-in-typescript/learn/lecture/11677720#overview)   
+
+```ts
+export interface GameCharacter { health : number; magic : number; }
+
+import { GameCharacter } from "./GameCharacter";
+
+export class GameCharactersFactory {
+  public static getWarrior(level: number) : GameCharacter {
+    let warrior : GameCharacter;
+    if(level < 5) {
+      warrior = {health: 10, magic:0};
+    } else {
+      warrior = {health: 10, magic:10};
+    }
+    return warrior;
+  }
+
+  public static getFarmer(level: number) : GameCharacter {
+    let farmer : GameCharacter;
+    if(level < 5) {
+      farmer = {health: 2, magic:0};
+    } else {
+      farmer = {health: 5, magic:0};
+    }
+    return farmer;
+  }
+}
+
+const warrior = GameCharactersFactory.getWarrior(10);
+const farmer = GameCharactersFactory.getFarmer(2);
+```
+
+Similar to different create methods in valueObjects in DDD
+
+```ts
+export class MemberState extends ValueObject<IMemberStateProps> {
+  ...
+  public static createActive(): Result<MemberState> {
+    return MemberState.create({ value: MemberStateEnum.ACTIVE });
+  }
+
+  public static createPending(): Result<MemberState> {
+    return MemberState.create({ value: MemberStateEnum.PENDING });
+  }
+
+  public static createDeactivated(): Result<MemberState> {
+    return MemberState.create({ value: MemberStateEnum.DEACTIVATED });
+  }
+  ...
+}
+```
+
+#### Approach 2 
+Reference : [Refactoring Guru](https://refactoring.guru/design-patterns/factory-method) 
+
+TODO - was unclear 
 
 <br/>
 
+## Object pool
+
+* An object pool is a collection of pre-initialized objects whose initialization is heavy weight 
+* Every time we need an object we can take from the pool 
+* Instead of creating one and destroying them once done, we create a pool of lets say 20 objects
+* Once done, you return them back to the pool or destroy them
+
+### Is the object pool deprecated ?
+* With advancements in programming languages and general speed in which we can instanciate object, maintaining an object pool is more of a headache then it is useful
+* However object pooling is still very useful in game development. In gaming where you need instances like guns, bullets, trees, its helpful to not have to initialize them every time
+
+### How to implement the solution 
+Object pool is usually implemented in combination with factory design pattern
+
+```ts
+/* Continuing from example in factory pattern */
+export class GameCharacterPool {
+  private warriorPool : GameCharacter[] = [];
+
+  static WARRIOR_POOL_SIZE = 20;
+
+  constructor(level: number){
+    this.level = level
+    this.loadWarriorPool();
+  }
+
+  private loadWarriorPool() {
+    for(let i=0; i < GameCharacterPool.WARRIOR_POOL_SIZE; i++) {
+      this.warriorPool.push(GameCharactersFactory.getWarrior(this.level))
+    }
+  }
+
+  private getPoolItem<T>(pool: T[], reloadFn: () => void): T {
+    let item: T = pool.pop() as T;
+    if(!pool.length) {
+      reloadFn();
+    }
+    return item;
+  }
+
+  public getWarrior(): GameCharacter {
+    return this.getPoolItem(this.warriorPool, this.loadWarriorPool);
+  }
+}
+
+// app.js
+let pool = new GameCharacterPool(12);
+const warrior = pool.getWarrior();
+```
+
+<br/>
 
 ## Abstract factory
 
