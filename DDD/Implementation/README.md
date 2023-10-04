@@ -11,8 +11,8 @@ PUT /api/v3/feed/page/:pageId/settings
 ```
 
 ## Table of Contents
-- [Routing](#routing)
 - [Usecase](#usecase)
+    - [Routing](#routing)
     - [Index File](#index-file)
     - [Router File](#router-file)
     - [Usecase File](#usecase-file)
@@ -30,51 +30,6 @@ PUT /api/v3/feed/page/:pageId/settings
   - [Runners](#runners)
   - [Testing](#testing)
 
-
-## Routing  
-The entry point is a `server.ts` file similar to other node apps    
-Along with code to initialize app, establish db connection, etc, it routes all api requests to a router file    
-```ts
-// server.ts
-export class AppServer extends Initializer {
-  constructor() {
-    ...
-    this.routes();
-    ...
-  }
-
-  private routes(): void {
-    const router: express.Router = express.Router();
-    ...
-    this._app.use("/api/v3", v3Router);
-    ...
-  }
-}
-```
-
-In DDD, the whole application (from codebase as well as real-life perspective) is thought of as individual domains (the specific area of expertise or business context the software addresses)   
-The codebase had separate folders for each domain      
-So in an app, users can be a domain, all entities and code specific to user resides in this domain  
-Integrations can be a domain, all third party integrations resides in this domain  
-The common router routes the request to its appropriate domain, in our case its feed `/api/v3/feed/page/:pageId/settings`
-
-```ts
-const v3Router = express.Router();
-
-v3Router.use("/users", userDomainRouter);
-v3Router.use("/feed", feedDomainRouter);
-v3Router.use("/analytics", analyticsDomainRouter);
-v3Router.use("/integration", integrationDomainRouter);
-```
-
-The feedRouter further routes it to pageRouter, which passes it on to the router specifically built for this endpoint   
-Auth specific and other middlewares are also added at these routing stages
-```ts
-pageRouter.put(`/:pageId/settings`, (req, res) =>
-  updatePageSettingsRouter.execute(req, res)
-);
-```
-
 ## Usecase 
 
 Usecases are where the actually business logic is coded   
@@ -89,6 +44,51 @@ updatePageSettings
   - UpdatePageSettingsUseCase.api.spec.ts     // API test cases for the endpoint
   - index.ts      // instantiates and exports router object by passing all required dependencies
 ```
+
+### Routing  
+The entry point is a `server.ts` file similar to other node apps    
+Along with code to initialize app, establish db connection, etc, it routes all api requests to a router file    
+  ```ts
+  // server.ts
+  export class AppServer extends Initializer {
+    constructor() {
+      ...
+      this.routes();
+      ...
+    }
+
+    private routes(): void {
+      const router: express.Router = express.Router();
+      ...
+      this._app.use("/api/v3", v3Router);
+      ...
+    }
+  }
+  ```
+
+In DDD, the whole application (from codebase as well as real-life perspective) is thought of as individual domains (the specific area of expertise or business context the software addresses)   
+The codebase had separate folders for each domain      
+So in an app, users can be a domain, all entities and code specific to user resides in this domain  
+Integrations can be a domain, all third party integrations resides in this domain  
+The common router routes the request to its appropriate domain, in our case its feed `/api/v3/feed/page/:pageId/settings`
+
+  ```ts
+  const v3Router = express.Router();
+
+  v3Router.use("/users", userDomainRouter);
+  v3Router.use("/feed", feedDomainRouter);
+  v3Router.use("/analytics", analyticsDomainRouter);
+  v3Router.use("/integration", integrationDomainRouter);
+  ```
+
+  The feedRouter further routes it to pageRouter, which passes it on to the router specifically built for this endpoint   
+  Auth specific and other middlewares are also added at these routing stages
+  ```ts
+  pageRouter.put(`/:pageId/settings`, (req, res) =>
+    updatePageSettingsRouter.execute(req, res)
+  );
+  ```
+
 
 ### Index file 
 The index file simply instantiates and exports router object by passing all required dependencies
@@ -430,6 +430,117 @@ export class PageSettings extends AggregateRoot<IPageSettingsProps> {
 * Domain events are events that represent something significant happening within the domain. 
 * They are used to communicate changes or state transitions within aggregates and can trigger actions or workflows in other parts of the system.
 
+  ```ts
+  /* 
+    The domain event is defined as such (under domain_name/domain/events folder)
+    It has all the details related to the event
+  */
+  export class PageShareRequestCreated implements IDomainEvent {
+    public dateTimeOccurred: Date;
+    public pageRequests: PageRequest;
+
+    constructor(page: PageRequest) {
+      this.dateTimeOccurred = new Date();
+      this.pageRequests = page;
+    }
+
+    getAggregateId(): UniqueEntityID {
+      return this.pageRequests.id;
+    }
+  }
+
+  /* A subscriber for this event is present (under domain_name/subscription folder) */
+  export class AfterPageShareRequestCreated implements IHandle<PageShareRequestCreated> {
+    constructor() {
+      this.setupSubscriptions();
+    }
+
+    setupSubscriptions(): void {
+      DomainEvents.register(this.onPageShareRequestCreated.bind(this), PageShareRequestCreated.name);
+    }
+
+    private async onPageShareRequestCreated(event: PageShareRequestCreated): Promise<void> {
+      try {
+        // Call functions to be run 
+      } catch (err) {
+        logger.error(err);
+      }
+    }
+  }
+
+  /* 
+    Step 1 - Aggregate method called
+    When FE calls the API to create a new page request, CreatePageRequestsUseCase runs which calls the createShareRequest method of PageRequest aggregate, that adds a domain event
+  */
+  const pageRequests = PageRequest.createShareRequest({/* props from req body */});
+
+  /* 
+    PageRequest is an aggregate, which has a public method createShareRequest
+    This method adds a domain event when a new createShareRequest is created
+  */
+  public static createShareRequest(props: IPageShareRequestsProps, id?: UniqueEntityID): Result<PageRequest> {
+    // validation and logic to create a share request
+    pageRequests.addDomainEvent(new PageShareRequestCreated(pageRequests));
+    ...
+  }
+
+
+  /*
+    Step 2 - Domain event added to array
+    AggregateRoot.ts file - All aggregates have an array of domain events 
+    Whenever addDomainEvent is called, it adds the event to this array
+  */
+  get domainEvents(): IDomainEvent[] {
+    return this._domainEvents;
+  }
+
+
+  /* 
+    Step 3 - Domain events for aggregate are dispatched
+    In the usecase, once all updates are done, repo method is called to persist updates, this repo method dispatches the domain events
+  */
+  await this.repos.pageRequestsRepo.save(pageRequests.getValue());
+
+  /* The repo method calls DomainEvents.dispatchEventsForAggregate() */
+  public async save(pageRequests: FlowRequest): Promise<void> {
+    const persistence = FlowRequestsMap.toPersistence(pageRequests);
+
+    await this.pageRequestsModel.insertMany(persistence);
+    DomainEvents.dispatchEventsForAggregate(pageRequests.id);
+  }
+
+  /* 
+    Dispatch function 
+    How dispatch function works under the hood is by sending the event to all subscribers, The subscriber that matches the event name runs
+  */
+  public static dispatch(event: IDomainEvent): void {
+    const eventClassName: string = event.constructor.name;
+    // Send the event to all the subscribers
+    if (this.handlersMap.hasOwnProperty(eventClassName)) {
+      const handlers: any[] = this.handlersMap[eventClassName];
+
+      for (const handler of handlers) {
+        handler(event);
+      }
+    }
+  }
+
+  /* Step 4 - The subscriber that matches the event name, in our case AfterPageShareRequestCreated runs */
+  ```
+
+  Domain events can also be implemented in a much simpler but less effective way by using eventEmitter in nodejs
+  ```ts
+  /* Whenever the event occurs, emit the event */
+  eventEmitter.emit(APP_EVENT.MEMBER_NAME_UPDATED, this);
+
+  /* Listen to the event using addListener */
+  export class AfterMemberNameUpdated implements IHandle<MemberNameUpdated> {
+    constructor(){
+      this.emitter.addListener(APP_EVENT.MEMBER_NAME_UPDATED, this.executeSubscription.bind(this));
+    }
+  }
+  ```
+
 ## Others
 
 ### Jobs
@@ -437,3 +548,100 @@ export class PageSettings extends AggregateRoot<IPageSettingsProps> {
 ### Runners
 
 ### Testing
+Types of Test cases 
+* Unit test cases - Test all vo, aggregates, entities, mappers, etc using unit test cases. They do not need a db connection
+* Repo test cases - Test all repo methods, these need db connection
+* API test cases - Test APIs by passing req and expecting response. These need db connection. Its complete end to end testing of an endpoint
+* Transaction test cases - Transactions are db events that should work together, test them using transaction test cases
+
+#### API test cases
+  ```ts
+  /* Imports and initialization */
+  import * as chai from "chai";
+  import * as chaiAsPromised from "chai-as-promised";
+  import { test } from "mocha";
+  import { mockRequest, mockResponse } from "mock-req-res";
+  import * as sinonChai from "sinon-chai";
+
+  const expect = chai.expect;
+
+  chai.use(sinonChai);
+  chai.use(chaiAsPromised);
+  const entitiesCreator = new TestEntitiesCreator(); // A helper class that gives dummy objects according to requirement
+
+  describe("UpdatePageSettingsUseCase API test", () => {
+    /* Create instances of all repo methods and service methods, mock services if required */
+    const memberRepo = new MemberRepo(models.User);
+
+    beforeEach(async () => {
+      router = new UpdatePageSettingsRouter(
+        new UpdatePageSettingsUseCase(
+          { memberRepo },
+          { pagePermissionsService }
+        )
+      );
+
+      // create pages, members, and other required objects in db
+    });
+
+    describe("Validations", () => {
+      test("Should fail if ...", async () => {
+        const req = {
+          memberId: memberId,
+          params: { pageId: pageId.id.toString() },
+          body: { settings: settings }
+        };
+
+        const request = mockRequest(req);
+        const response = mockResponse();
+
+        await router.execute(request, response);
+
+        /* Test api response status code */ 
+        expect(response.status.calledWith(200));
+
+        /* Test API response json */
+        const responseDTO = response.json.getCall(0).args[0];
+        expect(responseDTO.message).to.be.eql("MISSING_REQUIRED_PARAMETERS");
+        expect(responseDTO.body).to.be.eql("Some error body");
+      });
+    });
+
+    describe("Updating settings", () => {
+      test("Should update settings if ...", async () => {
+        const req = {
+          memberId: memberId,
+          params: {
+            pageId: pageId.id.toString()
+          },
+          body: {
+            settings: [
+              {
+                //...
+                message: "Test case"
+              }
+            ]
+          }
+        };
+
+        const request = mockRequest(req);
+        const response = mockResponse();
+
+        await router.execute(request, response);
+
+        /* Test api response status code */ 
+        expect(response.status.calledWith(200));
+
+        /* Test API response json */
+        const responseDTO = response.json.getCall(0).args[0];
+        expect(responseDTO.data[0].connectionState).to.eq("DISCONNECTING");
+
+        /* Test if db fields are updated as expected */
+        const pageReq = await pageRequestsRepo.findByShareRequestId(pageRequest.id);
+        const deniedShareReq = pageReq.shareRequests[0];
+        expect(deniedShareReq.stateInfo.denied).to.exist;
+        expect(deniedShareReq.stateInfo.denied.actionBy).to.be.eqls(memberId);
+      });
+    });
+  });
+  ```
