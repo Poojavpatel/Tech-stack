@@ -6,14 +6,16 @@
   - [Liskov substitution (substitutability) principle](#liskov-substitution-substitutability-principle)
   - [Interface segregation principle](#interface-segregation-principle)
   - [Dependency inversion principle](#dependency-inversion-principle)
+  - [Loose Coupling](#loose-coupling)
 - [Design Patterns](#design-patterns)
+  - [Dependency Injection](#dependency-injection)
   - [Creational Patterns](#creational-patterns)
     - [Singleton](#singleton)
     - [Factory](#factory)
     - [Object pool](#object-pool)
-    - [Abstract factory](#abstract-factory)
+    <!-- - [Abstract factory](#abstract-factory)
     - [Builder](#builder)
-    - [Prototype](#prototype)
+    - [Prototype](#prototype) -->
   - [Structural Patterns](#structural-patterns)
     - [Adapter](#adapter)
     - [Bridge](#bridge)
@@ -266,6 +268,142 @@ All patterns can be categorized by their intent or purpose
 * **Structural patterns** explain how to assemble objects and classes into larger structures, while keeping these structures flexible and efficient.
 
 * **Behavioral patterns** take care of effective communication and the assignment of responsibilities between objects.
+
+<br/>
+
+---
+
+## Dependency Injection
+
+* Dependency injection (DI) is a design pattern used in software development to achieve the principle of Inversion of Control (IoC). 
+* Instead of a class or component creating its own dependencies, those dependencies are injected from the outside.
+* DI promotes loose coupling between components, improves maintainability, and enhances testability by allowing dependencies to be injected from external sources.
+
+#### What type of pattern is it
+* DI doesn't fall into any of the categories (Creational, Structural, Behavioral) because it is more of an architectural design principle rather than a traditional design pattern.
+* While it's not part of the original Gang of Four design patterns, it is widely used in software development to achieve these goals and is often considered a fundamental concept in modern software design.
+
+#### What is principle of Inversion of Control (IoC)
+* The Principle of Inversion of Control (IoC) is a fundamental concept in software engineering and design. It's not a specific design pattern but rather a high-level architectural principle that promotes the decoupling of components in a system
+*  IoC suggests that control over the flow of a program should be inverted. Instead of a component controlling the creation and management of its dependencies, it should receive those dependencies from an external source. This external source often is a container or framework.
+
+#### Example of traditional flow vs Dependency Injection (DI) flow
+  ```ts
+  /* In the traditional approach, a class typically creates its own dependencies directly within its methods or constructors */
+  class UserService {
+    private databaseService: DatabaseService;
+
+    constructor() {
+      // In the traditional approach, the class creates its own dependencies
+      this.databaseService = new DatabaseService();
+    }
+
+    getUser(userId: number) {
+      return this.databaseService.getUserById(userId);
+    }
+  }
+  ```
+
+  ```ts
+  /* In the Dependency Injection approach, dependencies are provided to the class from external sources */
+  class UserService {
+    private databaseService: DatabaseService;
+
+    constructor(databaseService: DatabaseService) {
+      // Dependencies are injected from the outside.
+      this.databaseService = databaseService;
+    }
+
+    getUser(userId: number) {
+      return this.databaseService.getUserById(userId);
+    }
+  }
+  ```
+
+### Dependency Injector/Container
+* A Dependency Injector (or Container) is responsible for managing the creation and resolution of dependencies. It provides a way to configure how objects are instantiated and how their dependencies are injected.   
+* Popular libraries for this purpose in TypeScript include "InversifyJS" and "tsyringe."   
+
+In [this course](https://www.udemy.com/course/design-patterns-in-typescript/learn/lecture/11677734) we go over these. Since I did not understand it completely, I am skipping it for now    
+1. How to create a custom dependency container 
+1. Typescript decorators
+1. Adding decorators to custom dependency container 
+1. Using InversifyJS   
+
+
+#### Example of a Dependency Injector using InversifyJS
+```bash
+npm install inversify reflect-metadata
+```
+
+```ts
+import { injectable, inject, Container } from 'inversify';
+
+// Define an interface for the DatabaseService
+interface DatabaseService {
+  getUserById(userId: number): string;
+}
+
+// Define the implementation of the DatabaseService
+@injectable()
+class MySQLDatabaseService implements DatabaseService {
+  getUserById(userId: number) {
+    return `User ${userId} from MySQL`;
+  }
+}
+
+// Define a UserService that depends on DatabaseService
+@injectable()
+class UserService {
+  private databaseService: DatabaseService;
+
+  constructor(@inject("DatabaseService") databaseService: DatabaseService) {
+    this.databaseService = databaseService;
+  }
+
+  getUser(userId: number) {
+    return this.databaseService.getUserById(userId);
+  }
+}
+
+// Create an InversifyJS container
+const container = new Container();
+
+// Bind the DatabaseService implementation to the interface
+container.bind<DatabaseService>("DatabaseService").to(MySQLDatabaseService);
+
+// Resolve and use the UserService from the container
+const userService = container.resolve<UserService>(UserService);
+
+// Now, you can use the UserService, and the DatabaseService is injected from the container
+console.log(userService.getUser(123)); // Output: User 123 from MySQL
+```
+
+### Example of how dependency injection is done is DDD codebase
+```ts
+// app/modules/domain_name/repos/index.ts - This common file exports all repos of that domain
+const memberRepo = new MemberRepo(models.User);
+
+export {
+  ...
+  memberRepo,
+  ...
+}
+
+// app/modules/domain_name/services/permissionService/index.ts - All services have an index file that exports their instances
+const permissionService = new PermissionService(/* all of its dependencies */)
+export { permissionService };
+```
+
+```ts
+/* Dependencies injected to usecase */
+const updateSettingsUseCase = new UpdateSettingsUseCase(memberRepo, permissionService);
+const updateSettingsRouter = new UpdateSettingsRouter(updateSettingsUseCase);
+
+export { updateSettingsRouter };
+```
+
+<br/>
 
 ---
 
@@ -543,6 +681,179 @@ const warrior = pool.getWarrior();
 
 
 ## Decorator
+
+The Decorator Design Pattern is a structural design pattern that allows you to dynamically add or modify behavior to individual objects without altering their class
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/decorator/decorator-2x.png" width="700px" >
+</p>
+
+### Real-World Analogy
+Wearing clothes is an example of using decorators. When you’re cold, you wrap yourself in a sweater. If you’re still cold with a sweater, you can wear a jacket on top. If it’s raining, you can put on a raincoat. All of these garments “extend” your basic behavior but aren’t part of you, and you can easily take off any piece of clothing whenever you don’t need it.
+
+### Example 1 - Notifier
+Consider you have a notifier class and a few sub classes for SMS notifier, Facebook notifier, Slack notifier   
+Now you want to send several combined notifications, for that you will have to create separate sub classes for all possible combinations   
+SMS + slack notifier, SMS + facebook notifier, all channel notifier etc   
+   
+Extending a class is the first thing that comes to mind when you need to alter an object’s behavior. However, inheritance has several serious caveats that you need to be aware of   
+* Inheritance is static. You can’t alter the behavior of an existing object at runtime. You can only replace the whole object with another one that’s created from a different subclass.
+* Subclasses can have just one parent class. In most languages, inheritance doesn’t let a class inherit behaviors of multiple classes at the same time.   
+
+One of the ways to overcome these caveats is by using Aggregation or Composition  instead of Inheritance.   
+Aggregation/composition is the key principle behind many design patterns, including Decorator   
+[for more details](https://refactoring.guru/design-patterns/decorator)
+
+```ts
+// 1. A Notifier interface with send method
+// 2. A Base decorator that implements Notifier
+// 3. Individual decorators for SMS, facebook, slack
+// 4. Client code
+
+const stack = new Notifier();
+if(facebookEnabled) {
+  stack = new FacebookDecorator(stack);
+}
+if(slackEnabled) {
+  stack = new SlackDecorator(stack)
+}
+app.setNotifier(stack)
+
+notifier.sendAlert("House on fire") // sent via facebook and slack
+```
+
+
+### Example 2 - Coffee maker
+
+  ```ts
+  // Step 1: Define an interface for the component (base class).
+  interface Coffee {
+      cost(): number;
+  }
+
+  // Step 2: Create a concrete component (base class implementation).
+  class SimpleCoffee implements Coffee {
+      cost(): number {
+          return 5; // Cost of a simple coffee
+      }
+  }
+
+  // Step 3: Create decorator classes that extend the component and add behavior.
+  class MilkDecorator implements Coffee {
+      private coffee: Coffee;
+
+      constructor(coffee: Coffee) {
+          this.coffee = coffee;
+      }
+
+      cost(): number {
+          return this.coffee.cost() + 2; // Add the cost of milk
+      }
+  }
+
+  class SugarDecorator implements Coffee {
+      private coffee: Coffee;
+
+      constructor(coffee: Coffee) {
+          this.coffee = coffee;
+      }
+
+      cost(): number {
+          return this.coffee.cost() + 1; // Add the cost of sugar
+      }
+  }
+
+  // Step 4: Client code that uses decorators.
+  const myCoffee: Coffee = new SimpleCoffee();
+  console.log("Cost of simple coffee:", myCoffee.cost()); // 5
+
+  const coffeeWithMilk: Coffee = new MilkDecorator(myCoffee);
+  console.log("Cost of coffee with milk:", coffeeWithMilk.cost()); // 7
+
+  const coffeeWithMilkAndSugar: Coffee = new SugarDecorator(coffeeWithMilk);
+  console.log("Cost of coffee with milk and sugar:", coffeeWithMilkAndSugar.cost()); // 8
+  ```
+
+The same can be achieved through builder pattern as well    
+For simple cases like the coffee example, either pattern can be adapted, and the choice may come down to personal preference or the specific needs of your application.   
+
+```ts
+class Coffee {
+    private hasMilk: boolean = false;
+    private hasSugar: boolean = false;
+    private cost: number = 5;
+
+    addMilk(): Coffee {
+        if (!this.hasMilk) {
+            this.cost += 2; // Add the cost of milk only once
+            this.hasMilk = true;
+        }
+        return this; // Return the coffee object to allow chaining
+    }
+
+    addSugar(): Coffee {
+        if (!this.hasSugar) {
+            this.cost += 1; // Add the cost of sugar only once
+            this.hasSugar = true;
+        }
+        return this; // Return the coffee object to allow chaining
+    }
+
+    getCost(): number {
+        return this.cost;
+    }
+}
+
+const coffeeWithMilkAndSugar = new Coffee()
+    .addMilk()
+    .addSugar();
+
+console.log("Cost of coffee with milk and sugar:", coffeeWithMilkAndSugar.getCost());
+```
+
+
+### Example 3 - Computer
+[udemy lecture](https://www.udemy.com/course/design-patterns-in-typescript/learn/lecture/11677752)
+
+```ts
+
+```
+
+### Decorator vs Builder (when to use which)
+#### Decorator
+* Use the Decorator pattern when you want to add or modify behavior of objects without changing their actual code. Decorators are suitable for adding responsibilities to individual objects dynamically.
+* Use the Decorator pattern when you need a flexible and reusable way to add or modify behavior. Decorators allow you to create combinations of behaviors dynamically by stacking decorators.
+
+**Scenarios where Decorator pattern suits better**
+* User Permissions and Authentication: Consider a user authentication system where users have different roles and permissions. The decorator pattern can be used to dynamically add or remove permissions to user objects, allowing for flexible access control.
+* Logging and Monitoring: In a logging or monitoring system, you may want to add various logging behaviors (e.g., log to a file, log to a database, send notifications) to different parts of your application. The decorator pattern can dynamically add these behaviors without changing the core classes.
+* UI Components: In graphical user interface (GUI) development, you often have UI components (e.g., buttons, text fields) that may need to have various decorations (e.g., borders, shadows) applied. The decorator pattern can be used to add these decorations dynamically.
+* Encryption and Compression: When dealing with data transmission or storage, you may want to apply encryption and compression to data streams. The decorator pattern can be used to wrap data streams with encryption and compression decorators as needed.
+
+**Real-world Analogies**
+* Wearing layers of clothing 
+* Text Formatting - Imagine a word processing software where you can apply formatting options like bold, italic, underline, and font color to a text. Each formatting option acts as a decorator, modifying the appearance of the text without changing its content.
+* Vehicle Customization - When customizing a vehicle (e.g., a car or a bike), you can add accessories like spoilers, custom paint, and decals. These accessories decorate the vehicle, adding style and functionality without altering the vehicle's core structure.
+* Food Toppings - When ordering a pizza or a sandwich, you can choose from a variety of toppings such as cheese, vegetables, meats, and sauces. Each topping can be thought of as a decorator, enhancing the flavor and texture of the dish.
+
+
+#### Builder 
+* Use the Builder pattern when you are dealing with complex objects that have many optional components or configurations. Builders excel at constructing objects with numerous parameters or attributes.
+* Builders are typically used when you want to create an object with a significant number of optional parameters and you want to avoid telescoping constructors (constructors with many parameters) or having a large number of constructor overloads.
+* Use the Builder pattern when the construction process involves multiple steps and the **order of those steps matters**
+
+**Scenarios where Builder pattern suits better**
+* Database Query Builder : When constructing complex database queries with various conditions, joins, and clauses, a builder pattern can be more intuitive. Each method call adds a specific part to the query, and the order in which you specify conditions can be crucial.
+* Document Generation : Suppose you are generating documents (e.g., PDFs or Word documents) with different formatting, styles, and content elements. A builder pattern can help construct documents step by step, allowing for precise control over the document structure
+* Immutable Objects : When working with immutable objects, the builder pattern is often preferred. Immutable objects cannot be modified once created, so a builder can help you construct these objects with various attributes.
+
+**Real-world Analogies**
+* Meal Ordering - When you order a meal at a restaurant, you can customize it by choosing specific appetizers, main courses, sides, and desserts. The menu acts as a builder, allowing you to build your meal with various components.
+* Car Configuration - When ordering a custom car from a manufacturer, you can specify the car's make, model, engine, color, interior features, and optional accessories. The car configuration process is similar to using a builder to create a custom car.
+* Toy Assembly - Building a complex toy or model kit involves assembling various parts according to instructions. The assembly process can be likened to a builder pattern, where you follow step-by-step instructions to construct the final toy or model.
+
+
+
 
 <br/>
 

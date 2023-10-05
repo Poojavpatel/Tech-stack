@@ -275,40 +275,38 @@ Else its an entity
 * Example: In an e-commerce application, an "Order" can be an aggregate with the "Order" entity as its aggregate root. The order entity contains information about the customer, items, and pricing, and it ensures consistency when updating order details.
 * You can also raise domain events from an update property method in an aggregate
 * For each aggregate, all domain events that are raised are saved in an array, they are dispatched at once in repo method once db operation is completed
-
-```ts
-export interface IPageSettingsProps {
-  sharing?: PagePermission;  // this is a value object
-  lastEditedBy?: MemberId;   // this is an entity
-}
-
-export class PageSettings extends AggregateRoot<IPageSettingsProps> {
-  private constructor(props: IPageSettingsProps, id?: UniqueEntityID) {
-    super(props, id);
+  ```ts
+  export interface IPageSettingsProps {
+    sharing?: PagePermission;  // this is a value object
+    lastEditedBy?: MemberId;   // this is an entity
   }
 
-  // getter setter methods
+  export class PageSettings extends AggregateRoot<IPageSettingsProps> {
+    private constructor(props: IPageSettingsProps, id?: UniqueEntityID) {
+      super(props, id);
+    }
 
-  // update methods that can raise Domain events if required
-  public updatePagePermission(permission: PagePermission, editedBy?: MemberId): void {
-    this.props.sharing = permission;
-    if (editedBy) this.props.lastEditedBy = editedBy;
+    // getter setter methods
 
-    this.addDomainEvent(new PagePermissionUpdated(this, editedBy));
+    // update methods that can raise Domain events if required
+    public updatePagePermission(permission: PagePermission, editedBy?: MemberId): void {
+      this.props.sharing = permission;
+      if (editedBy) this.props.lastEditedBy = editedBy;
+
+      this.addDomainEvent(new PagePermissionUpdated(this, editedBy));
+    }
+
+    public static create(props: IPageSettingsProps, id?: UniqueEntityID): Result<PageSettings> {
+      // validations
+      const defaultProps: IPageSettingsProps = {
+        ...props,
+        sharing: props.sharing || ShareCollectionPermission.createDefault()
+      };
+
+      return Result.ok<PageSettings>(new PageSettings(defaultProps, id));
+    }
   }
-
-  public static create(props: IPageSettingsProps, id?: UniqueEntityID): Result<PageSettings> {
-    // validations
-    const defaultProps: IPageSettingsProps = {
-      ...props,
-      sharing: props.sharing || ShareCollectionPermission.createDefault()
-    };
-
-    return Result.ok<PageSettings>(new PageSettings(defaultProps, id));
-  }
-}
-
-```
+  ```
 
 ### Entities 
 * These are objects with distinct identities that are defined by their unique identifiers   
