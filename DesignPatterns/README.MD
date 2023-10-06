@@ -17,10 +17,11 @@
     - [Builder](#builder)
     - [Prototype](#prototype) -->
   - [Structural Patterns](#structural-patterns)
+    - [Decorator](#decorator)
     - [Adapter](#adapter)
+    - [Facade](#facade)
     - [Bridge](#bridge)
     - [Composite](#composite)
-    - [Decorator](#decorator)
   - [Behavioural Patterns](#behavioural-patterns)
     - [Chain of responsibility](#chain-of-responsibility)
     - [Iterator](#iterator)
@@ -664,22 +665,6 @@ const warrior = pool.getWarrior();
 
 > These patterns explain how to assemble objects and classes into larger structures, while keeping these structures flexibile and efficient
 
-
-## Adapter
-
-<br/>
-
-
-## Bridge
-
-<br/>
-
-
-## Composite
-
-<br/>
-
-
 ## Decorator
 
 The Decorator Design Pattern is a structural design pattern that allows you to dynamically add or modify behavior to individual objects without altering their class
@@ -815,9 +800,69 @@ console.log("Cost of coffee with milk and sugar:", coffeeWithMilkAndSugar.getCos
 ### Example 3 - Computer
 [udemy lecture](https://www.udemy.com/course/design-patterns-in-typescript/learn/lecture/11677752)
 
-```ts
+  ```ts
+  class Computer {
+    boot() : void {
+      console.log(`Booting computer`);
+    }
+    print() : void {
+      console.log(`No printer attached`);
+    }
+    renderVideo() : void {
+      console.log(`Cannot render video without graphics card`);
+    }
+  }
 
-```
+  class ServerComputer extends Computer {
+    boot() : void {
+      console.log(`Booting server`);
+    }
+  }
+
+  class ComputerDecorator extends Computer {
+    private computer: Computer;
+
+    constructor(computer: Computer) {
+      super();
+      this.computer = computer;
+    }
+
+    boot() : void {
+      return this.computer.boot();
+    }
+    print() : void {
+      return this.computer.print();
+    }
+    renderVideo() : void {
+      return this.computer.renderVideo();
+    }
+  }
+
+  class PrinterDecorator extends ComputerDecorator {
+    constructor(computer: Computer) {
+      super(computer);
+    }
+
+    print() : void {
+      console.log(`Printing sheet`);
+    }
+  }
+
+  class GraphicsDecorator extends ComputerDecorator {
+    constructor(computer: Computer) {
+      super(computer);
+    }
+
+    renderVideo() : void {
+      console.log(`Rendering Video`);
+    }
+  }
+
+  let computerWithPrinterAndGraphics = new GraphicsDecorator(new PrinterDecorator(new ServerComputer()))
+
+  computerWithPrinterAndGraphics.print();
+  computerWithPrinterAndGraphics.renderVideo();
+  ```
 
 ### Decorator vs Builder (when to use which)
 #### Decorator
@@ -852,8 +897,439 @@ console.log("Cost of coffee with milk and sugar:", coffeeWithMilkAndSugar.getCos
 * Car Configuration - When ordering a custom car from a manufacturer, you can specify the car's make, model, engine, color, interior features, and optional accessories. The car configuration process is similar to using a builder to create a custom car.
 * Toy Assembly - Building a complex toy or model kit involves assembling various parts according to instructions. The assembly process can be likened to a builder pattern, where you follow step-by-step instructions to construct the final toy or model.
 
+<br/>
+
+## Adapter
+
+Adapter is a structural design pattern, which allows incompatible objects to collaborate.   
+
+It is used to connect similar objects with different interfaces
+   
+The Adapter acts as a wrapper between two objects. It catches calls for one object and transforms them to format and interface recognizable by the second object.
+
+**Real-world Analogies**   
+When you travel from the US to Europe for the first time, you may get a surprise when trying to charge your laptop. The power plug and sockets standards are different in different countries. That’s why your US plug won’t fit a German socket. The problem can be solved by using a power plug adapter that has the American-style socket and the European-style plug.
+
+**Scenarios where Adapter pattern suits**
+* Legacy Code Integration - It’s very often used in systems based on some legacy code. In such cases, Adapters make legacy code work with modern classes.
+
+* Database Adapters - When switching between different database systems, you can create database adapters to abstract the differences in database interfaces. This allows your application to work seamlessly with different database systems without changing the core code.
+
+* Third-Party Libraries Integration - When you're using a third-party library or API that doesn't quite match your application's interface. You can create an adapter that wraps around the third-party code and presents it in a way that's more convenient for your application.
+
+* Language Translation: If you're building a multilingual application, you can use adapters to switch between different translation services or libraries seamlessly.
+
+* File Format Conversion: Adapters can be useful when dealing with different file formats, such as converting data from XML to JSON or vice versa.
 
 
+### Example 1 - Database Adapters
+
+  ```ts
+  class MongoDB {
+    // MongoDB-specific methods
+    connect() {}
+    findOne() {}
+    // ...
+  }
+
+  class MySQL {
+    // MySQL-specific methods
+    connectDB() {}
+    query() {}
+    // ...
+  }
+
+  // Adapter for MySQL to make it compatible with MongoDB interface
+  class MySQLAdapter {
+    constructor(private mySQL: MySQL) {}
+    
+    connect() {
+      this.mySQL.connectDB();
+    }
+    
+    findOne() {
+      this.mySQL.query('SELECT * FROM table LIMIT 1');
+      // Adapt the result to match MongoDB's format
+      return { _id: 1, data: {} };
+    }
+  }
+  ```
+
+
+### Example 2 - Countries
+
+```ts
+/* 
+  You have an application which lists countries by continent, currency, etc
+  Initially the countries were persisted-in and read from json files
+  As the app grew larger and json was tough to maintain, you realized you need to use an external api for listing countries
+*/
+
+// Initial code - reading from JSON
+interface Country {
+  name : string,
+  capital : string,
+  currency : string
+}
+
+class CountriesRepository {
+  public getCountriesByContinent(continent: string): Promise<Country[]>{
+    // read file with corresponding continent name, format response and return
+  }
+
+  public getCountriesByCurrency(currency: string): Promise<Country[]>{
+    // read all files to get list of all countries, filter by currency and return
+  }
+}
+
+const countriesRepo = new CountriesRepository()
+const allEuroCountries = countriesRepo.getCountriesByCurrency("EUR");
+```
+
+```ts
+// Using Adapter pattern to read from API
+
+// Step 1 - create an interface according to existing implementation
+interface ICountriesRepository {
+  getCountriesByContinent(continent: string): Promise<Country[]>
+  getCountriesByCurrency(currency: string): Promise<Country[]>
+}
+
+// Step 2 - Both existing class and new class should implement the interface
+class CountriesRepository implements ICountriesRepository {
+  // ...
+}
+
+class RestCountriesAdapter implements ICountriesRepository {
+  // private methods that fetch countries using api
+  // private helper methods that help format to required type
+  // private methods for compatibility, eg api considers north and south americas as same continent, add necessary conditions to handle those cases
+  // public methods as specified by interface
+}
+
+// Step 3 - Use new adapter class
+const countriesRepo = new RestCountriesAdapter()
+const allEuroCountries = countriesRepo.getCountriesByCurrency("EUR");
+```
+
+
+### Example 3 - Language Translator
+
+```ts
+interface LanguageTranslator {
+  translate(text: string, sourceLanguage: string, targetLanguage: string): string;
+}
+
+// Adapter for Google Translate
+class GoogleTranslateAdapter implements LanguageTranslator {
+  private googleTranslate: GoogleTranslateService;
+
+  constructor() {
+    this.googleTranslate = new GoogleTranslateService();
+  }
+
+  translate(text: string, sourceLanguage: string, targetLanguage: string): string {
+    // Adapt Google Translate's API to the common interface
+    return this.googleTranslate.translateText(text, sourceLanguage, targetLanguage);
+  }
+}
+
+// Adapter for Microsoft Translator
+class MicrosoftTranslatorAdapter implements LanguageTranslator {
+  private microsoftTranslator: MicrosoftTranslatorService;
+
+  constructor() {
+    this.microsoftTranslator = new MicrosoftTranslatorService();
+  }
+
+  translate(text: string, sourceLanguage: string, targetLanguage: string): string {
+    // Adapt Microsoft Translator's API to the common interface
+    return this.microsoftTranslator.translateText(text, sourceLanguage, targetLanguage);
+  }
+}
+```
+
+<br/>
+
+## Facade
+
+The Facade pattern is a structural design pattern that provides a simplified, higher-level interface to a complex subsystem, making it easier to use.    
+It's often used when you have a complex system with many components and you want to provide a unified and simplified interface for clients to interact with
+
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/facade/facade-2x.png" width="700px" >
+</p>
+
+The facade pattern is an implementation of Principle of least (Law of Demeter) : Every component should have little or no knowledge of how other components work and only communicate with a selected few
+
+**My take**   
+It is similar to some services in DDD codebase   
+Eg - criteriaService.addMember method takes care of adding member to criteria array, creating criteriaHasMember relation, updating count of members etc   
+It takes in multiple repos and makes updates to all required collections
+
+**Cons**
+* A facade can become a god object coupled to all classes of an app.   
+In object-oriented programming, a god object (sometimes also called an omniscient or all-knowing object) is an object that references a large number of distinct types, has too many unrelated or uncategorized methods, or some combination of both.[1] The god object is an example of an anti-pattern and a code smell
+
+**Real-world Analogies**   
+* Think of a hotel concierge as a facade for the various services a hotel offers. Instead of guests having to interact with multiple departments (e.g., room service, housekeeping, restaurant reservations), they can simply approach the concierge, who acts as a single point of contact to fulfill their requests. The concierge handles the complexities behind the scenes and provides a streamlined experience for the guests.
+   
+* A personal assistant can act as a facade for an executive or business leader. The personal assistant manages their schedule, screens calls, arranges meetings, and handles administrative tasks, shielding the executive from the complexity of managing these aspects of their work.
+
+* An e-commerce website serves as a facade for a complex backend system that manages inventory, payment processing, order fulfillment, and customer accounts. Shoppers interact with the website's user-friendly interface without needing to understand the inner workings of the logistics and payment systems.
+
+<br/>
+
+**Scenarios where Facade pattern suits**
+* Payment Processing System - In a payment processing system, you might have various components like payment gateways, fraud detection, currency conversion, and transaction logging. Creating a facade for these components can simplify the process of making a payment for the client code
+
+* Video Conversion Library - Suppose you have a library for converting video files from one format to another. Behind the scenes, this library might use various codecs, file parsers, and video processing algorithms. A facade can provide a simple method to convert a video without exposing the intricacies of codec selection, quality settings, or format-specific options.
+
+* Third-party API Integration - When integrating with third-party APIs, you can create a facade that wraps the API calls and provides a more intuitive and consistent interface for your application. This can include handling authentication, error handling, and rate limiting, making it easier to work with the external service
+
+* Graphics Rendering Engine - If you're building a graphics-intensive application, like a game or a 3D modeling tool, you can use a facade to simplify the interaction with the underlying graphics rendering engine. This can hide the complexity of rendering pipelines, shaders, and hardware-specific optimizations.
+
+### Example 1 - Audio system 
+  ```ts
+  // Subsystem 1: Audio Player
+  class AudioPlayer {
+    playAudio(file: string): void {
+      console.log(`Playing audio: ${file}`);
+    }
+
+    stopAudio(): void {
+      console.log('Stopping audio playback');
+    }
+  }
+
+  // Subsystem 2: Volume Control
+  class VolumeControl {
+    setVolume(volume: number): void {
+      console.log(`Setting volume to ${volume}`);
+    }
+  }
+
+  // Subsystem 3: Audio Equalizer
+  class AudioEqualizer {
+    applyEqualizerPreset(preset: string): void {
+      console.log(`Applying equalizer preset: ${preset}`);
+    }
+  }
+
+  /* 
+  The AudioSystemFacade class encapsulates all subsystems and provides high-level methods like playMusicWithEQ and stopMusic, 
+  which simplify the process of playing audio with equalization
+  */
+  // Facade for the Audio System
+  class AudioSystemFacade {
+    private audioPlayer: AudioPlayer;
+    private volumeControl: VolumeControl;
+    private audioEqualizer: AudioEqualizer;
+
+    constructor() {
+      this.audioPlayer = new AudioPlayer();
+      this.volumeControl = new VolumeControl();
+      this.audioEqualizer = new AudioEqualizer();
+    }
+
+    playMusicWithEQ(file: string, volume: number, preset: string): void {
+      console.log('----- Starting Audio System -----');
+      this.audioEqualizer.applyEqualizerPreset(preset);
+      this.audioPlayer.playAudio(file);
+      this.volumeControl.setVolume(volume);
+    }
+
+    stopMusic(): void {
+      console.log('----- Stopping Audio System -----');
+      this.audioPlayer.stopAudio();
+    }
+  }
+
+  /* The client code interacts with the facade (audioFacade) instead of dealing directly with the individual subsystems */
+  // Client Code
+  const audioFacade = new AudioSystemFacade();
+
+  audioFacade.playMusicWithEQ('song.mp3', 80, 'Rock');
+  // Output:
+  // ----- Starting Audio System -----
+  // Applying equalizer preset: Rock
+  // Playing audio: song.mp3
+  // Setting volume to 80
+
+  audioFacade.stopMusic();
+  // Output:
+  // ----- Stopping Audio System -----
+  // Stopping audio playback
+
+  ```
+
+
+<br/>
+
+## Composite
+
+Composite is a structural design pattern that lets you compose objects into tree structures to represent part-whole hierarchies and then work with these structures as if they were individual objects
+
+The Composite pattern lets you run a behavior recursively over all components of an object tree
+
+This pattern is particularly useful when you need to work with objects that have a hierarchical structure and you want to treat individual objects and groups of objects in a consistent way.
+
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/composite/composite-2x.png" width="700px" >
+</p>
+
+The greatest benefit of this approach is that you don’t need to care about the concrete classes of objects that compose the tree. You don’t need to know whether an object is a simple product or a sophisticated box. You can treat them all the same via the common interface. When you call a method, the objects themselves pass the request down the tree.
+
+* Keep in mind that the implementing Composite pattern might violate the Interface Segregation Principle because the methods will be empty in the leaf class. However, the client will be able to treat all the elements equally, even when composing the tree.
+
+**Pros**  
+* You can work with complex tree structures more conveniently: use polymorphism and recursion to your advantage.
+
+
+**Real-world Analogies** 
+
+* Imagine you have a deck of cards, the deck can have individual cards as well as other sub decks, and those decks can further have individual cards as well as other sub decks
+
+* Imagine that you have two types of objects: Products and Boxes. A Box can contain several Products as well as a number of smaller Boxes. These little Boxes can also hold some Products or even smaller Boxes, and so on.
+
+* Directories can contain files and other directories, creating a hierarchical structure
+
+**Scenarios where Composite pattern suits**
+* File Systems - A file system can be modeled using the Composite Pattern. Directories can contain files and other directories, creating a hierarchical structure. Operations like copying and deleting can be performed uniformly on both files and directories.
+
+* Menu Systems - In a menu system for a restaurant or a software application, menus can have items, and submenus can contain more items or submenus. The Composite Pattern can be used to build and manage menu structures
+
+* Document Object Models (DOM) - In web development, the DOM is a perfect example of a part-whole hierarchy. HTML documents consist of elements, which can contain other elements, forming a tree structure. The Composite Pattern is used to represent and manipulate the DOM
+
+* Bill of Materials (BOM) - In manufacturing and engineering, a bill of materials represents the hierarchy of components and subcomponents required to build a product
+
+* Mathematical Expressions - Representing mathematical expressions as trees, where operators and operands are nodes in the tree. This can be useful for parsing and evaluating expressions.
+
+### Example 1 - Deck of cards
+  ```ts
+  abstract class Card {
+    abstract display(): void;
+  }
+
+  class PlayingCard extends Card {
+    constructor(private rank: string, private suit: string) {
+      super();
+    }
+
+    display(): void {
+      console.log(`${this.rank} of ${this.suit}`);
+    }
+  }
+
+  class DeckOfCards extends Card {
+    private cards: (Card | DeckOfCards)[] = [];
+
+    addItem(item: Card | DeckOfCards): void {
+      this.cards.push(item);
+    }
+
+    display(): void {
+      for (const item of this.cards) {
+        /* method called recursively incase of deck of cards */
+        item.display();
+      }
+    }
+  }
+
+  // Usage
+  const aceOfSpades = new PlayingCard("Ace", "Spades");
+  const twoOfHearts = new PlayingCard("2", "Hearts");
+
+  const deck1 = new DeckOfCards();
+  deck1.addItem(aceOfSpades);
+  deck1.addItem(twoOfHearts);
+
+  const deck2 = new DeckOfCards();
+  deck2.addItem(new PlayingCard("King", "Diamonds"));
+  deck2.addItem(new PlayingCard("10", "Clubs"));
+
+  deck1.addItem(deck2);
+
+  deck1.display();
+  /* 
+  Ace of Spades
+  2 of Hearts
+  King of Diamonds
+  10 of Clubs
+  */
+  ```
+
+### Example 2 - Box of products 
+
+  ```ts
+  abstract class Item {
+    abstract getPrice(): number;
+  }
+
+  class Product extends Item {
+    constructor(private name: string, private price: number) {
+      super();
+    }
+
+    getPrice(): number {
+      return this.price;
+    }
+  }
+
+  class Box extends Item {
+    private items: Item[] = [];
+
+    addItem(item: Item): void {
+      this.items.push(item);
+    }
+
+    getPrice(): number {
+      let total = 0;
+      for (const item of this.items) {
+        /* 
+          This method leverages polymorphism
+          If the item is a product, its getPrice method is called
+          If the item is a box, the box's getPrice method is called recursively
+        */
+        total += item.getPrice();
+      }
+      return total;
+    }
+  }
+
+  // Usage
+  const laptop = new Product("Laptop", 1000);
+  const smartphone = new Product("Smartphone", 500);
+
+  console.log(`Total cost of laptop: $${laptop.getPrice()}`) // 1000
+
+  const accessoryBox = new Box();
+  accessoryBox.addItem(new Product("Keyboard", 50));
+  accessoryBox.addItem(new Product("Mouse", 30));
+
+  console.log(`Total cost of accessoryBox: $${accessoryBox.getPrice()}`) // 80
+
+  const bigBox = new Box();
+  bigBox.addItem(laptop);
+  bigBox.addItem(smartphone);
+  bigBox.addItem(accessoryBox);
+
+  console.log(`Total cost of the big box: $${bigBox.getPrice()}`); // 1580
+  ```
+
+### Composite vs Decorator pattern
+* Composite and Decorator have similar structure diagrams since both rely on recursive composition to organize an open-ended number of objects.
+
+* A Decorator is like a Composite but only has one child component.   
+
+* Decorator adds additional responsibilities to the wrapped object, while Composite just “sums up” its children’s results.
+
+
+<br/>
+
+## Bridge
 
 <br/>
 
