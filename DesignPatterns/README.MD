@@ -20,16 +20,20 @@
     - [Decorator](#decorator)
     - [Adapter](#adapter)
     - [Facade](#facade)
-    - [Bridge](#bridge)
     - [Composite](#composite)
+    <!-- - [Bridge](#bridge) -->
   - [Behavioural Patterns](#behavioural-patterns)
-    - [Chain of responsibility](#chain-of-responsibility)
+    - [Strategy](#strategy)
+    - [Observer](#observer)
+    - [Command](#command)
+    - [Template](#template)
+    - [State](#state)
+    <!-- - [Chain of responsibility](#chain-of-responsibility)
     - [Iterator](#iterator)
     - [Mediator](#mediator)
-    - [State](#state)
-    - [Visitor](#visitor)
-    - [Observer](#observer)
-    - [Strategy](#strategy)
+    - [Visitor](#visitor) -->
+    
+    
 
 
 ## Refresh OOPS concepts
@@ -1345,7 +1349,27 @@ The greatest benefit of this approach is that you don’t need to care about the
 > These patterns take care of effective communication and the assignment of responsibilities between objects.
 
 
-## Chain of responsibility
+## Strategy
+
+<br/>
+
+## Observer
+
+<br/>
+
+## Command
+
+<br/>
+
+## Template
+
+<br/>
+
+## State
+
+<br/>
+
+<!-- ## Chain of responsibility
 
 <br/>
 
@@ -1360,30 +1384,21 @@ The greatest benefit of this approach is that you don’t need to care about the
 <br/>
 
 
-## State
 
-<br/>
 
 
 ## Visitor
 
-<br/>
+<br/> -->
 
 
-## Observer
-
-<br/>
 
 
-## Strategy
 
-<br/>
+
 
 
 <br/>
 <br/>
 
 
----
-
-## Relations among patterns
