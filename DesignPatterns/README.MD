@@ -22,7 +22,7 @@
     - [Facade](#facade)
     - [Composite](#composite)
     <!-- - [Bridge](#bridge) -->
-  - [Behavioural Patterns](#behavioural-patterns)
+  - [Behavioural Patterns](#behavioral-patterns)
     - [Strategy](#strategy)
     - [Observer](#observer)
     - [Command](#command)
@@ -1344,16 +1344,255 @@ The greatest benefit of this approach is that you don’t need to care about the
 
 ---
 
-## Behavioural Patterns
+## Behavioral Patterns
 
 > These patterns take care of effective communication and the assignment of responsibilities between objects.
 
 
 ## Strategy
 
+The Strategy Design Pattern allows you to define a family of interchangeable algorithms, encapsulate each one of them, and make them interchangeable   
+This pattern helps you to select an algorithm at runtime based on the specific situation or context   
+
+The primary advantage of strategy pattern is the ability to **choose algorithm at runtime**
+
+**My Take**   
+Since we follow dependency injection and dependency inversion, the constructor of a usecase expects any implementation that follows an interface   
+So we can pass implementations as required   
+Eg - We want to log error to console in a usecase, we can pass the ConsoleLoggerStrategy instance.    
+If we want to log error to a file, we can pass the FileLoggerStrategy instance.
+
+**Real-world Analogies**
+* Transportation Methods & Navigation App:   
+Think of transportation methods like cars, bicycles, and trains as different strategies. You can choose a strategy (transportation method) based on factors like speed, cost, and convenience to reach your destination.
+
+* Smartphone Cameras:   
+Smartphone cameras often offer various photography modes like portrait, panorama, and night mode. Each mode represents a different strategy for taking photos, allowing you to select the one that best suits the current lighting and subject.
+
+* Fitness Training:   
+In fitness training, you might have different workout routines for strength training, cardio, or flexibility. Each routine can be seen as a strategy that you choose based on your fitness goals.
+
+* Investment Strategies:   
+Investment portfolios can be managed using various strategies, such as aggressive, conservative, or balanced approaches. These strategies are chosen based on an investor's risk tolerance and financial goals.
+
+**Scenarios where Strategy pattern suits**
+* Sorting Algorithms:    
+You can use the Strategy Pattern to encapsulate different sorting algorithms such as quicksort, mergesort, and bubblesort. Depending on the situation, you can switch between these algorithms without changing the client code that uses sorting.
+
+* File Compression:    
+When compressing files, you can have different compression algorithms like ZIP, GZIP, or custom algorithms. Using the Strategy Pattern, you can switch between these compression strategies easily.
+
+* Authentication:    
+You might have different authentication methods in your application, such as username/password, OAuth, or fingerprint authentication. Each of these methods can be implemented as a strategy, allowing you to switch between them based on user preferences or security requirements.
+
+* Logging and Error Handling:    
+You can encapsulate different logging and error handling strategies. For example, you might have strategies for logging to a file, sending logs to a remote server, or displaying logs in the console.
+
+* Caching Strategies:    
+In caching systems, you can have strategies for cache eviction policies (e.g., LRU, LFU, or TTL-based). You can switch between these strategies based on your application's caching needs.
+
+### Example 1 - Payment Strategy
+  ```ts
+  // Step 1: Define a set of strategy interfaces and concrete implementations
+  interface PaymentStrategy {
+    pay(amount: number): void;
+  }
+
+  class CreditCardPayment implements PaymentStrategy {
+    constructor(private cardNumber: string, private name: string) {}
+
+    pay(amount: number): void {
+      console.log(`Paid $${amount} with credit card ${this.cardNumber}`);
+    }
+  }
+
+  class PayPalPayment implements PaymentStrategy {
+    constructor(private email: string) {}
+
+    pay(amount: number): void {
+      console.log(`Paid $${amount} via PayPal to ${this.email}`);
+    }
+  }
+
+  // Step 2: Create a context class that uses the strategy
+  class ShoppingCart {
+    private items: Map<string, number> = new Map();
+    private paymentStrategy: PaymentStrategy;
+
+    /* The usecase expects any implementation of PaymentStrategy interface, so we can pass either strategy */
+    constructor(paymentStrategy: PaymentStrategy) {
+      this.paymentStrategy = paymentStrategy;
+    }
+
+    addItem(item: string, price: number): void {
+      if (this.items.has(item)) {
+        this.items.set(item, this.items.get(item)! + price);
+      } else {
+        this.items.set(item, price);
+      }
+    }
+
+    checkout(): void {
+      const totalAmount = Array.from(this.items.values()).reduce(
+        (total, price) => total + price,
+        0
+      );
+      this.paymentStrategy.pay(totalAmount);
+    }
+  }
+
+  // Step 3: Use the context class with different strategies
+  const cart1 = new ShoppingCart(new CreditCardPayment("1234-5678-9012-3456", "John Doe"));
+  cart1.addItem("Item 1", 25);
+  cart1.addItem("Item 2", 30);
+  cart1.checkout();
+
+  const cart2 = new ShoppingCart(new PayPalPayment("john@example.com"));
+  cart2.addItem("Item 1", 25);
+  cart2.checkout();
+  ```
+
+### Relations with Other Patterns
+
+* Decorator lets you change the skin of an object, while Strategy lets you change the guts
+
 <br/>
 
 ## Observer
+
+Observer design pattern that lets you define a subscription mechanism to notify multiple objects about any events that happen to the object they’re observing   
+
+So, the Observer pattern is like a notification system where one thing (the subject) tells many other things (observers) that something interesting has happened, without those observers needing to know the details about the subject.   
+   
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/observer/observer-2x.png" width="700px" >
+</p>
+
+Imagine you have a newspaper (the "subject") and many people (the "observers") who want to be notified when the newspaper publishes a new issue
+
+**Newspaper (Subject):** The newspaper keeps a list of subscribers (people who want to know about new issues).   
+**Subscribers (Observers):** People who subscribe to the newspaper are the observers. They want to be notified when a new issue comes out.   
+**Publishing:** When the newspaper publishes a new issue, it goes through the list of subscribers and tells each person about the new issue.   
+**Subscribing:** When someone subscribes to the newspaper, their name is added to the list of subscribers.   
+**Unsubscribing:** If someone decides they no longer want the newspaper, their name is removed from the list of subscribers.   
+
+This pattern is useful because it keeps the newspaper and subscribers loosely connected. The newspaper doesn't need to know who the subscribers are or how many there are. It just knows how to notify them when something new happens.
+
+
+**Real-world Analogies**
+* Social Media Followers - When the user posts a new update, it is automatically shared with all their followers
+* Traffic Signals - The traffic signal changes its lights, notifying all drivers and pedestrians waiting at the intersection when it's safe to proceed
+* Weather Alerts - weather monitoring system sends out alerts to all the subscribed apps, websites, and emergency services when severe weather conditions are detected
+* Shopping Discounts - Shoppers sign up for the store's loyalty program. When there are special deals or discounts, the store sends notifications to the shoppers' mobile apps, allowing them to take advantage of the savings.
+
+**Scenarios where Observer pattern suits**
+* Notifications
+* Track analytics 
+* UI Components - In graphical user interfaces, you can use the Observer pattern to notify various UI elements (e.g., buttons, text fields, and labels) about changes in underlying data, such as updating the display when data is modified
+* Chat Applications - In chat applications, when one user sends a message, it is received by multiple other users. The Observer pattern can be used to notify all active users of new messages.
+* Distributed Systems and Publish-Subscribe Architectures - In distributed systems, such as message brokers or publish-subscribe systems, the Observer pattern is used to broadcast messages to multiple subscribers without the sender needing to know who they are.
+* Database Triggers - Database systems often use the Observer pattern to trigger actions or notifications when changes are made to the database. For example, sending emails when a new user registers or updating a cache when data is modified
+* Monitoring and Logging - In system monitoring and logging, the Observer pattern can be used to notify multiple logging or monitoring components about system events or errors
+* Sensor Networks - In sensor networks, multiple sensors may collect data, and the Observer pattern can be used to transmit this data to central monitoring systems or control units
+
+### Example 1 - News feed system 
+
+```ts
+/* Observer */
+interface Observer {
+  update(article: string): void;
+}
+
+class Subscriber implements Observer {
+  constructor(private name: string) {}
+
+  update(article: string): void {
+    console.log(`${this.name} received an update: ${article}`);
+  }
+}
+
+/* Subject (News Feed) */
+class NewsFeed {
+  private observers: Observer[] = [];
+
+  // Subscribe an observer
+  subscribe(observer: Observer): void {
+    this.observers.push(observer);
+  }
+
+  // Unsubscribe an observer
+  unsubscribe(observer: Observer): void {
+    const index = this.observers.indexOf(observer);
+    if (index !== -1) {
+      this.observers.splice(index, 1);
+    }
+  }
+
+  // Notify all observers
+  publishArticle(article: string): void {
+    console.log(`New article published: ${article}`);
+    this.observers.forEach((observer) => {
+      observer.update(article);
+    });
+  }
+}
+
+/* Usage */
+const newsFeed = new NewsFeed();
+
+const subscriber1 = new Subscriber('Subscriber 1');
+const subscriber2 = new Subscriber('Subscriber 2');
+const subscriber3 = new Subscriber('Subscriber 3');
+
+newsFeed.subscribe(subscriber1);
+newsFeed.subscribe(subscriber2);
+newsFeed.subscribe(subscriber3);
+
+newsFeed.publishArticle('New TypeScript Features');
+newsFeed.publishArticle('Latest JavaScript Frameworks');
+
+newsFeed.unsubscribe(subscriber2);
+
+newsFeed.publishArticle('Web Development Tips');
+```
+
+### Example 2 - Domain Events in DDD
+
+This is somewhat similar to observer pattern but more complex and deals with multiple events
+
+In DDD we use domain events      
+Whenever a change happens, a new domain event is added to the list of events, which is maintained under an aggregate      
+The domain event class itself maintains a list of handlers which are basically list of callback functions   
+when the change is persisted we dispatch all domain events for that aggregate      
+this is when the change event is sent to all handlers that satisfy a condition   
+
+Example -    
+A few domain events are added to member aggregate  
+  ```ts
+  Member { domainEvents : [MemberStateUpdated, MemberEmailUpdate, MemberRegisteredForAnEvent] }
+  ```
+
+All of these events have a list of their handlers 
+  ```ts
+  handlersMap : {
+    MemberStateUpdated : [AfterMemberStateUpdatedTriggerAnalytics,  AfterMemberStateUpdatedSendNotifications],
+    MemberEmailUpdate : [AfterMemberEmailUpdateSendNotifications],
+    MemberRegisteredForAnEvent : [AfterMemberRegisteredForAnEventSendNotifications],
+  }
+  ```
+
+When the changes are persisted, events for aggregate are dispatched
+  ```ts
+  aggregate.domainEvents.forEach((event: IDomainEvent) => this.dispatch(event));
+
+  const handlers = this.handlersMap[eventClassName]
+  for (const handler of handlers) { 
+    handler(event);
+  }
+  ```
+
+
 
 <br/>
 

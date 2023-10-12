@@ -526,6 +526,40 @@ Else its an entity
   /* Step 4 - The subscriber that matches the event name, in our case AfterPageShareRequestCreated runs */
   ```
 
+
+  ```ts
+  /* 
+    The domain events class maintains a list of handlers
+    It has a register method that add handlers to the array 
+    It has a dispatch method that passes event to all handlers
+  */
+  export class DomainEvents {
+    private static handlersMap = {};
+
+    public static register(callback: (event: IDomainEvent) => void, eventClassName: string): void {
+      if (!this.handlersMap.hasOwnProperty(eventClassName)) {
+        this.handlersMap[eventClassName] = [];
+      }
+      this.handlersMap[eventClassName].push(callback);
+    }
+
+    public static dispatch(event: IDomainEvent): void {
+      const eventClassName: string = event.constructor.name;
+      // Send the event to all the subscribers
+      if (this.handlersMap.hasOwnProperty(eventClassName)) {
+        const handlers: any[] = this.handlersMap[eventClassName];
+
+        for (const handler of handlers) {
+          handler(event);
+        }
+      }
+    }
+  }
+  ```
+
+  [Observer design pattern used to implement domain events](../../DesignPatterns/README.MD#observer)
+
+
   Domain events can also be implemented in a much simpler but less effective way by using eventEmitter in nodejs
   ```ts
   /* Whenever the event occurs, emit the event */
