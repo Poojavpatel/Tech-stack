@@ -13,8 +13,8 @@
     - [Singleton](#singleton)
     - [Factory](#factory)
     - [Object pool](#object-pool)
-    <!-- - [Abstract factory](#abstract-factory)
     - [Builder](#builder)
+    <!-- - [Abstract factory](#abstract-factory)
     - [Prototype](#prototype) -->
   - [Structural Patterns](#structural-patterns)
     - [Decorator](#decorator)
@@ -640,21 +640,242 @@ const warrior = pool.getWarrior();
 
 <br/>
 
+## Builder
+
+The Builder pattern is a creational design pattern that is used to construct a complex object step by step.     
+It separates the construction of a complex object from its representation, allowing the same construction process to create various representations
+
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/diagrams/builder/problem1-2x.png" width="700px" >
+</p>
+
+**The Problem**   
+Let’s think about how to create a House object. To build a simple house, you need to construct four walls and a floor, install a door, fit a pair of windows, and build a roof. But what if you want a bigger, brighter house, with a backyard and other goodies   
+
+Solution 1 -    
+The simplest solution is to extend the base House class and create a set of subclasses to cover all combinations of the parameters. But eventually you’ll end up with a considerable number of subclasses. Any new parameter, such as the porch style, will require growing this hierarchy even more.   
+
+Solution 2 -    
+You can create a giant constructor right in the base House class with all possible parameters that control the house object. While this approach indeed eliminates the need for subclasses, it creates another problem. In most cases most of the parameters will be unused, making the constructor calls pretty ugly.    
+For instance, only a fraction of houses have swimming pools, so the parameters related to swimming pools will be useless nine times out of ten.   
+`house = new House(4, 2, 1, true, null, null, true, null)`
+
+
+The Builder pattern suggests that you extract the object construction code out of its own class and move it to separate objects called builders.   
+You can go further and extract a series of calls to the builder steps you use to construct a product into a separate class called director. The director class defines the order in which to execute the building steps, while the builder provides the implementation for those steps.
+
+
+
+**Real-World Analogy**   
+* Car manufacturing company   
+A customer might want a car with specific features, such as a powerful engine, leather seats, and a sunroof. However, the manufacturing process involves various steps, from assembling the chassis to adding different components like the engine, seats, and accessories.
+
+* Meal Ordering System:    
+Consider a customizable meal ordering system, where a customer can select from various components such as a main dish, side dishes, and drinks. The Builder pattern can be used to facilitate the construction of the meal based on the customer's specific choices.
+
+**When to use builder pattern**
+* When you have a telescoping constructor or a constructor with many optional parameters
+
+
+### Example 1 - Car manufacturing process
+
+```ts
+// Product
+class Car {
+  private carParts: string[] = [];
+
+  public listParts(): void {
+    console.log(`Car parts: ${this.carParts.join(', ')}\n`);
+  }
+
+  public addPart(part: string): void {
+    this.carParts.push(part);
+  }
+}
+
+// Builder
+interface CarBuilder {
+  reset(): void;
+  setSeats(seats: number): void;
+  setEngine(horsepower: number): void;
+  setTripComputer(): void;
+  setGPS(): void;
+}
+
+// Concrete Builder
+class JeepBuilder implements CarBuilder {
+  private car: Car;
+
+  constructor() {
+    this.reset();
+  }
+
+  reset(): void {
+    this.car = new Car();
+  }
+
+  setSeats(seats: number): void {
+    this.car.addPart(`Seats: ${seats}`);
+  }
+
+  setEngine(horsepower: number): void {
+    this.car.addPart(`Engine: ${horsepower}HP`);
+  }
+
+  setTripComputer(): void {
+    this.car.addPart('Trip Computer installed');
+  }
+
+  setGPS(): void {
+    this.car.addPart('GPS installed');
+  }
+
+  getResult(): Car {
+    const result = this.car;
+    this.reset();
+    return result;
+  }
+}
+
+// Director
+class CarBuildDirector {
+  private builder: CarBuilder;
+
+  setBuilder(builder: CarBuilder): void {
+    this.builder = builder;
+  }
+
+  constructSUV(): void {
+    this.builder.reset();
+    this.builder.setSeats(5);
+    this.builder.setEngine(250);
+    this.builder.setTripComputer();
+    this.builder.setGPS();
+  }
+}
+
+// Example usage
+const director = new CarBuildDirector();
+const builder = new JeepBuilder();
+
+director.setBuilder(builder);
+
+director.constructSUV();
+
+const car = builder.getResult();
+car.listParts();
+```
+
+### Example 2 - Complex database queries in DDD
+
+```ts
+/* Builder */
+export interface TemplateQueryBuilderProps {
+  query?: TemplateQuery;
+  paginationOptions?: TemplatePaginationOptions;
+}
+
+export class TemplateQueryBuilder {
+  private query: TemplateQuery;
+  private sortBy: Record<string, 1 | -1>;
+  private paginationOptions: TemplatePaginationOptions;
+
+  private constructor(props: TemplateQueryBuilderProps) {
+    this.query = props.query || {};
+    this.sortBy = {};
+    this.paginationOptions = props.paginationOptions || TemplatePaginationOptions.create().getValue();
+  }
+
+  setVisibilityPublic(): TemplateQueryBuilder {
+    this.query.visibility = TemplateVisibilityEnum.PUBLIC;
+    return this;
+  }
+
+  setAllBlockTypesExceptGivePoints(): this {
+    this.query["blocks.type"] = { $ne: BlockTypeEnum.GIVE_POINTS_STACK };
+    return this;
+  }
+
+  setCategories(categories: string[]): this {
+    this.query["$or"] = this.query["$or"] || [];
+    this.query["$or"].push({ category: { $in: categories } });
+    return this;
+  }
+
+  setSearchByTitle(searchKeyword: string): this {
+    const searchString = TextUtil.escapeSpecialCharsForRegExp(searchKeyword);
+    const searchRegex = new RegExp(searchString, "i");
+
+    this.query["title"] = searchRegex;
+    return this;
+  }
+
+  sortByTitleAsc(): TemplateQueryBuilder {
+    this.sortBy["title"] = 1;
+    return this;
+  }
+
+  build(): ITemplateQueryBuilderResponse {
+    return {
+      query: this.query,
+      sortBy: this.sortBy,
+      paginationOptions: this.paginationOptions
+    };
+  }
+
+  static create(props: TemplateQueryBuilderProps): Result<TemplateQueryBuilder> {
+    return Result.ok<TemplateQueryBuilder>(new TemplateQueryBuilder({ ...props }));
+  }
+}
+
+/* Repo methods to fetch using builder */
+export interface ITemplateRepo {
+  getTemplateQueryBuilder(props?: TemplateQueryBuilderProps): TemplateQueryBuilder;
+  getTemplatesByBuilder(build: ITemplateQueryBuilderResponse): Promise<TemplateDetails[]>;
+}
+
+export class TemplateRepo implements ITemplateRepo {
+  ...
+  public getTemplateQueryBuilder(props?: TemplateQueryBuilderProps): TemplateQueryBuilder {
+    const resultOrError = TemplateQueryBuilder.create(props);
+    return resultOrError.isSuccess ? resultOrError.getValue() : null;
+  }
+
+  public async getTemplatesByBuilder(build: ITemplateQueryBuilderResponse): Promise<TemplateDetails[]> {
+    const sortBy = build.sortBy || { title: 1 };
+    const templatesQuery = this.TemplateModel.find(build.query);
+    templatesQuery.sort(sortBy).allowDiskUse(true).lean();
+
+    const templates = await templatesQuery.exec();
+    return templates.map((t) => TemplateDetailsMap.toDomain(t));
+  }
+}
+
+/* Usage in usecase */
+const templateBuilder = this.repos.templateRepo.getTemplateQueryBuilder({ paginationOptions: pagination });
+templateBuilder.setVisibilityPublic();
+templateBuilder.sortByTitleAsc();
+templateBuilder.setCategories(categories);
+
+const templates = await this.repos.templateRepo.getPaginatedTemplatesByBuilder(templateBuilder.build());
+```
+
+<br/>
+
+<!-- 
 ## Abstract factory
 
 <br/>
 
 
-## Builder
-
-<br/>
 
 
 ## Prototype
 
 <br/>
 
-
+ -->
 
 
 
@@ -1331,11 +1552,11 @@ The greatest benefit of this approach is that you don’t need to care about the
 * Decorator adds additional responsibilities to the wrapped object, while Composite just “sums up” its children’s results.
 
 
-<br/>
+<!-- <br/>
 
 ## Bridge
 
-<br/>
+<br/> -->
 
 
 <br/>
@@ -1592,11 +1813,221 @@ When the changes are persisted, events for aggregate are dispatched
   }
   ```
 
-
-
 <br/>
 
 ## Command
+
+Imagine you are in a restaurant as a customer, and you want to order some food. Instead of going to the kitchen and telling the chef directly what you want, you tell the waiter. The waiter then takes your order to the kitchen and the chef prepares the food accordingly. Here, the waiter acts as a mediator between you and the chef.   
+   
+In software development, the Command design pattern works similarly. It allows you to encapsulate a request as an object, making it possible to parameterize clients with different requests, queue or log requests, and support undoable operations. This helps in decoupling the sender of a request from the object that performs the action, providing more flexibility and extensibility to the codebase.
+   
+For instance, in a program, if you have different actions that need to be performed, you can encapsulate each action as a separate command. Then, you can use an invoker to execute these commands without needing to know the specifics of how each command is executed.
+
+**Supporting Undoable Operations**   
+The Command pattern enables you to implement undo and redo functionality easily. By encapsulating each operation as a command, you can maintain a history of executed commands. If you need to revert any operation, you can simply traverse this history and call the undo method of each command, effectively reversing the changes made by the command.
+
+
+**Real-world Analogies**
+* Restaurant Ordering System   
+Imagine you are a waiter taking orders in a restaurant. When a customer places an order, you note down the request and send it to the kitchen. In this scenario, the customer's order is like a command, and you, the waiter, are the invoker. The kitchen, which processes the order, is the receiver.
+
+* TV Remote Control:    
+Think of a TV remote control where you press different buttons to perform various actions like changing the channel, adjusting the volume, or turning the TV on or off. Each button press represents a specific command, and the remote control is the invoker that executes these commands on the TV, acting as the receiver.
+
+* Smart Home Devices:    
+Consider a smart home system where you can control different devices like lights, thermostats, and security systems through a central control panel or a smartphone app. Each action you perform, such as turning on the lights or adjusting the temperature, can be seen as a command, and the control panel or smartphone app acts as the invoker.
+
+* Text Editor Undo Functionality:    
+In a text editor, when you perform actions like typing, deleting, or formatting text, you can often undo these actions. Each action you perform can be thought of as a command, and the text editor's undo functionality acts as the invoker that executes these commands in reverse to revert the changes.
+
+**Scenarios where Command pattern suits**   
+The Command design pattern is particularly useful in various scenarios where you need to decouple the sender and receiver of a request, or when you want to support operations like undo, redo, queuing, and logging
+
+* Multi-level Undo/Redo Operations:    
+In applications where users perform a series of complex operations, such as in graphic editors or word processors, the Command pattern can be used to implement multi-level undo and redo functionality, allowing users to revert changes to the document at different stages.
+
+* Transaction Management:    
+In database systems or financial applications, the Command pattern can be used to manage transactions. Each database operation can be encapsulated as a command, making it easier to roll back or commit a series of database changes as a single unit.
+
+* Logging and Auditing:    
+The Command pattern can be used to log and audit operations in an application. By encapsulating each operation as a command and maintaining a history of executed commands, you can create an audit trail for tracking and analyzing the sequence of actions performed within the application.
+
+### Example 1 - Restaurant Ordering System
+
+  ```ts
+  // Receiver
+  class Kitchen {
+      receiveOrder(order: string): void {
+          console.log(`Order received for: ${order}`);
+          // Process the order in the kitchen
+      }
+  }
+
+  // Command interface
+  interface OrderCommand {
+      execute(): void;
+  }
+
+  // Concrete command: CustomerOrder
+  class CustomerOrder implements OrderCommand {
+      private order: string;
+      private kitchen: Kitchen;
+
+      constructor(order: string, kitchen: Kitchen) {
+          this.order = order;
+          this.kitchen = kitchen;
+      }
+
+      execute(): void {
+          this.kitchen.receiveOrder(this.order);
+      }
+  }
+
+  // Invoker
+  class Waiter {
+      private orders: OrderCommand[] = [];
+
+      takeOrder(command: OrderCommand): void {
+          this.orders.push(command);
+      }
+
+      sendOrdersToKitchen(): void {
+          this.orders.forEach(order => {
+              order.execute();
+          });
+          this.orders = [];
+      }
+  }
+
+  // Example usage
+  const kitchen = new Kitchen();
+  const waiter = new Waiter();
+
+  const order1 = new CustomerOrder("Pasta", kitchen);
+  const order2 = new CustomerOrder("Steak", kitchen);
+
+  waiter.takeOrder(order1);
+  waiter.takeOrder(order2);
+
+  waiter.sendOrdersToKitchen();
+  ```
+
+### Example 2 - How you can implement undo and redo functionality using the Command pattern in TypeScript
+
+  ```ts
+  // Command interface
+  interface Command {
+      execute(): void;
+      undo(): void;
+  }
+
+  // Receiver
+  class Calculator {
+      private value: number = 0;
+
+      add(x: number): void {
+          this.value += x;
+      }
+
+      subtract(x: number): void {
+          this.value -= x;
+      }
+
+      getValue(): number {
+          return this.value;
+      }
+  }
+
+  // Concrete command: AddCommand
+  class AddCommand implements Command {
+      private calculator: Calculator;
+      private value: number;
+
+      constructor(calculator: Calculator, value: number) {
+          this.calculator = calculator;
+          this.value = value;
+      }
+
+      execute(): void {
+          this.calculator.add(this.value);
+      }
+
+      undo(): void {
+          this.calculator.subtract(this.value);
+      }
+  }
+
+  // Concrete command: SubtractCommand
+  class SubtractCommand implements Command {
+      private calculator: Calculator;
+      private value: number;
+
+      constructor(calculator: Calculator, value: number) {
+          this.calculator = calculator;
+          this.value = value;
+      }
+
+      execute(): void {
+          this.calculator.subtract(this.value);
+      }
+
+      undo(): void {
+          this.calculator.add(this.value);
+      }
+  }
+
+  // Invoker
+  class Invoker {
+      private history: Command[] = [];
+
+      execute(command: Command): void {
+          command.execute();
+          this.history.push(command);
+      }
+
+      undo(): void {
+          if (this.history.length > 0) {
+              const command = this.history.pop();
+              if (command) {
+                  command.undo();
+              }
+          }
+      }
+  }
+
+  // Example usage
+  const calculator = new Calculator();
+  const invoker = new Invoker();
+
+  const addCommand = new AddCommand(calculator, 10);
+  const subtractCommand = new SubtractCommand(calculator, 5);
+
+  invoker.execute(addCommand);
+  console.log('Value:', calculator.getValue()); // Output: Value: 10
+
+  invoker.execute(subtractCommand);
+  console.log('Value:', calculator.getValue()); // Output: Value: 5
+
+  invoker.undo();
+  console.log('Value:', calculator.getValue()); // Output: Value: 10
+  ```
+
+### Relations with other patterns
+
+* Chain of Responsibility, Command, Mediator and Observer address various ways of connecting senders and receivers of requests
+  * Chain of Responsibility passes a request sequentially along a dynamic chain of potential receivers until one of them handles it.
+
+  * Command establishes unidirectional connections between senders and receivers.
+
+  * Mediator eliminates direct connections between senders and receivers, forcing them to communicate indirectly via a mediator object.
+  
+  * Observer lets receivers dynamically subscribe to and unsubscribe from receiving requests.
+
+* You can use Command and Memento together when implementing “undo”. In this case, commands are responsible for performing various operations over a target object, while mementos save the state of that object just before a command gets executed.
+
+* Prototype can help when you need to save copies of Commands into history.
+
+* You can treat Visitor as a powerful version of the Command pattern. Its objects can execute operations over various objects of different classes.
 
 <br/>
 
