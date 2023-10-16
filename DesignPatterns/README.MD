@@ -2020,7 +2020,7 @@ The Command pattern can be used to log and audit operations in an application. B
   * Command establishes unidirectional connections between senders and receivers.
 
   * Mediator eliminates direct connections between senders and receivers, forcing them to communicate indirectly via a mediator object.
-  
+
   * Observer lets receivers dynamically subscribe to and unsubscribe from receiving requests.
 
 * You can use Command and Memento together when implementing “undo”. In this case, commands are responsible for performing various operations over a target object, while mementos save the state of that object just before a command gets executed.
@@ -2033,9 +2033,273 @@ The Command pattern can be used to log and audit operations in an application. B
 
 ## Template
 
+The Template Method is a behavioral design pattern that defines the skeleton of an algorithm in the superclass but lets subclasses override specific steps of the algorithm without changing its structure.
+
+**Real-world Analogies**
+
+* Recipe for Cooking   
+A template for making pasta could have specific steps for boiling water, adding pasta, and preparing a sauce, but the type of pasta and the sauce ingredients can vary. Similarly, the template method defines the overall structure for preparing a dish, while specific steps can be modified or customized by different recipes.
+By using the template method, the core cooking process remains the same, while allowing for variations in specific steps. This allows you to reuse the general steps for different dishes, making the overall cooking process more efficient and consistent.
+
+* Education System:    
+A curriculum can be seen as a template for the education system. It sets the overall structure of what needs to be taught in a specific course, while individual teachers can have the flexibility to use different teaching methods and materials within that structure.
+
+* Building Construction:   
+Blueprints for building construction can be considered as templates. They outline the overall structure of a building, including the layout, the rooms, and the foundation. Contractors can then modify the specific materials, design details, and interior finishes while adhering to the predefined blueprint.
+
+**Scenarios where Template pattern suits**   
+The Template Design Pattern is particularly useful in scenarios where you want to define an algorithm's structure but allow subclasses to alter specific steps of the algorithm without changing its overall structure
+
+* Report Generation: In applications that generate various types of reports, the Template Pattern can be used to define a standard report generation process while allowing customization for different report formats and data sources.
+
+* Game Development: When creating games, the Template Pattern can be used to define the overall game structure, including the game loop, rendering, and updating, while allowing different implementations for specific game elements and behaviors.
+
+* Workflow Automation: In workflow automation systems, the Template Pattern can be used to define a standard workflow structure, allowing different steps to be executed based on specific conditions or requirements.
+
+### Example 1 - Pasta Recipe
+  ```ts
+  abstract class PastaRecipe {
+
+    /* The template method defines the skeleton of an algorithm */
+    public cookPasta(): void {
+      this.boilWater();
+      this.addPasta();
+      this.cookPastaAlDente();
+      this.prepareSauce();
+      this.combinePastaAndSauce();
+      this.serve();
+      this.customStep(); // Hook
+    }
+
+    /* These operations have to be implemented in subclasses */
+    protected abstract addPasta(): void;
+    protected abstract prepareSauce(): void;
+
+    /* These operations already have implementations */
+    protected boilWater(): void {
+      console.log('Boiling water');
+    }
+
+    protected cookPastaAlDente(): void {
+      console.log('Cooking pasta al dente');
+    }
+
+    protected combinePastaAndSauce(): void {
+      console.log('Combining pasta and sauce');
+    }
+
+    protected serve(): void {
+      console.log('Serving delicious pasta');
+    }
+
+    /* These are hooks. Subclasses may override them, but it's not mandatory */
+    protected customStep(): void {} 
+  }
+
+  class SpaghettiRecipe extends PastaRecipe {
+    protected addPasta(): void {
+      console.log('Adding spaghetti to boiling water');
+    }
+
+    protected prepareSauce(): void {
+      console.log('Preparing tomato-based sauce for spaghetti');
+    }
+
+    protected customStep(): void {
+      console.log('Adding parmesan cheese on top'); 
+    }
+  }
+
+  class PenneRecipe extends PastaRecipe {
+    protected addPasta(): void {
+      console.log('Adding penne to boiling water');
+    }
+
+    protected prepareSauce(): void {
+      console.log('Preparing creamy sauce for penne');
+    }
+  }
+
+  // Client code
+  function cookPastaRecipe(recipe: PastaRecipe) {
+    console.log('Cooking Pasta:');
+    recipe.cookPasta();
+  }
+
+  // Using the template with specific pasta recipes
+  const spaghettiRecipe = new SpaghettiRecipe();
+  const penneRecipe = new PenneRecipe();
+
+  cookPastaRecipe(spaghettiRecipe);
+  cookPastaRecipe(penneRecipe);
+  ```
+
+### Relations with other patterns
+
+* Template Method is based on inheritance: it lets you alter parts of an algorithm by extending those parts in subclasses. Strategy is based on composition: you can alter parts of the object’s behavior by supplying it with different strategies that correspond to that behavior. Template Method works at the class level, so it’s static. Strategy works on the object level, letting you switch behaviors at runtime.
+
+* Template pattern vs just abstract classes
+To me it looked like template pattern is just abstract classes where a few methods are common and a few are to be implemented in subclasses   
+
+  The Template Design Pattern offers a specific approach for defining an algorithm structure, ensuring that the steps are not only abstract but also predefined. It helps in maintaining the structure of the algorithm while allowing specific variations in certain steps.   
+
+  The template pattern enforces a specific structure for the algorithm, ensuring that certain steps are followed in a defined sequence.   
+
+
+
 <br/>
 
 ## State
+
+The State design pattern is a behavioral pattern that allows an object to alter its behavior when its internal state changes.    
+The pattern is particularly useful in scenarios where an object's behavior is dependent on its state and must change dynamically based on the state transitions
+
+Use the State pattern when you have an object that behaves differently depending on its current state, the number of states is enormous, and the state-specific code changes frequently.
+
+**Real-world Analogies**   
+
+* Phone buttons   
+The buttons and switches in your smartphone behave differently depending on the current state of the device
+When the phone is unlocked, pressing buttons leads to executing various functions   
+When the phone is locked, pressing any button leads to the unlock screen   
+When the phone’s charge is low, pressing any button shows the charging screen   
+
+* Package Delivery System:   
+Imagine a package delivery system where a package can be in different states such as "In Transit," "Out for Delivery," and "Delivered." Each state has its own set of behaviors, like updating the location, estimated delivery time, and delivery confirmation.
+
+* Game Character State:   
+Consider a video game character that can be in different states like "Normal," "Powered Up," and "Injured." Each state affects the character's abilities, speed, and appearance. For example, when the character is "Powered Up," it might have increased strength and special powers.
+
+* Vending Machine:   
+Imagine a vending machine with states like "Ready," "Dispensing Item," and "Out of Stock." Each state controls what the user can do, such as selecting items, processing payments, and dispensing products.
+
+**Scenarios where State pattern suits**   
+The State design pattern is suitable for scenarios where the behavior of an object changes depending on its internal state
+
+* User Interface (UI) Management:     
+When dealing with complex user interfaces, the State pattern can be used to manage different states of the UI components, such as enabling or disabling certain buttons or features based on the current state of the application.
+
+* Workflow Management:   
+In applications with complex workflows or processes, the State pattern can help manage the different stages of the workflow. Each stage can have its own set of actions and rules, allowing for easier management and transition between various workflow states.
+
+* E-commerce Order Processing:   
+In e-commerce applications, the State pattern can be applied to manage the different states of an order, such as processing, shipped, delivered, or cancelled. Each state can trigger specific actions or notifications to the users or the system.
+
+
+### Example 1 - 
+  ```ts
+  // State interface
+  interface OrderState {
+      cancelOrder(): void;
+      verifyPayment(): void;
+      shipOrder(): void;
+  }
+
+  // Concrete states
+  class NewOrderState implements OrderState {
+      constructor(private order: Order) {}
+
+      cancelOrder() {
+          console.log("Cancelling order.");
+          this.order.setState(new CancelledOrderState(this.order));
+      }
+
+      verifyPayment() {
+          console.log("Payment verified. Processing order.");
+          this.order.setState(new ProcessingOrderState(this.order));
+      }
+
+      shipOrder() {
+          console.log("Cannot ship the order. Payment not verified.");
+      }
+  }
+
+  class ProcessingOrderState implements OrderState {
+      constructor(private order: Order) {}
+
+      cancelOrder() {
+          console.log("Cancelling order.");
+          this.order.setState(new CancelledOrderState(this.order));
+      }
+
+      verifyPayment() {
+          console.log("Payment already verified. Processing order.");
+      }
+
+      shipOrder() {
+          console.log("Shipping order.");
+          this.order.setState(new ShippedOrderState(this.order));
+      }
+  }
+
+  class ShippedOrderState implements OrderState {
+      constructor(private order: Order) {}
+
+      cancelOrder() {
+          console.log("Cannot cancel the order. Already shipped.");
+      }
+
+      verifyPayment() {
+          console.log("Payment already verified. Order already processed and shipped.");
+      }
+
+      shipOrder() {
+          console.log("Cannot ship the order. Already shipped.");
+      }
+  }
+
+  class CancelledOrderState implements OrderState {
+      constructor(private order: Order) {}
+
+      cancelOrder() {
+          console.log("Cannot cancel the order. Already cancelled.");
+      }
+
+      verifyPayment() {
+          console.log("Cannot verify payment. Order is cancelled.");
+      }
+
+      shipOrder() {
+          console.log("Cannot ship the order. Order is cancelled.");
+      }
+  }
+
+  // Context (Order) - It maintains the current state and delegates the behavior to the appropriate state object
+  class Order {
+      private state: OrderState;
+
+      constructor() {
+          this.state = new NewOrderState(this);
+      }
+
+      setState(state: OrderState) {
+          this.state = state;
+      }
+
+      cancelOrder() {
+          this.state.cancelOrder();
+      }
+
+      verifyPayment() {
+          this.state.verifyPayment();
+      }
+
+      shipOrder() {
+          this.state.shipOrder();
+      }
+  }
+
+  // Usage
+  const order = new Order();
+  order.verifyPayment(); // Payment verified. Processing order.
+  order.shipOrder(); // Shipping order.
+  order.cancelOrder(); // Cancelling order.
+  ```
+
+
+### Relations with other patterns
+
+* State can be considered as an extension of Strategy. Both patterns are based on composition: they change the behavior of the context by delegating some work to helper objects. Strategy makes these objects completely independent and unaware of each other. However, State doesn’t restrict dependencies between concrete states, letting them alter the state of the context at will.
 
 <br/>
 
