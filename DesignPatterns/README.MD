@@ -14,24 +14,26 @@
     - [Factory](#factory)
     - [Object pool](#object-pool)
     - [Builder](#builder)
-    <!-- - [Abstract factory](#abstract-factory)
-    - [Prototype](#prototype) -->
+    - [Abstract factory](#abstract-factory)
+    - [Prototype](#prototype)
   - [Structural Patterns](#structural-patterns)
     - [Decorator](#decorator)
     - [Adapter](#adapter)
     - [Facade](#facade)
     - [Composite](#composite)
-    <!-- - [Bridge](#bridge) -->
+    - [Bridge](#bridge)
+    - [Flyweight](#flyweight)
+    - [Proxy](#proxy)
   - [Behavioural Patterns](#behavioral-patterns)
     - [Strategy](#strategy)
     - [Observer](#observer)
     - [Command](#command)
     - [Template](#template)
     - [State](#state)
-    <!-- - [Chain of responsibility](#chain-of-responsibility)
+    - [Chain of responsibility](#chain-of-responsibility)
     - [Iterator](#iterator)
     - [Mediator](#mediator)
-    - [Visitor](#visitor) -->
+    - [Visitor](#visitor)
     
     
 
@@ -863,8 +865,95 @@ const templates = await this.repos.templateRepo.getPaginatedTemplatesByBuilder(t
 
 <br/>
 
-<!-- 
+
 ## Abstract factory
+
+The Abstract Factory pattern is a creational design pattern that provides an interface for creating families of related or dependent objects without specifying their concrete classes. It's used when there's a need to create a set of related or dependent objects.    
+This pattern allows the client code to use the interface for creating these objects, without being concerned about the implementation logic
+
+  ```ts
+  // Abstract product: Button
+  interface Button {
+      render(): void;
+  }
+
+  // Concrete product: LightButton
+  class LightButton implements Button {
+      render(): void {
+          console.log('Rendering LightButton');
+      }
+  }
+
+  // Concrete product: DarkButton
+  class DarkButton implements Button {
+      render(): void {
+          console.log('Rendering DarkButton');
+      }
+  }
+
+  // Abstract product: Input
+  interface Input {
+      render(): void;
+  }
+
+  // Concrete product: LightInput
+  class LightInput implements Input {
+      render(): void {
+          console.log('Rendering LightInput');
+      }
+  }
+
+  // Concrete product: DarkInput
+  class DarkInput implements Input {
+      render(): void {
+          console.log('Rendering DarkInput');
+      }
+  }
+
+  // Abstract Factory: ThemeFactory
+  interface ThemeFactory {
+      createButton(): Button;
+      createInput(): Input;
+  }
+
+  // Concrete Factory: LightThemeFactory
+  class LightThemeFactory implements ThemeFactory {
+      createButton(): Button {
+          return new LightButton();
+      }
+
+      createInput(): Input {
+          return new LightInput();
+      }
+  }
+
+  // Concrete Factory: DarkThemeFactory
+  class DarkThemeFactory implements ThemeFactory {
+      createButton(): Button {
+          return new DarkButton();
+      }
+
+      createInput(): Input {
+          return new DarkInput();
+      }
+  }
+
+  // Client code
+  function applyTheme(themeFactory: ThemeFactory) {
+      const button = themeFactory.createButton();
+      const input = themeFactory.createInput();
+
+      button.render();
+      input.render();
+  }
+
+  // Usage
+  const lightThemeFactory = new LightThemeFactory();
+  const darkThemeFactory = new DarkThemeFactory();
+
+  applyTheme(lightThemeFactory);
+  applyTheme(darkThemeFactory);
+  ```
 
 <br/>
 
@@ -873,12 +962,89 @@ const templates = await this.repos.templateRepo.getPaginatedTemplatesByBuilder(t
 
 ## Prototype
 
-<br/>
+Prototype is a creational design pattern that lets you copy existing objects without making your code dependent on their classes.
 
- -->
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/prototype/prototype-2x.png" width="700px" >
+</p>
+
+**Problem**   
+Say you have an object, and you want to create an exact copy of it. How would you do it? First, you have to create a new object of the same class. Then you have to go through all the fields of the original object and copy their values over to the new object.
+   
+Nice! But there’s a catch. Not all objects can be copied that way because some of the object’s fields may be private and not visible from outside of the object itself.
+
+   
+There’s one more problem with the direct approach. Since you have to know the object’s class to create a duplicate, your code becomes dependent on that class. If the extra dependency doesn’t scare you, there’s another catch. Sometimes you only know the interface that the object follows, but not its concrete class, when, for example, a parameter in a method accepts any objects that follow some interface.
+
+**Real-World Analogy**   
+* Photocopying a Document:   
+Consider a scenario where you need multiple copies of a document. Instead of rewriting the entire document every time, you can use a photocopy machine to create copies from an original document. Here, the original document acts as the prototype, and the copies are created from it, saving time and effort.
+
+* Baking Cookies from a Recipe:   
+When you bake cookies using a recipe, you follow a set of instructions to create multiple cookies that have the same taste and texture. The recipe serves as the prototype, and you can make multiple batches of cookies using the same instructions without having to create a new set of instructions each time.
+
+* Cloning of Plants:   
+In agriculture, the process of cloning plants involves taking a cutting from an existing plant and allowing it to grow into a new plant with identical characteristics. The original plant acts as the prototype, and the new plant inherits all the features of the original, including its genetic makeup and traits.
+
+**Scenarios where pattern should be used**   
 
 
+### Example 1
+  ```ts
+  // Creating an interface for the car prototype
+  interface CarPrototype {
+    clone(): CarPrototype;
+    getInfo(): void;
+  }
 
+  // Creating a concrete car prototype class
+  class BasicCar implements CarPrototype {
+    private brand: string;
+    private model: string;
+
+    constructor(brand: string, model: string) {
+      this.brand = brand;
+      this.model = model;
+    }
+
+    // Implementing the clone method to create a copy of the current car prototype
+    clone(): CarPrototype {
+      return new BasicCar(this.brand, this.model);
+    }
+
+    // Method to get information about the car
+    getInfo(): void {
+      console.log(`Brand: ${this.brand}, Model: ${this.model}`);
+    }
+
+    // Method to modify car details
+    modifyDetails(brand: string, model: string): void {
+      this.brand = brand;
+      this.model = model;
+    }
+  }
+
+  // Usage of the Prototype pattern
+  const prototypeCar = new BasicCar('Toyota', 'Corolla');
+
+  // Creating multiple instances of the car prototype using cloning
+  const car1 = prototypeCar.clone();
+  const car2 = prototypeCar.clone();
+
+  // Modifying properties of the cloned cars
+  car1.modifyDetails('Honda', 'Civic');
+  car2.modifyDetails('Ford', 'Fiesta');
+
+  car1.getInfo(); // Brand: Honda, Model: Civic
+  car2.getInfo(); // Brand: Ford, Model: Fiesta
+  ```
+
+### Relations with Other Patterns
+* Prototype can help when you need to save copies of Commands into history
+
+* Prototype isn’t based on inheritance, so it doesn’t have its drawbacks. On the other hand, Prototype requires a complicated initialization of the cloned object. Factory Method is based on inheritance but doesn’t require an initialization step.
+
+* Sometimes Prototype can be a simpler alternative to Memento. This works if the object, the state of which you want to store in the history, is fairly straightforward and doesn’t have links to external resources, or the links are easy to re-establish.
 
 <br/>
 <br/>
@@ -1552,11 +1718,249 @@ The greatest benefit of this approach is that you don’t need to care about the
 * Decorator adds additional responsibilities to the wrapped object, while Composite just “sums up” its children’s results.
 
 
-<!-- <br/>
+<br/>
 
 ## Bridge
 
-<br/> -->
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/diagrams/bridge/problem-en-2x.png" width="700px" >
+</p>
+
+
+**Problem**   
+Say you have a geometric Shape class with a pair of subclasses: Circle and Square. You want to extend this class hierarchy to incorporate colors, so you plan to create Red and Blue shape subclasses   
+However, since you already have two subclasses, you’ll need to create four class combinations such as BlueCircle and RedSquare   
+Adding new shape types and colors to the hierarchy will grow it exponentially. For example, to add a triangle shape you’d need to introduce two subclasses, one for each color   
+   
+This problem occurs because we’re trying to extend the shape classes in two independent dimensions: by form and by color
+   
+The Bridge pattern attempts to solve this problem by switching from inheritance to the object composition
+   
+Following this approach, we can extract the color-related code into its own class with two subclasses: Red and Blue. The Shape class then gets a reference field pointing to one of the color objects. Now the shape can delegate any color-related work to the linked color object. That reference will act as a bridge between the Shape and Color classes
+
+
+**My Take**   
+Nothing fancy here, its simple, we would use a field for colour in objects of shape class   
+The colour property instead of making a string we should make it of type colour 
+
+### Example 1 - Colour 
+
+  ```ts
+  // Abstraction - Shape
+  interface Shape {
+    getColor(): Color;
+    setColor(color: Color): void;
+    draw(): void;
+  }
+
+  // Concrete Abstraction - Circle
+  class Circle implements Shape {
+    private color: Color;
+
+    constructor(color: Color) {
+      this.color = color;
+    }
+
+    getColor(): Color {
+      return this.color;
+    }
+
+    setColor(color: Color): void {
+      this.color = color;
+    }
+
+    draw(): void {
+      console.log(`Drawing a ${this.color.getColorName()} circle`);
+    }
+  }
+
+  // Implementor - Color
+  interface Color {
+    getColorName(): string;
+  }
+
+  // Concrete Implementor - Red Color
+  class RedColor implements Color {
+    getColorName(): string {
+      return "red";
+    }
+  }
+
+  // Concrete Implementor - Blue Color
+  class BlueColor implements Color {
+    getColorName(): string {
+      return "blue";
+    }
+  }
+
+  // Usage
+  const redCircle = new Circle(new RedColor());
+  redCircle.draw();
+
+  const blueCircle = new Circle(new BlueColor());
+  blueCircle.draw();
+  ```
+
+<br/>
+
+## Flyweight
+
+Flyweight is a structural design pattern that lets you fit more objects into the available amount of RAM by sharing common parts of state between multiple objects instead of keeping all of the data in each object.
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/flyweight/flyweight-2x.png" width="700px" >
+</p>
+
+Constant data of an object is usually called the intrinsic state. It lives within the object; other objects can only read it, not change it.   
+The rest of the object’s state, often altered from the outside by other objects, is called the extrinsic state.   
+The Flyweight pattern suggests that you stop storing the extrinsic state inside the object. Instead, you should pass this state to specific methods which rely on it. Only the intrinsic state stays within the object, letting you reuse it in different contexts. As a result, you’d need fewer of these objects since they only differ in the intrinsic state, which has much fewer variations than the extrinsic.   
+ 
+Example : 
+  ```ts
+  /* Before applying Flyweight pattern */
+
+  class Circle {
+    /*
+    The radius and color are intrinsic properties of the circle. 
+    These properties cannot be changed once the circle is created, and they are specific to each instance of the circle 
+    */
+    private readonly radius: number;
+    private readonly color: string;
+    /* the position is extrinsic to the circle, as it can be changed by the client code that is interacting with the circle */
+    private position: { x: number; y: number };
+
+    constructor(radius: number, color: string, position: { x: number; y: number }) {
+      this.radius = radius;
+      this.color = color;
+      this.position = position;
+    }
+
+    draw(): void {
+      console.log(`Drawing a ${this.color} circle with radius ${this.radius} at position (${this.position.x}, ${this.position.y})`);
+    }
+  }
+
+  const circle1 = new Circle(5, 'red', { x: 10, y: 5 });
+  const circle2 = new Circle(5, 'red', { x: 20, y: 10 });
+
+  circle1.draw();
+  circle2.draw();
+  ```   
+
+  ```ts
+  /* After applying Flyweight pattern */
+
+  class Circle {
+    private readonly radius: number;
+    private readonly color: string;
+
+    constructor(radius: number, color: string) {
+      this.radius = radius;
+      this.color = color;
+    }
+
+    draw(position: { x: number; y: number }): void {
+      console.log(`Drawing a ${this.color} circle with radius ${this.radius} at position (${position.x}, ${position.y})`);
+    }
+  }
+
+  const flyweightCircle = new Circle(5, 'red');
+
+  // Drawing circles at different positions
+  flyweightCircle.draw({ x: 10, y: 5 });
+  flyweightCircle.draw({ x: 20, y: 10 });
+  ```
+
+
+
+
+**Real-world Analogies**  
+
+* Coffee Shop Chain   
+In a coffee shop chain, the menu items such as espresso, latte, and cappuccino are like the intrinsic state. The customer preferences for sugar level or type of milk (like almond, soy, or regular) are the extrinsic state. By using the Flyweight pattern, the coffee shop chain can standardize the preparation of menu items while customizing the extrinsic preferences, improving service efficiency and maintaining consistency in taste across multiple locations
+
+* Piano Manufacturing   
+When producing a piano, the black and white keys are like the intrinsic state as they remain the same for all pianos. However, the external design or the color of the piano casing can be considered as extrinsic state
+
+* Music Streaming Service   
+In a music streaming service, the audio files of songs are the intrinsic state, and the user's playback history or playlist information is the extrinsic state
+
+**Scenarios where Flyweight pattern suits**  
+
+* Graphic Design and Image Processing Software:   
+Graphic design tools often utilize the Flyweight pattern to optimize the handling of basic shapes, colors, and graphical elements, allowing efficient rendering and manipulation of complex visual data.
+
+* Game Development:   
+Game development frameworks and engines often leverage the Flyweight pattern to manage and optimize the rendering of graphical elements, textures, and sprites, especially in games with numerous recurring objects or characters.
+
+* Compiler Design and Code Editors:   
+Compilers and code editors can use the Flyweight pattern to manage and optimize the handling of syntax highlighting, abstract syntax trees, and other language-specific data structures.
+
+* Caching and Database Systems:   
+Caching mechanisms and database systems can make use of the Flyweight pattern to efficiently manage and reuse frequently accessed data and resources, reducing memory usage and improving overall system performance.
+
+* Network Applications:   
+Network applications, especially those dealing with data transfer and processing, can utilize the Flyweight pattern to optimize the management of network resources, such as connections, packets, and data buffers.
+
+<br/>
+
+## Proxy 
+
+Proxy is a structural design pattern that lets you provide a substitute or placeholder for another object. A proxy controls access to the original object, allowing you to perform something either before or after the request gets through to the original object.
+
+  ```ts
+  // Subject interface
+  interface Image {
+    display(): void;
+  }
+
+  // RealSubject class
+  class RealImage implements Image {
+    private fileName: string;
+
+    constructor(fileName: string) {
+      this.fileName = fileName;
+      this.loadFromDisk();
+    }
+
+    display(): void {
+      console.log(`Displaying ${this.fileName}`);
+    }
+
+    private loadFromDisk(): void {
+      console.log(`Loading ${this.fileName} from disk`);
+    }
+  }
+
+  // Proxy class
+  class ProxyImage implements Image {
+    private realImage: RealImage | null = null;
+    private fileName: string;
+
+    constructor(fileName: string) {
+      this.fileName = fileName;
+    }
+
+    display(): void {
+      if (!this.realImage) {
+        this.realImage = new RealImage(this.fileName);
+      }
+      this.realImage.display();
+    }
+  }
+
+  // Client code
+  const image1: Image = new ProxyImage('testImage.jpg');
+
+  // Image will be loaded from disk only when required
+  image1.display();
+  image1.display();
+
+  // Output:
+  // Loading testImage.jpg from disk
+  // Displaying testImage.jpg
+  // Displaying testImage.jpg
+  ```
 
 
 <br/>
@@ -2303,17 +2707,113 @@ In e-commerce applications, the State pattern can be applied to manage the diffe
 
 <br/>
 
-<!-- ## Chain of responsibility
+## Chain of responsibility
+
+Chain of Responsibility is a behavioral design pattern that lets you pass requests along a chain of handlers. Upon receiving a request, each handler decides either to process the request or to pass it to the next handler in the chain.   
+
+Use the pattern when it’s essential to execute several handlers in a particular order
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/chain-of-responsibility/chain-of-responsibility-2x.png" width="700px" >
+</p>
+
+**My take**   
+Looks like middlewares to me   
+
 
 <br/>
 
 
 ## Iterator
 
+Iterator is a behavioral design pattern that lets you traverse elements of a collection without exposing its underlying representation (list, stack, tree, etc.)
+
+Use the Iterator pattern when your collection has a complex data structure under the hood, but you want to hide its complexity from clients (either for convenience or security reasons)
+
+Use the Iterator when you want your code to be able to traverse different data structures or when types of these structures are unknown beforehand
+
+
+### Relation with different classes
+* You can use Visitor along with Iterator to traverse a complex data structure and execute some operation over its elements, even if they all have different classes.
+* You can use Iterators to traverse Composite trees
+
 <br/>
 
 
 ## Mediator
+
+Mediator is a behavioral design pattern that lets you reduce chaotic dependencies between objects. The pattern restricts direct communications between the objects and forces them to collaborate only via a mediator object.
+
+<p align="center">
+<img src="https://refactoring.guru/images/patterns/content/mediator/mediator-2x.png" width="700px" >
+</p>
+
+
+**Real-world Analogies**   
+
+* ATC    
+Aircraft pilots don’t talk to each other directly when deciding who gets to land their plane next. All communication goes through the control tower.
+
+
+  ```ts
+  interface ChatMediator {
+      sendMessage(message: string, user: User): void;
+  }
+
+  class ConcreteChatMediator implements ChatMediator {
+      private users: User[] = [];
+
+      addUser(user: User): void {
+          this.users.push(user);
+      }
+
+      /* 
+      When a message is sent, the mediator distributes it to all other users except the sender
+      This way, the users don't need to have direct references to each other, achieving a more loosely coupled system
+      */
+      sendMessage(message: string, user: User): void {
+          for (const u of this.users) {
+              if (u !== user) {
+                  u.receive(message);
+              }
+          }
+      }
+  }
+
+  class User {
+      private name: string;
+      private mediator: ChatMediator;
+
+      constructor(name: string, mediator: ChatMediator) {
+          this.name = name;
+          this.mediator = mediator;
+      }
+
+      send(message: string): void {
+          console.log(`${this.name} sends: ${message}`);
+          this.mediator.sendMessage(message, this);
+      }
+
+      receive(message: string): void {
+          console.log(`${this.name} receives: ${message}`);
+      }
+  }
+
+  const mediator = new ConcreteChatMediator();
+
+  const user1 = new User("User1", mediator);
+  const user2 = new User("User2", mediator);
+  const user3 = new User("User3", mediator);
+
+  mediator.addUser(user1);
+  mediator.addUser(user2);
+  mediator.addUser(user3);
+
+  user1.send("Hello, everyone!");
+  ```
+
+
+
 
 <br/>
 
@@ -2323,7 +2823,7 @@ In e-commerce applications, the State pattern can be applied to manage the diffe
 
 ## Visitor
 
-<br/> -->
+<br/>
 
 
 
