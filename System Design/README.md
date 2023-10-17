@@ -1,3 +1,70 @@
+## Table of Contents
+
+1. [What is System Design](#what-is-system-design)
+2. [System design basics](#system-design-basics)
+    1. [Key Characteristics of Distributed Systems](#key-characteristics-of-distributed-systems)
+    2. [Load Balancing](#load-balancing)
+    3. [Caching](#caching)
+    4. [Data Partitioning (Sharding)](#data-partitioning-sharding)
+    5. [Indexes](#indexes)
+    6. [Proxies](#proxies)
+    7. [Redundancy and Replication](#redundancy-and-replication)
+    8. [Horizontal vs Vertical Scaling](#horizontal-vs-vertical-scaling)
+    9. [CAP Theorem](#cap-theorem)
+    10. [PACELC Theorem](#pacelc-theorem)
+    11. [Consistent Hashing](#consistent-hashing)
+    12. [Long-Polling vs WebSockets vs Server-Sent Events](#long-polling-vs-websockets-vs-server-sent-events)
+    13. [Bloom Filters](#bloom-filters)
+    14. [Quorum](#quorum)
+    15. [Leader and Follower](#leader-and-follower)
+    16. [Heartbeat](#heartbeat)
+    17. [Checksum](#checksum)
+    18. [SLI, SLO, and SLA](#sli-slo-and-sla)
+    19. [Message Queue](#message-queue)
+    20. [Distributed message queue](#distributed-message-queue)
+    21. [Logging Monitoring Alerting](#logging-monitoring-alerting)
+3. [Software Architecture Patterns](#software-architecture-patterns)
+    1. [Layered pattern](#layered-pattern)
+    2. [Client-Server pattern](#client-server-pattern)
+    3. [Master-Slave pattern](#master-slave-pattern)
+    4. [Event Bus pattern](#event-bus-pattern)
+    5. [Pipe Filter pattern](#pipe-filter-pattern)
+    6. [Broker pattern](#broker-pattern)
+    7. [Peer to Peer pattern](#peer-to-peer-pattern)
+    8. [MVC pattern](#mvc-pattern)
+    9. [Interpreter pattern](#interpreter-pattern)
+    10. [Blackboard pattern](#blackboard-pattern)
+4. [System Design - Choosing database](#system-design---choosing-database)
+    1. [When to choose which database](#when-to-choose-which-database)
+    2. [Time series Database](#time-series-database)
+    3. [File Storage vs Blob Storage](#file-storage-vs-blob-storage)
+    4. [Data warehouse, Database for analytics - Hadoop](#data-warehouse-database-for-analytics---hadoop)
+    5. [RDBMS advantages](#rdbms-advantages)
+    6. [RDBMS disadvantages](#rdbms-disadvantages)
+    7. [Non-relational DBMS advantages](#non-relational-dbms-advantages)
+    8. [Non-relational DBMS disadvantages](#non-relational-dbms-disadvantages)
+    9. [How to Choose the Right Type of Database](#how-to-choose-the-right-type-of-database)
+    10. [Databases and Analogies with SQL](#databases-and-analogies-with-sql)
+    11. [Databases according to CAP theorem](#databases-according-to-cap-theorem)
+5. [API Design](#api-design)
+    1. [API rate limiting](#api-rate-limiting)
+    2. [Put vs Patch](#put-vs-patch)
+6. [Technologies & Frameworks](#technologies--frameworks)
+    1. [Kafka](#kafka)
+7. [System Design Interviews - Step by step](#system-design-interviews---step-by-step)
+8. [Tips and Tricks](#tips-and-tricks)
+9. [Random Notes](#random-notes)
+10. [Architecture](#architecture)
+11. [System Design Examples](#system-design-examples)
+    1. [Scaling a local pizza shop](#scaling-a-local-pizza-shop)
+    2. [URL Shortening service like TinyURL](#url-shortening-service-like-tinyurl)
+    3. [Design a WhatsApp Chat messaging system](#design-a-whatsapp-chat-messaging-system-design)
+    4. [Design TikTok](#design-tiktok)
+    5. [Design a B2B application used by Retail stores](#design-a-b2b-application-used-by-retail-stores)
+
+<br/>
+
+
 # What is System Design
 
 System - Architecture or collection of software/technology, that communicate with each other,in order to serve a set of **users**, to filfill a **requirement**
@@ -477,6 +544,12 @@ TODO : notes
 <br/>
 <br/>
 <br/>
+
+---
+
+# Software Architecture Patterns
+
+[Software Architecture Patterns](../SoftwareArchitecture/README.md)    
 
 ---
 # System Design - Choosing database 
