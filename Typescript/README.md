@@ -1,3 +1,32 @@
+## Table of Contents
+- [Running Typescript files](#running-typescript-files)
+- [Basics](#basics)
+  - [Types](#types-in-typescript)
+  - [Enum](#enum-in-typescript)
+  - [Type Assertions](#type-assertions)
+  - [Partial Type](#partial-type)
+  - [Union Type](#union-type)
+  - [Never](#never)
+  - ['extends' keyword](#extends-keyword)
+- [Generics](#generics)
+- [OOPS in Typescript](#oops-in-typescript)
+- [Access Modifier](#access-modifier)
+- [Properties in typescript](#properties-in-typescript)
+- [Common errors](#common-errors)
+- [Decorators](#decorators)
+- [Advance TS](#advance-ts)
+  - [Remove a member of a Union type](#remove-a-member-of-a-union-type)
+  - [Argument to be optional only in some cases](#argument-to-be-optional-only-in-some-cases)
+  - [Mapped types](#mapped-types)
+  - [Conditional types](#conditional-types)
+  - [Namespaces](#namespaces)
+  - [Mixins](#mixins)
+  - [Utility types](#utility-types)
+  - [Nullish coalescing](#nullish-coalescing)
+  - [Discriminated Unions](#discriminated-unions)
+
+<br/>
+
 # Typescript 
 
 * Typescript is a super set of javascript 
@@ -8,6 +37,7 @@
 1. OOP support - private, interface, abstract 
 1. Compile time errors
 1. Intellisence support
+
 ### Running Typescript files
 ```bash
 sudo npm install -g typescript
@@ -21,8 +51,6 @@ tsc index.ts | node index.js
 # To transpile using ES6 
 tsc --target ES6 index.ts
 ```
-
-
 
 ---
 
@@ -147,6 +175,218 @@ async function updateBlog(id: string, blog: Partial<Blog> & Pick<Blog, 'title'>)
     ...blog
   });
 }
+```
+
+### Union Type
+
+A union type is a type formed by combining multiple types, allowing a value to be of one of those types. The syntax for a union type is the use of the | (pipe) operator between the individual types.
+
+```ts
+// Union type: number or string
+let myVariable: number | string;
+
+myVariable = 42;      // Valid
+myVariable = "Hello"; // Valid
+// myVariable = true;  // Error: Type 'boolean' is not assignable to type 'number | string'.
+```
+
+```ts
+// Another way of defining a union type
+type numberOrStringType = number | string;
+let myVariable2 : numberOrStringType;
+
+myVariable2 = 42;
+myVariable2 = "Hello";
+myVariable2 = true;
+```
+
+```ts
+// Function that takes a number or string and returns a string
+function formatInput(input: number | string): string {
+    return `Formatted: ${input}`;
+}
+
+console.log(formatInput(42));      // "Formatted: 42"
+console.log(formatInput("Hello")); // "Formatted: Hello"
+// console.log(formatInput(true));  // Error: Type 'boolean' is not assignable to type 'number | string'.
+```
+
+### Never
+
+* In TypeScript, the never type represents a value that never occurs.   
+* It is used to indicate that a function will never return normally (i.e., it throws an exception or enters an infinite loop) or that a variable will never have a value.   
+* The never type is a bottom type, which means it is a subtype of every type, but no type is a subtype of never.
+
+```ts
+/* The throwError function is annotated with a return type of never to indicate that it never returns normally. It always throws an error, preventing the control flow from reaching the end of the function. */
+function throwError(message: string): never {
+  throw new Error(message);
+}
+
+/* Functions that enter an infinite loop are also annotated with a return type of never because they never complete execution. */
+function infiniteLoop(): never {
+  while (true) {
+    // Code that never exits
+  }
+}
+```
+
+* If a type B is a subtype of type A, it means that wherever a value of type A is expected, a value of type B can be safely used without causing type errors.
+* The never type is unique because it is a subtype of every type, including primitives like number.
+* This means that a variable of type never can be assigned to a variable of any other type without causing a type error.
+
+```ts
+let x: number;
+let y: never;
+
+x = y; // Valid, because 'never' is a subtype of 'number'
+```
+
+### 'extends' keyword
+
+In TypeScript, the extends keyword is used in a few different contexts, and its meaning varies depending on the context. 
+
+1. TypeScript Generics   
+In the context of generics, extends is used to specify constraints on the type parameter. You can use extends to ensure that the generic type satisfies certain conditions.
+    ```ts
+    // A generic function that takes a value of type T and returns it doubled
+    function doubleValue<T extends number>(value: T): T {
+        return value * 2;
+    }
+
+    const result = doubleValue(5);  // Result: 10
+    const invalidResult = doubleValue("string");  // Error: Argument of type '"string"' is not assignable to parameter of type 'number'.
+    ```
+2. Conditional Types   
+In conditional types, extends is used to check if one type extends another, leading to the selection of one of two possible types based on this condition.
+    ```ts
+    // A conditional type that checks if T is a string
+    type IsString<T> = T extends string ? true : false;
+
+    const isStringResult: IsString<"hello"> = true;  // true
+    const isNotStringResult: IsString<42> = false;   // false
+    ```
+
+    The basic syntax of a conditional type is as follows
+    ```ts
+    type MyConditionalType<T> = T extends SomeCondition ? TypeIfTrue : TypeIfFalse;
+    /* 
+    T is a type parameter
+    SomeCondition is a type condition that is checked against T 
+    */
+    ```
+
+    In TypeScript, one type can extend another type if the first type is considered a subtype or a more specific version of the second type.   
+    ```ts
+    "c" extends string                                          // true
+    string extends number                                       // false
+    Apple extends Fruit                                         // true
+    Apple extends Fruit | Vegetable                             // false
+    { x: string } extends { x: string, y: number }              // true
+    { x: string, y?: number } extends { x: string, y: number }  // true
+
+    /*
+    While Apple is a subtype of Fruit, it is not a subtype of the union type Fruit | Vegetable
+    An object type with a subset of properties is considered a subtype of an object type with additional properties.
+    An object type with optional properties is considered a subtype of an object type with the same properties as required
+    */
+    ``` 
+
+3. Class Inheritance   
+In the context of class inheritance, extends is used to indicate that a class is extending (or inheriting from) another class.
+    ```ts
+    class Animal {
+        sound: string;
+
+        constructor(sound: string) {
+            this.sound = sound;
+        }
+
+        makeSound(): void {
+            console.log(this.sound);
+        }
+    }
+
+    class Dog extends Animal {
+        constructor() {
+            super("Woof!");
+        }
+
+        wagTail(): void {
+            console.log("Tail wagging!");
+        }
+    }
+
+    const dog = new Dog();
+    dog.makeSound();  // Output: Woof!
+    dog.wagTail();    // Output: Tail wagging!
+    ```
+
+---
+
+### Generics
+
+Generics in TypeScript provide a way to create flexible and reusable components that can work with a variety of types. They allow you to write functions, classes, and types that can operate on different data types without sacrificing type safety.
+
+* A generic type is typically defined with a type parameter, denoted by a placeholder identifier (commonly T but can be any valid identifier).
+* Generics make your code more reusable because they allow functions, classes, or types to work with different data types.
+* TypeScript maintains the type information when using generics, providing static type checking
+
+```ts
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+const numberIdentity: number = identity(42);
+const stringIdentity: string = identity("Hello");
+
+const result1: number = identity<number>(42);
+const result2: number = identity<string>("Hello"); // Error: Type 'string' is not assignable to type 'number'
+```
+
+```ts
+/* Functions can use generics to create type-safe operations on different types */
+function logAndReturn<T>(value: T): T {
+  console.log(value);
+  return value;
+}
+
+/* Classes can use generics to create reusable data structures or services */
+class Box<T> {
+  private value: T;
+
+  constructor(value: T) {
+    this.value = value;
+  }
+
+  getValue(): T {
+    return this.value;
+  }
+}
+
+/* Generics are commonly used with array helpers to ensure type safety */
+function reverse<T>(array: T[]): T[] {
+  return array.reverse();
+}
+
+/* */
+```
+
+Applying a specific type to generic type
+
+```ts
+/* Suppose you have a generic type called Wrapper */
+type Wrapper<T> = {
+  value: T;
+};
+
+/* Now, let's apply this generic type to a specific type, like number */
+type NumberWrapper = Wrapper<number>;
+
+/* This means that we're replacing the type parameter T in Wrapper<T> with the type number. So, NumberWrapper is essentially equivalent to */
+type NumberWrapper = {
+  value: number;
+};
 ```
 
 ---
@@ -368,7 +608,47 @@ options: { initialRespondentsSize: number } = { initialRespondentsSize: 5 },
 
 TODO
 
-## Advance TS tricks
+## Advance TS
+
+### Remove a member of a Union type
+
+Consider we have a type abc which is a union type (can be 'a' or 'b' or 'c')   
+We need to create a type helper to remove one of the letters from the union (for example remove 'c', so type would be 'a' or 'b')
+
+```ts
+type abc = "a" | "b" | "c";
+type ab // we want this to be "a" | "b"
+```
+
+When we have objects or arrays, we can map over them, we have some kind of iterators   
+But what iterator do we have for ts unions, how can i map over each member of a ts union?
+
+Typescript does this automatically and it is call distributivity in typescript   
+Typescript automatically maps over each member of a union when it does a conditional type check
+
+```ts
+/* Removing c form union */
+type abc = "a" | "b" | "c";  // type abc = "a" | "b" | "c"
+type RemoveC<TType> = TType extends "c" ? never : TType;
+type ab = RemoveC<abc>;      // type ab = "a" | "b"
+```
+
+```ts
+/* Replacing c with d */
+type abc = "a" | "b" | "c";  // type abc = "a" | "b" | "c"
+type RemoveC<TType> = TType extends "c" ? "d" : TType;
+type ab = RemoveC<abc>;      // type ab = "a" | "b" | "d"
+```
+
+Refer https://www.youtube.com/watch?v=M4-Jl9JWGmo&list=PLIvujZeVDLMx040-j1W4WFs1BxuTGdI_b&index=2
+
+<br/>
+
+### Argument to be optional only in some cases
+
+https://www.youtube.com/watch?v=YE_3WwX-Dl8&list=PLIvujZeVDLMx040-j1W4WFs1BxuTGdI_b&index=4
+
+<br/>
 
 ### Mapped types 
 

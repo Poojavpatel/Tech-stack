@@ -35,3 +35,6 @@ var myOtherReference = myObject;
 expect(myObject).to.eql(anotherObject); // is true as all properties are the same, even the inner object (deep) one
 expect(myObject).to.eql(myOtherReference); // is still also true for the same reason
 ```
+
+## Playwright 
+End-to-end testing automation tool
