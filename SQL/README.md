@@ -1,5 +1,35 @@
 # SQL
 
+## Table of Contents
+
+- [Data Query Language](#data-query-language)
+- [SQL Queries](#sql-queries)
+  - [COUNT Queries](#count-queries)
+  - [FIND Queries](#find-queries)
+  - [LIKE Queries (REGEX)](#like-queries-regex)
+  - [UPDATE Queries](#update-queries)
+  - [UPDATE multiple rows with different values in one query](#update-multiple-rows-with-different-values-in-one-query)
+  - [Examples on a Table](#examples-on-a-table)
+- [Leetcode Problems](#leetcode-problems)
+  - [Second highest salary from the Employee table](#second-highest-salary-from-the-employee-table)
+  - [Employees Earning More Than Their Managers](#employees-earning-more-than-their-managers)
+  - [Customers Who Never Order](#customers-who-never-order)
+- [Concepts](#concepts)
+  - [Single vs Composite Indexes](#single-vs-composite-indexes)
+  - [Soft delete vs Hard delete](#soft-delete-vs-hard-delete)
+  - [RAW Datatype](#raw-datatype)
+  - [INSTR Function](#instr-function)
+  - [HAVING Clause](#having-clause)
+  - [Control Flow in SQL (CASE Statement)](#control-flow-in-sql-case-statement)
+  - [Routines and Triggers](#routines-and-triggers)
+- [SQL Joins](#sql-joins)
+  - [Cross Join](#cross-join)
+- [SQL Language Components](#sql-language-components)
+  - [TCL (Transaction Control Language)](#tcl-transaction-control-language)
+  - [DML (Data Manipulation Language)](#dml-data-manipulation-language)
+  - [DDL (Data Definition Language)](#ddl-data-definition-language)
+  - [DELETE vs DROP vs TRUNCATE](#delete-vs-drop-vs-truncate)
+
 ## Data Query Language
 * It is used to extract the data from the relations. e.g.; SELECT
 * A generic query to retrieve from a relational database is:
@@ -29,12 +59,12 @@ Find details of employees whose salary is in between 10000 50000
 SELECT * FROM Employees WHERE salary BETWEEN 10000 AND 50000;
 ```
 
-### LIKE Queris (REGEX)
+### LIKE Queries (REGEX)
 
 Find Names of employees starting with a
 ```sql
 SELECT first_name FROM Employees WHERE first_name LIKE 'A%';
-/* Here % means null or any no for characters */
+/* Here % means null or any number of characters */
 ```
 
 Find details of employees whose first_name end in 'A' and has 6 letters
@@ -115,13 +145,22 @@ select MAX(b) from a;
 
 ## Leetcode Problems
 
-* Second highest salary from the Employee table
+### Second highest salary from the Employee table
   ``` sql
   Create table If Not Exists Employee (Id int, Salary int)
   Truncate table Employee
   insert into Employee (Id, Salary) values ('1', '100')
   insert into Employee (Id, Salary) values ('2', '200')
   insert into Employee (Id, Salary) values ('3', '300')
+
+  Employee table:
+  +----+--------+
+  | id | salary |
+  +----+--------+
+  | 1  | 100    |
+  | 2  | 200    |
+  | 3  | 300    |
+  +----+--------+
   ```
   Given the above Employee table, the query should return 200 as the second highest salary. If there is no second highest salary, then the query should return null.
   ``` sql
@@ -141,8 +180,9 @@ select MAX(b) from a;
   SELECT IFNULL((SELECT DISTINCT Salary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET 1), NULL) AS SecondHighestSalary;
   ```
 
-* Employees Earning More Than Their Managers
+### Employees Earning More Than Their Managers
   ``` sql
+  Employee table:
   +----+-------+--------+-----------+
   | Id | Name  | Salary | ManagerId |
   +----+-------+--------+-----------+
@@ -151,6 +191,18 @@ select MAX(b) from a;
   | 3  | Sam   | 60000  | NULL      |
   | 4  | Max   | 90000  | NULL      |
   +----+-------+--------+-----------+
+  ```
+
+  Write a solution to find the employees who earn more than their managers.
+  Return the result table in any order.
+
+  ```sql
+  Output: 
+  +----------+
+  | Employee |
+  +----------+
+  | Joe      |
+  +----------+
   ```
 
   ``` sql
@@ -167,7 +219,7 @@ select MAX(b) from a;
   WHERE a.Salary > b.Salary;
   ```
 
-* Customers Who Never Order
+### Customers Who Never Order
   ``` sql
   /* Customers */
   +----+-------+
@@ -187,20 +239,32 @@ select MAX(b) from a;
   | 2  | 1          |
   +----+------------+
   ```
-  
+  Write a solution to find all customers who never order anything.
+  Return the result table in any order.
+
+  ```sql
+  Output: 
+  +-----------+
+  | Customers |
+  +-----------+
+  | Henry     |
+  | Max       |
+  +-----------+
+  ```
+
   ``` sql
   SELECT * FROM Customers WHERE Id NOT IN (SELECT CustomerId FROM Orders); 
 
   SELECT Name As 'Customers' FROM Customers WHERE Id NOT IN (SELECT CustomerId FROM Orders);
   ```
 
-* 
+### 
 
 --- 
 
 ## Concepts 
 
-### <ins>Single vs Composite Indexes</ins> 
+### Single vs Composite Indexes 
 https://user3141592.medium.com/single-vs-composite-indexes-in-relational-databases-58d0eb045cbe
 
 An index, or more specifically, an index on a column is an additional data structure of the table’s records sorted (typically via b-tree) only on that column. 
@@ -241,7 +305,7 @@ As such, adding unnecessary indexes can actually degrade performance overall
 <br/>
 <br/>
 
-### <ins>Soft delete vs Hard delete</ins>
+### Soft delete vs Hard delete
 
 ```
 Soft deletes: marking data as deleted
@@ -249,6 +313,24 @@ Hard deletes: performing a DELETE on a table
 ```
 
 Soft delete - implemented by adding a Boolean column 'deleted' in the DB and a timestamp of when it was “deleted”
+
+### RAW Datatype:
+
+- RAW datatype can store unstructured data in a column.
+- Stores variable-length binary data that can be queried and inserted but not manipulated. Maximum length is 32767 bytes.
+
+### INSTR Function:
+- Searches the string for a substring and returns the numeric value of the specified character's first occurrence.
+
+### HAVING Clause:
+- Similar to WHERE clause but is used for groups rather than rows.
+
+### Control Flow in SQL (CASE Statement)
+- A control flow function that allows writing if-else or if-then-else logic in a SQL query. Validates various conditions and shows the output when the first condition is true, stopping the traversal. If no condition is true, it executes the else block, showing a null value if the else block is not found.
+
+### Routines and Triggers:
+- **Routines:** Group of multiple commands that can be called whenever required (also known as subroutines).
+- **Triggers:** Special type of stored procedure containing SQL statements fired automatically whenever any database event occurs, residing in the system catalog.
 
 ---
 
@@ -322,51 +404,79 @@ SELECT * FROM orders full outer join customers on orders.customer_id = customers
 
 ---
 
-* TCL stands for Transaction Control Commands used for managing the changes made by DML commands like INSERT, DELETE, and UPDATE. The TCL commands are automatically committed in the database; that's why we cannot use them directly while creating tables or dropping them
+## SQL Language Components
 
-* DELETE -
--DML COMMAND
--Delete Rows from the table one by one
--We can use where clause with Delete to delete single row
--Delete is slower than truncate
--ROLLBACK is possible with DELETE
+### TCL (Transaction Control Language)
 
-DROP-
--DDL COMMAND
--Delete the entire structure or schema
--We can't use where clause with drop
--Drop is slower than DELETE & TRUNCATE
--ROLLBACK IS NOT POSSIBLE WITH DROP
+Transaction Control Language commands manages transactions within a database.   
+It includes commands such as COMMIT, ROLLBACK, and SAVEPOINT to control the outcome of transactions by either making changes permanent (COMMIT), undoing changes (ROLLBACK), or establishing points within a transaction for potential rollbacks (SAVEPOINT).   
+TCL commands ensure the consistency and integrity of data within a database during transactional processing.
+   
+      
+TCL stands for Transaction Control Commands used for managing the changes made by DML commands like INSERT, DELETE, and UPDATE. The TCL commands are automatically committed in the database; that's why we cannot use them directly while creating tables or dropping them
 
-TRUNCATE-
--DDL COMMAND
--Truncate deletes rows at a one goal
--We can't use where clause with Truncate
--Truncate faster than both DELETE & DROP
--Rollback is not possible with Truncate
 
-The TRUNCATE statement in SQL removes all data from the table and free the table's space.
-SQL's DELETE statement removes all data from the table but does not free the table's space.
+* COMMIT Statement:   
+Ends the current transaction and makes all changes performed in the transaction permanent.
 
-* RAW datatype can store unstructured data in a column
-RAW datatype stores variable-length binary data that can be queried and inserted but not manipulated. Its maximum length is 32767 bytes.
+* ROLLBACK Statement:   
+Backs out or cancels the current transaction changes and restores changed data to its previous state.
 
-* In which of the following cases a DML statement is not executed
-The DML statement is used to access and manipulate the data in an existing table. Therefore, it cannot be used in table deletion
+* SAVEPOINT:   
+Establishes a point within a transaction to which you can later roll back.
 
-* The INSTR function searches the string for substring and returns the numeric value of the specified character's first occurrence.
+### DML (Data Manipulation Language)
 
-* The HAVING clause is Similar to WHERE clause but is used for groups rather than rows
+* DML (Data Manipulation Language) commands are responsible for manipulating the data stored in the database.   
+* Primarily used to interact with and manage the data stored in database tables.   
+* They include operations such as SELECT, INSERT, UPDATE, and DELETE.
+* Transaction Control - Typically used within transactions that can be committed or rolled back.
 
-* The COMMIT statement is a transactional command used to end the current transaction and make all changes performed in the transaction permanent.
+Note : A DML statement is not executed in the case of table deletion.   
+DML statements are used to access and manipulate data in an existing table.
 
-The ROLLBACK statement is a transactional command used to back out or cancels the current transaction changes and restores changed data in its previous state.
+### DDL (Data Definition Language)
 
-*  A CASE statement is one of the control flow function that allows us to write an if-else or if-then-else logic in a SQL query. This expression validates various conditions and shows the output when the first condition is true, and stops traversing. If any condition is not true, it executes the else block. It shows a null value if the else block is not found.
+* DDL (Data Definition Language) commands are used to define, manage, and control the structure of the database. They involve operations that impact the schema and structure of the database.   
+* Employed to define and manage the structure of the database, including tables, indexes, constraints, etc.  
+* They include operations such as CREATE, ALTER, DROP
+* Transaction Control - Often implicitly commits the transaction and may not be rolled back in some database systems.
 
-* Routines, also known as subroutines, are the group of multiple commands that can be called whenever required.
+### DELETE vs DROP vs TRUNCATE
 
-Triggers are a special type of stored procedure containing a set of SQL statements that will be fired automatically whenever any database event occurs. It always resides in the system catalog.
+DELETE:
+- DML COMMAND
+- Deletes rows from the table one by one
+- Can use WHERE clause with DELETE to delete a single row
+- Slower than TRUNCATE
+- ROLLBACK is possible with DELETE
+
+DROP:
+- DDL COMMAND
+- Deletes the entire structure or schema (Irrevocably removes the entire table and its associated structure)
+- Cannot use WHERE clause with DROP
+- Slower than DELETE & TRUNCATE
+- ROLLBACK IS NOT POSSIBLE WITH DROP
+- Frees up storage space immediately, Usually used cautiously, as it leads to permanent data loss
+
+TRUNCATE:
+- DDL COMMAND
+- Deletes rows at one go
+- Cannot use WHERE clause with Truncate
+- Faster than both DELETE & DROP (because it doesn't log individual row deletions)
+- Transaction-specific and can be rolled back
+- Truncate statement removes all data from the table and frees the table's space
+- DELETE statement removes all data but does not free the table's space
+
+Summary
+- Use DELETE when you need to selectively remove specific rows from a table.
+- Use DROP when you want to permanently remove a table or other database object.
+- Use TRUNCATE when you want to remove all rows from a table without deleting the table itself, and speed is crucial, especially for large datasets.
+- Always exercise caution, especially with DROP, as it permanently removes data and structures, and the action cannot be undone. Always make sure to have backups before performing irreversible operations.
+
+---
+
+
 
 <!-- ## SQL queries dump
 
