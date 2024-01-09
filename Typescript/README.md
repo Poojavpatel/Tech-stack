@@ -4,6 +4,7 @@
   - [Types](#types-in-typescript)
   - [Enum](#enum-in-typescript)
   - [Type Assertions](#type-assertions)
+  - [Non-null assertion operator](#non-null-assertion-operator)
   - [Partial Type](#partial-type)
   - [Union Type](#union-type)
   - [Never](#never)
@@ -128,6 +129,50 @@ message2.endsWith('d');
 // Type Assertions 
 (<String>message2).endsWith('d');
 (message2 as String).endsWith('d');
+```
+
+### Non-null assertion operator (!)
+
+In TypeScript, the non-null assertion operator (!) is used to assert to the TypeScript compiler that a value is non-null and non-undefined. It tells the compiler to treat the expression as if the value cannot be null or undefined, even if the type system would normally consider it as such.   
+
+It's important to use the non-null assertion operator with caution, as it essentially tells the TypeScript compiler to trust your judgment. If misused, it can lead to runtime errors.
+
+```ts
+let myString: string | null = "Hello, TypeScript";
+
+// Using the non-null assertion operator
+let length: number = myString!.length;
+
+console.log(length); // Compiler knows myString is not null, so it doesn't raise an error
+```
+
+```ts
+/*
+The pop method on an array in JavaScript returns the last element of the array, or undefined if the array is empty.
+Since we want our function to only return number and not null|number, we get an error
+*/
+function getLastElement(arr: number[]): number {
+  if(!arr.length){
+    return 0;
+  }
+
+  const lastElement = arr.pop(); // const lastElement: number | undefined
+  return lastElement; // Error: Type 'number | undefined' is not assignable to type 'number'
+}
+```
+
+```ts
+/*
+Using the non-null assertion operator, we can explicitly assert the type
+*/
+function getLastElement(arr: number[]): number {
+  if(!arr.length){
+    return 0;
+  }
+
+  const lastElement = arr.pop()!; // const lastElement: number
+  return lastElement;
+}
 ```
 
 ### Partial<T> Type

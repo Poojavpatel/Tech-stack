@@ -27,3 +27,12 @@ const result1: number = identity<number>(42);
 type abc = "a" | "b" | "c";
 type RemoveC<TType> = TType extends "c" ? never : TType;
 type ab = RemoveC<abc>;
+
+function getLastElement(arr: number[]): number {
+  if(!arr.length){
+    return 0;
+  }
+
+  const lastElement = arr.pop()!;
+  return lastElement;
+}

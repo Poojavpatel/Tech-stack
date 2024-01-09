@@ -1,4 +1,9 @@
-# Operating Systems and Linux
+## Table of contents
+- [Operating Systems and Linux](#operating-systems-and-linux)
+- [Basic Linux and Unix Commands](#basic-linux-and-unix-commands)
+- [Mac setup](#mac-setup)
+
+## Operating Systems and Linux
 
 * An operating system (or OS) is a **group of computer programs**, including **device drivers, kernels, and other software** that **lets people interact with a computer**
 * It manages computer hardware and software resources
@@ -65,3 +70,16 @@ After the installation completes, restart Gnome Shell by pressing Alt + F2 and t
 *nix just means operating systems that are like the old workhorse Unix. Some examples include Linux, FreeBSD, and Mac OS X (its kernel, Darwin, is based on BSD).
 
 The main relation between *nix and Ruby is just a pragmatic one; most Ruby developers seem to prefer to work on Unix-like OSes (typically Linux or Mac OS X). There's no official relationship, and it's quite possible to work with Ruby on non-*nix OSes like Windows.
+
+--- 
+## Mac setup
+
+### mac change screenshot location
+Press Command + Shift + 5.   
+Click on Options.   
+Now either pick a folder that is listed, or choose Other Location.   
+If you choose Other Locaiton you can navigate to the folder you wish the screenshot to go to, or create a folder if required.
+
+## Mac Shortcuts 
+
+Command ⌘ + `  - To switch between windows of the same application
