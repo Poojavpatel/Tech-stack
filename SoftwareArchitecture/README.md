@@ -15,7 +15,16 @@
   1. [Broker pattern](#broker-pattern)
   1. [Interpreter pattern](#interpreter-pattern)
   1. [Blackboard pattern](#blackboard-pattern)
-* [Relations among patterns](#relations-among-patterns)
+  1. [Relations among patterns](#relations-among-patterns)
+* [Architectural Approaches](#architectural-approaches)
+  1. [Monolithic Architecture](#monolithic-architecture)
+  1. [Microservice Architecture](#microservice-architecture)
+  1. [Serverless](#serverless)
+      1. [DynamoDB Streams](#serverless)
+      1. [MongoDB Change Streams](#serverless)
+* [Software Development Environments](#software-development-environments)
+  1. [Brownfield software development](#brownfield-software-development)
+  1. [Greenfield software development](#greenfield-software-development)
 
 <!-- ### Reference
 
@@ -39,7 +48,7 @@ For example, in the context of mobile applications:
 
 By combining these patterns, developers can create mobile applications that not only communicate effectively with external servers but also have a well-structured and maintainable internal architecture
 
-## Layered pattern
+### Layered pattern
 
 The Layered Pattern, also known as the N-Tier architecture, is a software architecture pattern that divides the software into different layers, where each layer has a specific responsibility and interacts only with adjacent layers. These layers typically include the presentation layer, business logic layer, and data access layer
 
@@ -56,7 +65,7 @@ This layer contains the core functionality and rules of the application. It is r
 **Data Access Layer:**    
 This layer is responsible for interacting with the database or any data storage system. It handles tasks such as querying, updating, and storing data.
 
-### Usage 
+#### Usage 
 1. **Enterprise Software Systems:** These include large-scale business applications like ERP, CRM, and supply chain management systems, which use the Layered Pattern to handle complex business processes by separating the user interface, business logic, and data storage.
 
 2. **Web Applications:** Platforms such as e-commerce websites, CMS, and online banking systems employ the Layered Pattern to separate responsibilities between rendering web pages, managing user interactions, and handling data operations.
@@ -71,7 +80,7 @@ This layer is responsible for interacting with the database or any data storage 
 
 <br/>
 
-## Client-Server pattern
+### Client-Server pattern
 
 The Client-Server Pattern is a widely used architectural pattern in which a piece of software or hardware called the client requests services or resources from another piece of software or hardware called the server. The client-server architecture is built on the principle of dividing the application's functionality or processing between the client and the server, allowing them to focus on specific tasks.
 
@@ -80,7 +89,7 @@ The Client-Server Pattern is a widely used architectural pattern in which a piec
 **Server:** The server is the back-end that stores, processes, and manages data and resources. It responds to client requests by performing the necessary processing and returning the results back to the client.
 
 
-### Example
+#### Example
 
 Consider a web application like an online shopping platform:
 
@@ -89,7 +98,7 @@ Consider a web application like an online shopping platform:
 - The web server processes the request, retrieves the necessary data from the database, and sends the requested information back to the client.
 - The client browser then displays the product information to the user.
 
-### Usage 
+#### Usage 
 
 1. **Networking Applications:** In networking applications, the client-server model is used for communication between different devices on a network. This includes web servers, email servers, and file servers.
 
@@ -105,7 +114,7 @@ Consider a web application like an online shopping platform:
 
 <br/>
 
-## Master-Slave pattern
+### Master-Slave pattern
 
 The Master-Slave Pattern, also known as the Leader-Follower Pattern, is an architectural pattern that involves coordinating and distributing tasks among multiple components in a system. In this pattern, one component, known as the master, controls and manages the overall workflow and delegates tasks to other subordinate components, known as slaves. The slaves perform tasks as instructed by the master and report back their results.
 
@@ -113,11 +122,11 @@ The Master-Slave Pattern, also known as the Leader-Follower Pattern, is an archi
 
 2. **Slave Components:** The slave components perform tasks assigned to them by the master. They report the results back to the master and do not have any autonomy in decision-making beyond their designated tasks.
 
-### Example
+#### Example
 
 An example of the Master-Slave Pattern can be seen in a parallel processing system, where a central server (the master) distributes data processing tasks to multiple computing nodes (slaves). Each computing node processes a part of the data in parallel, and the results are aggregated and combined by the master to produce the final output.
 
-### Usage 
+#### Usage 
 
 The Master-Slave Pattern is generally used in various systems that require parallel processing, load balancing, or distributed computing. Some common use cases include:
 
@@ -141,7 +150,7 @@ Systems that require high computational power, such as video encoding systems or
 
 <br/>
 
-## MVC pattern
+### MVC pattern
 
 The Model-View-Controller (MVC) pattern is a widely used architectural pattern in software development. It separates an application into three main components: the model, the view, and the controller. Each component has its own distinct role, which promotes the separation of concerns and facilitates a more modular and maintainable codebase.
 
@@ -153,7 +162,7 @@ Here are the details about each component:
 
 3. **Controller:** The controller acts as an intermediary between the model and the view. It receives user input from the view, processes it through the model, and updates the view accordingly. It effectively controls the flow of data between the model and the view.
 
-### Example
+#### Example
 Here's an example to illustrate the use of the MVC pattern:
 
 Consider a web application for a blog platform:
@@ -162,7 +171,7 @@ Consider a web application for a blog platform:
 - The view is the web page that displays the blog posts, comments, and other user interface elements.
 - The controller handles user requests, such as creating new blog posts, adding comments, or updating existing content. It interacts with the model to retrieve or modify data and updates the view to reflect the changes.
 
-### Usage 
+#### Usage 
 
 The MVC pattern is commonly used in various software systems, including:
 
@@ -177,7 +186,7 @@ The MVC pattern is commonly used in various software systems, including:
 
 <br/>
 
-## Event-Driven Architecture
+### Event-Driven Architecture
 
 The Event-Driven Architecture (EDA) Pattern is a software architecture pattern where the flow of the system is determined by events such as user actions, messages from other services, or external systems. It enables the communication between decoupled software components through the use of events.
 
@@ -185,13 +194,13 @@ The Event-Driven Architecture (EDA) Pattern is a software architecture pattern w
 
 - **Event Producers and Consumers:** Event producers generate events, and event consumers react to these events and perform actions based on them.
 
-### Example
+#### Example
 
 Here's an example to illustrate the use of the Event-Driven Architecture (EDA) Pattern:
 
 Consider a stock trading platform where various events, such as buy or sell orders, market price changes, and trade executions, trigger specific actions within the system. The system's components react to these events in real-time, enabling traders to make informed decisions and facilitating the execution of trades based on market events.
 
-### Usage
+#### Usage
 
 The Event-Driven Architecture (EDA) Pattern is commonly used in various software systems, including:
 
@@ -204,7 +213,7 @@ The Event-Driven Architecture (EDA) Pattern is commonly used in various software
 4. **Enterprise Integration:** EDA is used in enterprise integration systems to enable communication and data exchange between different enterprise applications and services.
 
 
-### Relation with event bus pattern 
+#### Relation with event bus pattern 
 
 The Event-Driven Architecture (EDA) Pattern and the Event Bus Pattern are related concepts, but they are not exactly the same. The Event-Driven Architecture (EDA) Pattern refers to the overall architectural approach that emphasizes the production, detection, consumption, and reaction to events that occur within a system. On the other hand, the Event Bus Pattern is a specific implementation or a messaging infrastructure that facilitates the communication and distribution of events among various components of a system.
 
@@ -219,7 +228,7 @@ In summary, the Event Bus Pattern is a specific implementation that facilitates 
 
 <br/>
 
-## Event Bus pattern
+### Event Bus pattern
 
 The Event Bus Pattern is a design pattern that facilitates communication between different components of a system by using an event bus as a central communication channel. It allows various parts of the system to communicate with each other without needing to be directly aware of each other's existence. Components can publish events to the event bus, and other components can subscribe to specific types of events from the event bus.
 
@@ -227,11 +236,11 @@ The Event Bus Pattern is a design pattern that facilitates communication between
 
 - **Publish-Subscribe Model:** Components can publish events to the event bus, and other interested components can subscribe to specific types of events from the event bus.
 
-### Example
+#### Example
 
 Consider a large e-commerce platform with various services handling different functionalities such as inventory management, order processing, and customer support. By implementing an event bus, these services can communicate with each other by publishing and subscribing to relevant events. For instance, when a new order is placed, the order processing service can publish an event to the event bus, which triggers the inventory management service to update the available stock and the customer support service to send an order confirmation email to the customer.
 
-### Usage
+#### Usage
 
 1. **Microservices Architecture:** In a microservices-based system, the Event Bus Pattern can be used to facilitate communication and data exchange between different services without creating tight coupling between them.
 
@@ -243,7 +252,7 @@ Consider a large e-commerce platform with various services handling different fu
 
 <br/>
 
-## Repository pattern
+### Repository pattern
 
 The Repository Pattern is a design pattern that mediates between the application's data access logic and the business logic. It centralizes data access logic in a common repository, which allows the rest of the application to access the data through a simple and consistent interface. The repository acts as a middle layer between the data source and the application.
 
@@ -253,11 +262,11 @@ Some key details about the Repository Pattern:
 
 - **Centralized Data Access Logic:** By centralizing data access logic, the Repository Pattern helps in managing data-related operations more efficiently and in a standardized manner.
 
-### Example
+#### Example
 
 Consider a web application for a blog platform. The application utilizes a repository to handle all data access operations related to blog posts, such as retrieving blog posts from the database, adding new blog posts, updating existing posts, and deleting posts. The repository provides a standardized interface for the application to interact with the underlying data source, allowing the application to perform these operations without needing to know the details of the data access implementation.
 
-### Usage
+#### Usage
 
 1. **Data-Driven Applications:** The Repository Pattern is widely used in data-driven applications, such as those that involve data retrieval, storage, and manipulation.
 
@@ -269,7 +278,7 @@ Consider a web application for a blog platform. The application utilizes a repos
 
 <br/>
 
-## Publish-Subscribe Pattern/Observer pattern
+### Publish-Subscribe Pattern/Observer pattern
 
 The Publish-Subscribe Pattern is a messaging pattern that involves the communication between message senders, known as publishers, and message receivers, known as subscribers. Publishers send messages, or events, without any knowledge of which subscribers, if any, there may be. Subscribers express interest in one or more types of messages and only receive messages that are of interest to them.
 
@@ -277,11 +286,11 @@ The Publish-Subscribe Pattern is a messaging pattern that involves the communica
 
 - **Asynchronous Communication:** The pattern enables asynchronous communication between components, as publishers and subscribers do not need to be actively communicating at the same time.
 
-### Example
+#### Example
 
 Consider a stock market monitoring application that receives real-time data from various stock exchanges. The application employs a publish-subscribe mechanism where the stock exchanges act as publishers, sending updates on stock prices and market changes. The application's subscribers, such as traders and market analysts, receive the relevant data they are interested in and can make informed decisions based on the received information.
 
-### Usage
+#### Usage
 
 1. **Event-Driven Architectures:** The Publish-Subscribe Pattern is a fundamental component of event-driven architectures, enabling the decoupling of event producers and consumers.
 
@@ -293,7 +302,7 @@ Consider a stock market monitoring application that receives real-time data from
 
 <br/>
 
-## Peer to Peer pattern
+### Peer to Peer pattern
 
 
 The Peer-to-Peer Pattern is a network architecture pattern where each node or device in the network can act both as a client and a server, sharing resources and information directly with other nodes without the need for a centralized server. This pattern enables the decentralized sharing of data and computing resources among the participants in the network.
@@ -301,11 +310,11 @@ The Peer-to-Peer Pattern is a network architecture pattern where each node or de
 - **Decentralized Architecture:** The Peer-to-Peer Pattern operates on a decentralized architecture, allowing nodes to communicate and share resources without relying on a central server.
 
 - **Resource Sharing:** Nodes in a peer-to-peer network can share various resources, such as processing power, storage, and data, directly with other nodes in the network.
-### Example
+#### Example
 
 Consider a file-sharing application where users can share files directly with each other without the need for a central server. Each user's device acts as both a client and a server, allowing them to upload and download files to and from other users in the network. This peer-to-peer architecture facilitates efficient and decentralized file sharing among the application's users.
 
-### Usage
+#### Usage
 
 1. **File Sharing Applications:** Peer-to-peer networks are often used in file sharing applications, enabling users to share files directly between their devices without relying on a central server.
 
@@ -317,7 +326,7 @@ Consider a file-sharing application where users can share files directly with ea
 
 <br/>
 
-## Pipe Filter pattern
+### Pipe Filter pattern
 
 The Pipe Filter Pattern is a design pattern that facilitates the processing of data through a series of components called filters. Data flows through these filters in a pipeline, with each filter performing a specific operation on the data. The pattern enables the construction of complex data processing systems by combining multiple filters to achieve the desired outcome.
 
@@ -326,11 +335,11 @@ Some key details about the Pipe Filter Pattern:
 - **Data Processing Pipeline:** The Pipe Filter Pattern uses a data processing pipeline, where data passes through a sequence of filters, with each filter performing a specific transformation or analysis.
 
 - **Modularity and Reusability:** The pattern promotes modularity and reusability by allowing the easy combination and reconfiguration of different filters to create various data processing workflows.
-### Example
+#### Example
 
 Consider a data processing system that receives a stream of raw data. The system uses a series of filters, including data validation, data normalization, and data enrichment, to process the incoming data. Each filter in the pipeline performs a specific operation on the data, and the processed data is then passed to the next filter in the sequence. This enables the system to efficiently transform and analyze the incoming data stream to derive meaningful insights or store it in a structured format.
 
-### Usage
+#### Usage
 
 1. **Data Processing Systems:** The pattern is widely used in data processing systems, such as those used for data transformation, data validation, and data analysis.
 
@@ -343,7 +352,7 @@ Consider a data processing system that receives a stream of raw data. The system
 <br/>
 
 
-## Space-Based Architecture
+### Space-Based Architecture
 
 The Space-Based Architecture Pattern is a distributed computing architecture that emphasizes the use of a shared, scalable, and dynamically reconfigurable space for communication and coordination between components. In this pattern, components interact by reading and writing data to a shared space, enabling loosely coupled and highly scalable systems.
 
@@ -352,11 +361,11 @@ The Space-Based Architecture Pattern is a distributed computing architecture tha
 - **Loose Coupling:** Components in a space-based system interact indirectly through the shared space, promoting loose coupling and enabling flexible communication between different components.
 
 
-### Example
+#### Example
 
 Consider a distributed system for processing real-time data streams in an IoT environment. The system utilizes a shared space to collect and distribute data from various IoT devices. Different components, such as data processors and analytics modules, interact through the shared space, enabling efficient and scalable processing of incoming data streams. This space-based architecture allows the system to handle a large volume of data and dynamically scale based on the processing requirements.
 
-### Usage
+#### Usage
 
 1. **Distributed Caching Systems:** Space-based architectures are often used in distributed caching systems to store and manage cached data across multiple nodes in a distributed environment.
 
@@ -371,7 +380,7 @@ Consider a distributed system for processing real-time data streams in an IoT en
 
 
 
-## Broker pattern
+### Broker pattern
 
 The Broker Pattern is a design pattern that facilitates communication and coordination between distributed components in a system through the use of a central broker. The broker acts as an intermediary that receives requests from clients, processes them, and routes them to the appropriate services or components. It enables efficient communication and decouples the components from each other, promoting scalability and flexibility.
 
@@ -381,11 +390,11 @@ The Broker Pattern is a design pattern that facilitates communication and coordi
 
 - **Decoupling of Components:** By decoupling the components from direct communication with each other, the broker pattern promotes modularity and flexibility in the system's design.
 
-### Example
+#### Example
 
 Consider an e-commerce platform where different services, such as inventory management, order processing, and payment processing, are distributed across multiple servers. The platform utilizes a central message broker that receives requests from clients, such as new orders or inventory updates, and routes these requests to the appropriate services for processing. This broker enables efficient communication and coordination between the different components of the e-commerce platform.
 
-### Usage
+#### Usage
 
 1. **Message Brokers:** The pattern is widely used in message-oriented middleware, such as message queues and message-oriented middleware (MOM), to enable asynchronous communication and message routing between distributed components.
 
@@ -400,7 +409,7 @@ Consider an e-commerce platform where different services, such as inventory mana
 
 
 
-## Interpreter pattern
+### Interpreter pattern
 
 The Interpreter Pattern is a design pattern that is used to define the grammar for interpreting a language or script and to subsequently create an interpreter that can evaluate sentences or expressions in that language. It is commonly used in scenarios where there is a need to interpret and execute specific instructions or expressions in a domain-specific language.
 
@@ -411,11 +420,11 @@ The Interpreter Pattern is a design pattern that is used to define the grammar f
 - **Abstract Syntax Tree:** The Interpreter Pattern often utilizes an abstract syntax tree to represent the hierarchical structure of the language's expressions.
 
 
-### Example
+#### Example
 
 Consider a simple programming language that supports basic arithmetic operations. An interpreter is created for this language that can parse and evaluate arithmetic expressions written in the language. The interpreter breaks down the expressions into tokens and uses a syntax tree to evaluate the expressions, producing the final result. This enables the language to be used for simple mathematical computations within a specific domain.
 
-### Usage
+#### Usage
 
 1. **Programming Language Compilers:** The pattern is used in the design of programming language compilers and interpreters to parse and interpret the code written in a specific programming language.
 
@@ -427,7 +436,7 @@ Consider a simple programming language that supports basic arithmetic operations
 
 <br/>
 
-## Blackboard pattern
+### Blackboard pattern
 
 The Blackboard Pattern is an architectural pattern that involves solving complex problems by breaking them down into smaller, specialized subsystems that work collaboratively on different parts of the problem. These subsystems, known as knowledge sources, operate independently and contribute to a shared repository, known as the blackboard, where they can read and write information. The pattern is especially useful for solving problems that do not have a deterministic solution or require the combination of multiple knowledge sources.
 
@@ -438,11 +447,11 @@ The Blackboard Pattern is an architectural pattern that involves solving complex
 - **Shared Repository:** The blackboard serves as a shared repository where knowledge sources can exchange information and work together to find a solution.
 
 
-### Example
+#### Example
 
 Consider a natural language processing system that aims to translate a complex, technical document. The system utilizes multiple knowledge sources, including language models, grammar analyzers, and domain-specific dictionaries. These sources contribute their insights to a shared blackboard, where they collaborate to generate a high-quality translation of the document. The blackboard facilitates the exchange of information and the coordination of the different knowledge sources to achieve the desired translation outcome.
 
-### Usage
+#### Usage
 
 1. **Artificial Intelligence and Machine Learning:** The pattern is often used in AI and machine learning systems to combine the insights from various algorithms and models to solve complex problems or make decisions.
 
@@ -454,7 +463,7 @@ Consider a natural language processing system that aims to translate a complex, 
 
 <br/>
 
-## Relations among patterns
+### Relations among patterns
 
 * The **Client-Server Pattern** is often used in conjunction with the **Layered Pattern**, where the client represents the presentation layer, and the server typically represents the data layer or business logic layer.
 
@@ -473,3 +482,165 @@ Consider a natural language processing system that aims to translate a complex, 
 * The **Broker Pattern** is commonly used in conjunction with the **Publish-Subscribe Pattern** and the **Space-Based Architecture**, managing communication and coordination between distributed components in the system.
 
 <br/>
+
+---
+
+## Architectural Approaches
+
+### Monolithic Architecture
+* A Monolithic architecture is a traditional approach where an entire application is built as a single, tightly integrated unit
+* The entire application, including its components and services, is developed and deployed as a single unit
+* Monoliths are usually easier to develop and deploy initially
+* This type is Highly coupled as every function is reliant on another 
+* Monoliths communicate within the system since all parts are running in the same process
+   
+**Communication**    
+* Communication Style: Components of the application are often tightly integrated, and communication between them is direct
+* Communication Mechanism: Function calls, method invocations, or shared in-memory data structures are common means of communication.
+
+   
+      
+Suppose you have separate repositories for your frontend and backend code, and they are deployed individually, are they still a monolith?   
+  If multiple applications must always be redeployed together when one changes, they are not microservices. They are parts of a distributed monolith.
+
+What makes something a monolith ?
+- Not how many repositories / containers / lambdas / teams it has
+
+> Tight coupling makes it a monolith
+
+<br/>
+
+
+### Microservice Architecture
+
+* Microservice is decoupling of entire application into small small services 
+* The application is divided into small services, where each microservice is developed and deployed separately
+* Finished application is the sum of its microservices
+* Its easy to add features, make changes, and maintain written code
+* Different services can be simultaneously developed without disrupting others
+* Different services can be written in different languages
+* Isolates falut to a single service, if one service goes down, rest of the app is still working
+
+**Communication**    
+* Microservices can communicate among each other over HTTP using REST API
+* Microservices often communicate over the network using lightweight protocols such as HTTP/REST, messaging systems (e.g., RabbitMQ, Apache Kafka), or other mechanisms like gRPC
+
+
+
+#### Best Practices for Microservice Architecture
+* We can dockerize each microservice 
+* Separate build for each application
+
+
+Is a microservice completely isolated, or can it share databases?   
+What if they use different databases or different tables in same database, or same table too?   
+What matters is how tightly coupled the services are to dependencies, each other, and the data they manage.      
+> Loose coupling and high cohesion make it a microservice
+
+<br/>
+
+### Serverless
+* Serverless computing, also known as Function as a Service (FaaS), is an approach where the execution of code is managed by a cloud provider, and developers only need to focus on writing individual functions or pieces of code.
+* Developers write and deploy functions, which are triggered by events (e.g., HTTP requests, database changes).
+* The cloud provider manages the infrastructure and automatically scales resources based on demand.
+* Developers are billed based on the actual usage of resources, rather than pre-allocated infrastructure.
+* Serverless functions are event-triggered and scale automatically.
+
+**Communication**    
+* Communication Style: Serverless architectures often involve functions that respond to events, and communication is event-driven
+* Communication Mechanism: Functions are triggered by events such as HTTP requests, changes in data storage (e.g., object storage, databases), or other custom events. Communication may also occur through event-driven messaging systems
+
+What makes it serverless?   
+What if the code runs in containers?   
+Whether it’s serverless has nothing to do with if its built on demand or if it uses FaaS   
+What matters is that you don't have to manage the servers. That the instances can scale to zero or there are no instances to think about. That it scales up with demand. That you are only billed for what you use.    
+Monoliths, microservices, databases, storage, API gateways, event buses, and even complex software like machine learning models can be serverless.   
+Not where it's built, Not if it uses functions, Not if it uses containers, Not how many APIs it exposes   
+> The abstraction of infrastructure management makes it serverless
+
+
+**Examples of serverless communication**   
+1. Let's say you have a system for processing and resizing images.   
+When a user uploads an image to a storage system (like Amazon S3), an HTTP request event is generated.   
+This event triggers a serverless function (e.g., an AWS Lambda function) designed to process images.   
+The serverless function is executed in response to the image upload event. It automatically scales based on the incoming workload   
+The function reads the uploaded image, processes it, and then stores the processed image back into the storage system   
+
+1. Real-Time Notifications for New Database Records   
+When a new record is inserted into a database (e.g., an order placed by a customer), an event is generated.   
+Modern databases often have mechanisms for event notification or change tracking.   
+A serverless function, such as an AWS Lambda function, is configured to respond to database insert events.   
+The function is automatically triggered when a new record is added to the database.   
+The serverless function processes the event data, extracting information about the new order.   
+It can then send notifications, such as emails or push notifications, to relevant parties (e.g., customer and support team).
+
+1. Enhanced Scenario with Event-Driven Messaging
+When a new record is inserted into the database, an event is generated   
+A serverless function, such as an AWS Lambda function, is configured to respond to database insert events.   
+The serverless function can publish a message to an event-driven messaging system like AWS SNS.   
+AWS SNS (Simple Notification Service) allows the publication of messages to topics.   
+Subscribers, which can be other serverless functions or services, can subscribe to these topics to receive the messages.   
+Each subscriber can process the message independently, performing specific actions, such as sending notifications or updating other systems.   
+
+    
+   
+**Hooking AWS Lambda to db operations**   
+Modern databases often have mechanisms for event notification or change tracking
+
+**DynamoDB Streams**  
+* To configure an AWS Lambda function to run in response to a change in an Amazon DynamoDB table, you can use DynamoDB Streams
+* DynamoDB Streams captures a time-ordered sequence of item-level modifications in a DynamoDB table and stores this information in a log for up to 24 hours
+* AWS Lambda can then be configured to read from this stream and execute your function in response to changes.
+* In the DynamoDB table settings, enable DynamoDB Streams. This captures changes to the items in the table and stores them in a stream.
+* In the AWS Lambda function configuration, add a trigger. Choose "DynamoDB" as the trigger type and choose the DynamoDB table
+* Your lambda function can now accept events and process each event.Records
+  ```js
+  exports.handler = async (event) => {
+    // Process DynamoDB Stream events here
+    for (const record of event.Records) {
+      console.log('DynamoDB Record:', JSON.stringify(record));
+    }
+
+    return 'Successfully processed DynamoDB stream event';
+  };
+  ```
+* Check the CloudWatch logs for your Lambda function to see the output
+* Refer - https://www.youtube.com/watch?v=7aGYmQ1xDr0
+
+**MongoDB's Change Streams**
+* MongoDB provides a feature called Change Streams that allows you to watch for changes in a collection   
+* In the Lambda function configuration, add environment variables containing the MongoDB connection string and other necessary information
+* In your Lambda function code, use the MongoDB driver for your chosen runtime to connect to the MongoDB database and set up a change stream.
+  ```js
+  exports.handler = async (event) => {
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await client.connect();
+
+    const collection = client.db('your_database').collection('your_collection');
+    const changeStream = collection.watch();
+
+    changeStream.on('change', (change) => {
+        // Your processing logic goes here
+        console.log('MongoDB Change:', JSON.stringify(change));
+    });
+
+    // Keep Lambda function running
+    await new Promise((resolve) => setTimeout(resolve, 30000));
+
+    await client.close();
+    return 'Successfully processed MongoDB change event';
+  };
+  ```
+
+<br/>
+
+---
+
+## Software Development Environments
+
+### Brownfield software development 
+Refers to the development and deployment of a new software system in the presence of existing or legacy software systems. This implies that any new software architecture must take into account and coexist with previously created code
+
+
+### Greenfield software development 
+Refers to developing a system for a totally new environment and requires development from a clean slate – no legacy code around. It is an approach used when you're starting fresh and with no restrictions or dependencies.
