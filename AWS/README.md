@@ -28,7 +28,8 @@ In simple words AWS allows you to do the following things-
 
 ## Databases
 * RDS (Relational Database Service) — Allows you to run relational databases like MySQL, MariaDB, PostgreSQL, Oracle or SQL Server. These databases are fully managed by AWS like installing antivirus and patches.
-* DynamoDB — It is a highly scalable, high-performance NoSQL database. It provides single-digit millisecond latency at any scale.
+* DynamoDB — It is a highly scalable, high-performance NoSQL database. It provides single-digit millisecond latency at any scale.   
+[DynamoDB](./DynamoDB.md)
 * Elasticache — It is a way of caching data inside the cloud. It can be used to take load off of your database by caching most frequent queries.
 * Neptune — It has been launched recently. It is a fast, reliable and scalable graph database service.
 * RedShift — It is AWS’s data warehousing solution that can be used to run complex OLAP queries.

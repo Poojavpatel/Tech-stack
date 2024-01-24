@@ -18,24 +18,31 @@
 - [Databases](Databases/README.md)
 - [SQL](SQL/README.md)
 - [Mongo db](Mongodb/README.md)
+- [DynamoDB](AWS/DynamoDB.md)
 - [Redis](Redis/README.md)
 - [Cassandra](Cassandra/README.md)
+
+**Coding styles**
+- [TDD](TDD/Readme.md)
+- [OOPS](OOPS/README.md)
+- [Solid principles](DesignPatterns/README.MD#solid-principles)
+- [Design patterns](DesignPatterns/README.MD)
+- [DDD](DDD/Implementation/README.md)
 
 **System design**
 - [System Design](System%20Design/README.md)
 - [Software architecture patterns](SoftwareArchitecture/README.md)
 - [Auth](Security%20and%20attacks/README.md)
 
-**Coding styles**
-- [TDD](TDD/Readme.md)
-- [OOPS](OOPS/README.md)
-- [Solid principles and design patterns](DesignPatterns/README.MD)
-- [DDD](DDD/Implementation/README.md)
-
 **Web**
 - [Browsers,HTTP](Browsers%20Http%20Web/README.md)
 - [Jquery and Browser JS](Jquery%20and%20Browser%20JS/README.md)
 - [CSS](CSS%20SCSS%20SASS/README.md)
+
+**DevOps**
+- [DevOps](DevOps/README.md)
+- [AWS](AWS/README.md)
+- [Docker](Docker/README.md)
 
 **OS**
 - [Linux/Unix](Linux/README.md)
@@ -44,12 +51,11 @@
 - [CS Fundamentals](ComputerScience/README.md)
 
 **Others**
-- [AWS](AWS/README.md)
 - [Regex](Regex/README.md)
 - [Kafka](Kafka/README.md)
 - [Git](Git/README.md)
 - [Elastic search](Elastic%20search/README.md)
-- [Docker](Docker/README.md)
+
 
 ---
 

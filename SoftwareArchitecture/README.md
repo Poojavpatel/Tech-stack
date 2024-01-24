@@ -20,8 +20,8 @@
   1. [Monolithic Architecture](#monolithic-architecture)
   1. [Microservice Architecture](#microservice-architecture)
   1. [Serverless](#serverless)
-      1. [DynamoDB Streams](#serverless)
-      1. [MongoDB Change Streams](#serverless)
+      1. [DynamoDB Streams](#dynamodb-streams)
+      1. [MongoDB Change Streams](#mongodbs-change-streams)
 * [Software Development Environments](#software-development-environments)
   1. [Brownfield software development](#brownfield-software-development)
   1. [Greenfield software development](#greenfield-software-development)
@@ -587,7 +587,7 @@ Each subscriber can process the message independently, performing specific actio
 **Hooking AWS Lambda to db operations**   
 Modern databases often have mechanisms for event notification or change tracking
 
-**DynamoDB Streams**  
+#### DynamoDB Streams
 * To configure an AWS Lambda function to run in response to a change in an Amazon DynamoDB table, you can use DynamoDB Streams
 * DynamoDB Streams captures a time-ordered sequence of item-level modifications in a DynamoDB table and stores this information in a log for up to 24 hours
 * AWS Lambda can then be configured to read from this stream and execute your function in response to changes.
@@ -607,7 +607,7 @@ Modern databases often have mechanisms for event notification or change tracking
 * Check the CloudWatch logs for your Lambda function to see the output
 * Refer - https://www.youtube.com/watch?v=7aGYmQ1xDr0
 
-**MongoDB's Change Streams**
+#### MongoDB's Change Streams
 * MongoDB provides a feature called Change Streams that allows you to watch for changes in a collection   
 * In the Lambda function configuration, add environment variables containing the MongoDB connection string and other necessary information
 * In your Lambda function code, use the MongoDB driver for your chosen runtime to connect to the MongoDB database and set up a change stream.

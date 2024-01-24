@@ -1,5 +1,36 @@
 # Javascript
 
+## Table of contents
+* [JS Concepts](#js-concepts)
+    1. [Hoisting](#hoisting)
+    1. [IIFE (Immediately Invoked Function Expression)](#iife-immediately-invoked-function-expression)
+    1. [Scope](#scope)
+    1. [Closure](#closure)
+    1. [Higher Order Functions](#higher-order-functions)
+    1. [Memoization in JavaScript](#memoization-in-javascript)
+    1. [Currying in JavaScript](#currying-in-javascript)
+    1. [Yield in JavaScript](#yield-in-javascript)
+    1. [Call Apply Bind](#call-apply-bind)
+    1. [THIS](#this)
+* [JavaScript Engine](#javascript-engine)
+* [Prototypal Inheritance](#prototypal-inheritance)
+* [Generators and Iterators](#generators-and-iterators)
+* [Asynchronous JS](#asynchronous-js)
+    1. [Understanding how asynchronous calls work](#understanding-how-asynchronus-calls-work)
+    1. [Callbacks](#call-backs)
+    1. [Promise](#promise)
+    1. [Async-await](#async-await)
+* [Array Methods](#array-methods)
+* [Object-oriented Programming in JavaScript](#object-oriented-programming-in-javascript)
+    1. [Class](#class)
+    1. [Instance Methods & Class Methods](#instance-methods--class-methods)
+* [Spread Operator](#spread-operator)
+* [Optimization Techniques](#optimization-techniques)
+* [Fetch, I/O, APIs](#fetch-io-apis)
+* [Common Code](#common-code)
+* [Interview Questions](#interview-questions)
+
+
 ## JS Concepts
 
 ### <ins>Hoisting</ins>
