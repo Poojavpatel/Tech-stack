@@ -18,6 +18,7 @@
 1. [EventEmitter](#eventemitter)
 1. [Setup Basic Server and Using Node](#setup-basic-server-and-using-node)
 1. [Setup a Node Express Server and Connect to mLab Database](#setup-a-node-express-server-and-connect-to-mlab-database)
+1. [Auth](#auth)
 1. [Guess The Output](#guess-the-output)
 
 <br/>
@@ -233,7 +234,7 @@ Can be accessed anywhere in any file
 ---
 ### process.nextTick() and setImmediate()   
 
-> Consoles -> then all process.nextTick -> then all setImmediate
+> Consoles -> then all process.nextTick -> setTimeouts -> then all setImmediate
 
 * Understanding process.nextTick() - Whenever a new queue of operations is initialized we can think of it as a new tick. The process.nextTick() method **adds the callback function to the start of the next event queue**. It is to be noted that, at the start of the program process.nextTick() method is called for the first time before the event loop is processed.
 
@@ -462,6 +463,18 @@ $ node index.js
 ```
 
 ---
+
+## Auth
+
+Refer this file for everything related to authentication including    
+Hashing   
+Encryption   
+SSO
+
+[Authentication](../Auth/README.md)
+
+---
+
 ## Guess The Output
 
 ```javascript

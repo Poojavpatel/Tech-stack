@@ -131,7 +131,7 @@ console.log(name);   // ReferenceError: name is not defined
      }
    )(jquery)
    ```
-1. 
+1. IIFE Closure for Asynchronous Operations in a Loop
    ```js
    for(var i=0; i<3; i++){
      setTimeout(() => {console.log(i)}, 1000)
@@ -149,6 +149,15 @@ console.log(name);   // ReferenceError: name is not defined
    // 0
    // 1
    // 2
+
+   /* 
+    The setTimeout function is asynchronous. 
+    It doesn't execute immediately; it waits for the specified time before executing the provided function.
+    Meanwhile, the loop continues to run, and by the time the setTimeout callbacks are executed, the loop has already finished, and the variable i has reached its final value, which is 3.
+
+    In the second example, an Immediately Invoked Function Expression (IIFE) is used to create a new scope for each iteration of the loop, capturing the current value of i
+    The IIFE ensures that each iteration of the loop has its own scope with a distinct i. The value of i is passed to the IIFE as a parameter, creating a closure. This way, when the setTimeout callbacks are executed, they reference the correct value of i from the specific iteration, producing the expected output of 0, 1, and 2.
+   */
    ```
 
 <br/>
@@ -277,11 +286,37 @@ function saySomething(color){
 <br/>
 <br/>
 
-### Memorization in JavaScript
+### Memoization in JavaScript
 
 * Memoizing in simple terms means memorizing or storing in memory. 
-* A memoized function is usually faster because if the function is called subsequently with the previous value(s), then instead of executing the function, we would be fetching the result from the cache.
-* A memoized function should be a pure function. This means the function execution does not mutate. When called with a certain input, it should always returns the same value regardless of how many times the function will be called.
+* Memoization is an optimization technique in programming where the results of expensive function calls are cached or stored, so that if the same inputs occur again, the previously computed result can be returned instead of recalculating the result.
+* A memoized function should be a pure function. A pure function is a function where the output is solely determined by its input parameters, and it does not have any side effects or mutations
+
+```js
+const memoizedAdd = (() => {
+  const cache = {};
+
+  return (a, b) => {
+    const key = `${a}-${b}`;
+    
+    // Check if result is already in cache
+    if (cache[key]) {
+      return cache[key];
+    }
+
+    const result = a + b;
+
+    // Store result in cache
+    cache[key] = result;
+    return result;
+  };
+})();
+
+console.log(memoizedAdd(2, 3)); // Calculating result and logging: 5
+console.log(memoizedAdd(2, 3)); // Fetching result from cache and logging: 5
+console.log(memoizedAdd(4, 5)); // Calculating result and logging: 9
+console.log(memoizedAdd(4, 5)); // Fetching result from cache and logging: 9
+```
 
 <br/>
 <br/>
