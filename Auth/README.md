@@ -5,7 +5,7 @@ Everything related to Authentication, Authorization, Sessions, web tokens, cooki
 - [Hashing](#hashing)
 - [Encryption](#encryption)
 - [JSON Web Token (JWT)](#json-web-token-jwt)
-- [Explaining Sessions, Tokens, JWT, SSO, and OAuth](#explaining-sessions-tokens-jwt-sso-and-oauth-in-one-diagram)
+- [Explaining Sessions Tokens, JWT, SSO, and OAuth](#explaining-session-tokens-jwt-sso-and-oauth-in-one-diagram)
 - [SAML](#security-assertion-markup-language-saml)
 - [SSO](#sso-single-sign-on)
 
@@ -108,10 +108,64 @@ Example JWT Payload
 
 Note - JWTs are typically not stored on the server, They are designed to be self-contained tokens, meaning all the necessary information is included in the token itself, the client is responsible for storing the JWT
 
+
+#### Advantages of JWT
+
+1. Stateless and Scalable   
+JWTs are stateless, meaning all necessary information is contained within the token itself. This eliminates the need for server-side storage of session information, making it easier to scale applications.
+
+1. Decentralized   
+Since the token carries all necessary information, different services or microservices can independently verify and use the information without relying on a centralized server.
+
+1. Cross-Domain Authentication
+JWTs can be sent as part of an HTTP request header or in the URL, making them suitable for cross-domain authentication in web applications
+
+#### Code to create and verify jwt
+
+```ts
+import * as jwt from 'jsonwebtoken';
+
+const secretKey = 'your-secret-key';
+const user = {
+  id: '123',
+  username: 'john_doe',
+};
+
+// Function to create a JWT
+function createToken(user: any): string {
+  const expiresIn = '1h';
+  const token = jwt.sign(user, secretKey, { expiresIn });
+  return token;
+}
+
+// Function to verify a JWT
+function verifyToken(token: string): any | null {
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    return decoded;
+  } catch (error) {
+    console.error('JWT verification failed:', error.message);
+    return null;
+  }
+}
+
+// Creating a JWT
+const accessToken = createToken(user);
+console.log('Generated JWT:', accessToken);
+
+// Verifying a JWT
+const verifiedUser = verifyToken(accessToken);
+```
+
+
+
+
+
+
 <br/>
 <br/>
 
-### Explaining Sessions, Tokens, JWT, SSO, and OAuth in One Diagram
+### Explaining Session Tokens, JWT, SSO, and OAuth in One Diagram
 
 <p align="left">
 <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F041727d8-aaba-4c1d-8b74-b2c26e2e05e2_1446x1890.png" width="700px" >

@@ -32,7 +32,7 @@
 **System design**
 - [System Design](System%20Design/README.md)
 - [Software architecture patterns](SoftwareArchitecture/README.md)
-- [Auth](Security%20and%20attacks/README.md)
+- [Auth](Auth/README.md)
 
 **Web**
 - [Browsers,HTTP](Browsers%20Http%20Web/README.md)
@@ -49,6 +49,7 @@
 
 **Computer science fundamentals**
 - [CS Fundamentals](ComputerScience/README.md)
+- [Auth](Auth/README.md)
 
 **Others**
 - [Regex](Regex/README.md)

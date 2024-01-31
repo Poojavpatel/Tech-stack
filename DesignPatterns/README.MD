@@ -173,6 +173,9 @@ class OrderService {
     return models.Orders.findById(orderId);
   }
 }
+
+const orderService = new OrderService();
+const orderProcessor = new OrderProcessor(orderService);
 ```
 
 **Adhering to DIP**
@@ -202,6 +205,8 @@ class OrderProcessor {
     order.state = "processed";
   }
 }
+
+/* TODO: mention how to instantiate */
 ```
 
 **TODO**      

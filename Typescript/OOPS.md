@@ -1,4 +1,12 @@
-### Interface
+## Table of contents
+- [Interface](#interface)
+- [Abstract class](#abstract-class)
+- [Interface vs Abstract classes](#interface-vs-abstract-classes)
+- [Inheritance in TypeScript (extends vs implements)](#inheritance-in-typescript-extends-vs-implements)
+- [Class vs Interface](#class-vs-interface)
+
+
+## Interface
 ```typescript
 function drawPoint(point){
   // draw a point with x,y cordinate
@@ -166,6 +174,152 @@ They all have their own implementations of queue, deliver and other methods
 <br/>
 
 ---
+
+## Interface vs Abstract classes 
+What should be used to enforce method implementations ?    
+The choice between using an interface or an abstract class to enforce method implementations depends on whether you need to define a contract (interface) or provide shared behavior with the option for customization (abstract class)
+
+### Use an Interface When:
+
+1. Defining Contracts: Interfaces are primarily used to define contracts or shapes that classes must adhere to. They specify the structure (properties and methods) that implementing classes must provide.
+
+1. Multiple Implementations: A class can implement multiple interfaces. This allows for greater flexibility in composing behavior from various sources.
+
+1. Loose Coupling: When you want to ensure loose coupling between classes, interfaces are a good choice. They allow different classes to conform to a common contract without being tightly bound to a common base class.
+
+1. Agility and Composition: Interfaces promote a more agile and compositional approach. They enable you to add functionality to classes in a modular way without worrying about class hierarchies.
+
+1. No Shared Implementation: Interfaces do not contain any implementation details. They only declare the structure of methods and properties, leaving the actual implementation to the classes that implement them.
+
+### Use an Abstract Class When:
+
+1. Common Implementation: Abstract classes can provide a common base with shared implementation details. They allow you to define methods that have a default implementation while still enforcing derived classes to provide their own implementations for certain methods.
+
+1. Code Reuse: When you have a group of related classes that share common methods or properties, abstract classes can help avoid code duplication by centralizing the shared logic in one place.
+
+1. Partial Implementations: Abstract classes can have abstract methods (methods without implementation) that must be implemented by derived classes. This enforces a contract while still allowing for shared behavior.
+
+1. Constructor Logic: If you need to enforce a specific constructor signature or include constructor logic that should be shared among derived classes, abstract classes are the way to go.
+
+1. Method Overriding: Abstract classes allow you to mark methods as abstract, indicating that they must be overridden by derived classes. This is useful when you want to ensure that certain methods are provided by subclasses.
+
+```typescript
+/* A combination of abstract class and interface can be used as well, refer eg under extends vs implements */
+abstract class Vehicle {
+  abstract drive(): void;
+}
+
+interface Flyable {
+  fly(): void;
+}
+
+class Car extends Vehicle {
+  drive() {
+    console.log("Car drives.");
+  }
+}
+
+class Helicopter extends Vehicle implements Flyable {
+  drive() {
+    console.log("Helicopter drives.");
+  }
+
+  fly() {
+    console.log("Helicopter flies.");
+  }
+}
+
+// In this example, Car extends Vehicle to inherit the drive method, while Helicopter extends Vehicle and implements Flyable to provide both driving and flying behavior.
+```
+
+<br/>
+
+---
+## Inheritance in TypeScript (extends vs implements)
+
+*extends (Inheritance) - Class to Class Relationship*    
+*implements (Interface Implementation) - Class to Interface Relationship*   
+
+The extends keyword is used when you want to create a new class that is a child or subclass of an existing class. It signifies inheritance, allowing the new class to inherit properties and methods from the parent class.    
+
+The implements keyword is used when a class agrees to adhere to the structure defined by an interface. It enforces that the class must provide implementations for all the properties and methods declared in the interface.
+
+* We can extend only once class, we can implement multiple interfaces
+* When implementing an interface, all properties and methods defined in the interface needs to be defined in the subclass
+* When extending a class, use super.parentMethod() to call parent method
+
+```typescript
+//// implements
+interface IHuman {
+	breath() : void;
+	name : string;
+}
+
+interface IAthelete {
+	run(): void;
+}
+
+class Student implements IHuman, IAthelete { // Property 'run' is missing in type 'Student' but required in type 'IAthelete'
+	name: string;
+	breath(): void {
+		console.log('Student Breathing')
+	}
+	run(): void {
+		console.log('Student running')
+	}
+}
+
+const pooja = new Student();
+pooja.breath();
+pooja.run();
+console.log(pooja.name);
+```
+
+```typescript
+class Human {
+	breath () {
+		console.log('Human Breathing')
+	}
+	walk () {
+		console.log('Human walking')
+	}
+}
+
+class Student2 extends Human{
+	learn () {
+		console.log('Student2 learning');
+	}
+	walk() {
+		super.walk();
+		console.log('Walk completed');
+	}
+}
+
+const swati = new Student2();
+swati.learn();
+swati.breath();
+swati.walk();
+```
+
+```typescript
+/* In real world application a class can do both as well */
+export interface IEmailNotificationDelivery {
+  isDeliveryPossible(notification: EmailNotification): Promise<Result<boolean>>;
+  queue(notifications: EmailNotification[]): Promise<Result<boolean>>;
+  queueWithCaching(notifications: EmailNotification[]): Promise<Result<boolean>>;
+}
+
+export class EmailNotificationDelivery
+  extends BaseNotificationDelivery<EmailNotification>
+  implements IEmailNotificationDelivery
+{
+}
+```
+
+<br/>
+
+---
+
 ## Class vs Interface
 Here are some guidelines to help you determine when to use a class and when to use an interface
 
@@ -263,151 +417,3 @@ class Fish implements Swimmable {
 ```
 
 4. You Want to Keep Implementation Details Separate: If you want to separate the declaration of an object's shape (using an interface) from its actual implementation (using a class), interfaces provide a clear separation of concerns.
-
----
-## Inheritance in TypeScript (extends vs implements)
-
-*extends (Inheritance) - Class to Class Relationship*    
-*implements (Interface Implementation) - Class to Interface Relationship*   
-
-The extends keyword is used when you want to create a new class that is a child or subclass of an existing class. It signifies inheritance, allowing the new class to inherit properties and methods from the parent class.    
-
-The implements keyword is used when a class agrees to adhere to the structure defined by an interface. It enforces that the class must provide implementations for all the properties and methods declared in the interface.
-
-* We can extend only once class, we can implement multiple interfaces
-* When implementing an interface, all properties and methods defined in the interface needs to be defined in the subclass
-* When extending a class, use super.parentMethod() to call parent method
-
-```typescript
-//// implements
-interface IHuman {
-	breath() : void;
-	name : string;
-}
-
-interface IAthelete {
-	run(): void;
-}
-
-class Student implements IHuman, IAthelete { // Property 'run' is missing in type 'Student' but required in type 'IAthelete'
-	name: string;
-	breath(): void {
-		console.log('Student Breathing')
-	}
-	run(): void {
-		console.log('Student running')
-	}
-}
-
-const pooja = new Student();
-pooja.breath();
-pooja.run();
-console.log(pooja.name);
-```
-
-```typescript
-class Human {
-	breath () {
-		console.log('Human Breathing')
-	}
-	walk () {
-		console.log('Human walking')
-	}
-}
-
-class Student2 extends Human{
-	learn () {
-		console.log('Student2 learning');
-	}
-	walk() {
-		super.walk();
-		console.log('Walk completed');
-	}
-}
-
-const swati = new Student2();
-swati.learn();
-swati.breath();
-swati.walk();
-```
-
-```typescript
-/* In real world application a class can do both as well */
-export interface IEmailNotificationDelivery {
-  isDeliveryPossible(notification: EmailNotification): Promise<Result<boolean>>;
-  queue(notifications: EmailNotification[]): Promise<Result<boolean>>;
-  queueWithCaching(notifications: EmailNotification[]): Promise<Result<boolean>>;
-}
-
-export class EmailNotificationDelivery
-  extends BaseNotificationDelivery<EmailNotification>
-  implements IEmailNotificationDelivery
-{
-}
-```
-
-<br/>
-
----
-
-## Interface vs Abstract classes 
-What should be used to enforce method implementations ?    
-The choice between using an interface or an abstract class to enforce method implementations depends on whether you need to define a contract (interface) or provide shared behavior with the option for customization (abstract class)
-
-### Use an Interface When:
-
-1. Defining Contracts: Interfaces are primarily used to define contracts or shapes that classes must adhere to. They specify the structure (properties and methods) that implementing classes must provide.
-
-1. Multiple Implementations: A class can implement multiple interfaces. This allows for greater flexibility in composing behavior from various sources.
-
-1. Loose Coupling: When you want to ensure loose coupling between classes, interfaces are a good choice. They allow different classes to conform to a common contract without being tightly bound to a common base class.
-
-1. Agility and Composition: Interfaces promote a more agile and compositional approach. They enable you to add functionality to classes in a modular way without worrying about class hierarchies.
-
-1. No Shared Implementation: Interfaces do not contain any implementation details. They only declare the structure of methods and properties, leaving the actual implementation to the classes that implement them.
-
-### Use an Abstract Class When:
-
-1. Common Implementation: Abstract classes can provide a common base with shared implementation details. They allow you to define methods that have a default implementation while still enforcing derived classes to provide their own implementations for certain methods.
-
-1. Code Reuse: When you have a group of related classes that share common methods or properties, abstract classes can help avoid code duplication by centralizing the shared logic in one place.
-
-1. Partial Implementations: Abstract classes can have abstract methods (methods without implementation) that must be implemented by derived classes. This enforces a contract while still allowing for shared behavior.
-
-1. Constructor Logic: If you need to enforce a specific constructor signature or include constructor logic that should be shared among derived classes, abstract classes are the way to go.
-
-1. Method Overriding: Abstract classes allow you to mark methods as abstract, indicating that they must be overridden by derived classes. This is useful when you want to ensure that certain methods are provided by subclasses.
-
-```typescript
-/* A combination of abstract class and interface can be used as well, refer eg under extends vs implements */
-abstract class Vehicle {
-  abstract drive(): void;
-}
-
-interface Flyable {
-  fly(): void;
-}
-
-class Car extends Vehicle {
-  drive() {
-    console.log("Car drives.");
-  }
-}
-
-class Helicopter extends Vehicle implements Flyable {
-  drive() {
-    console.log("Helicopter drives.");
-  }
-
-  fly() {
-    console.log("Helicopter flies.");
-  }
-}
-
-// In this example, Car extends Vehicle to inherit the drive method, while Helicopter extends Vehicle and implements Flyable to provide both driving and flying behavior.
-```
-
-<br/>
-
----
-

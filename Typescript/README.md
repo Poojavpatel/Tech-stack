@@ -53,6 +53,13 @@ tsc index.ts | node index.js
 tsc --target ES6 index.ts
 ```
 
+```bash
+# OR use ts-node package
+ts-node app/index.ts
+```
+
+
+
 ---
 
 ## OOPS in Typescript 
