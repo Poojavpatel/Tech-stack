@@ -3,11 +3,24 @@
 1. [What is System Design](#what-is-system-design)
 1. [System design basics](#system-design-basics)
    1. [Key Characteristics of Distributed Systems](#key-characteristics-of-distributed-systems)
+      1. [Scalability](#1-scalability)
+      1. [Reliability](#2-reliability)
+      1. [Availability](#3-availability)
+      1. [Efficiency](#4-efficiency)
+      1. [Serviceability or Manageability](#5-serviceability-or-manageability)
    1. [Load Balancing](#load-balancing)
    1. [Caching](#caching)
+      1. [Cache invalidation](#cache-invalidation)
+      1. [Cache eviction](#cache-eviction-policies)
+          1. [LRU Cache](#cache-eviction-policies)
+      1. [Content Distribution Network (CDN)](#content-distribution-network-cdn)
+      1. [Distributed Caching](#distributed-caching)
    1. [Data Partitioning (Sharding)](#data-partitioning-sharding)
    1. [Indexes](#indexes)
    1. [Proxies](#proxies)
+      1. [Forward Proxy]()
+      1. [Open Proxy]()
+      1. [Reverse Proxy]()
    1. [Redundancy and Replication](#redundancy-and-replication)
    1. [Horizontal vs Vertical Scaling](#horizontal-vs-vertical-scaling)
    1. [CAP Theorem](#cap-theorem)
@@ -46,6 +59,7 @@
    1. [How to Choose the Right Type of Database](#how-to-choose-the-right-type-of-database)
    1. [Databases and Analogies with SQL](#databases-and-analogies-with-sql)
    1. [Databases according to CAP theorem](#databases-according-to-cap-theorem)
+   1. [Can you not scale SQL databases?](#can-you-not-scale-sql-databases)
 1. [Virtualization](#virtualization)
    1. [Bare Metal](#bare-metal)
    1. [Virtual Machines (VMs)](#virtual-machines-vms)
@@ -53,6 +67,8 @@
 1. [API Design](#api-design)
    1. [API rate limiting](#api-rate-limiting)
    1. [Put vs Patch](#put-vs-patch)
+1. [Development and deployment](#development-and-deployment)
+   1. [Deployment strategies](#deployment-strategies)
 1. [Technologies & Frameworks](#technologies--frameworks)
    1. [Kafka](#kafka)
 1. [System Design Interviews - Step by step](#system-design-interviews---step-by-step)
@@ -110,6 +126,8 @@ A system may or may not have presentation layer (eg - logger system)
 <br/>
 
 ### 2. Reliability
+
+  > Reliability is achieved through redundancy
 
 - Considered reliable if it keeps <ins>delivering its services even when one or several of its software or hardware components fail</ins>
 - If a user has added an item to their shopping cart, the system is expected not to lose it.  
@@ -237,56 +255,92 @@ Benefits of Load Balancing
   (Cache invalidation means that when the original data is updates, cache should be in sync and return updated data)  
   (Keeping cache coherent with the source of truth ie database)
 
-<br/>
+What we generally implement redis cache on the Backend,    
+  FE requests for an item, If item not found in cache, fetch fresh from DB, update the cache and send it to FE
 
-- 3 methods for cache invalidation
 
-  1. <ins>Write through Cache</ins> - Data is written into the cache and the corresponding database at the same time
+
+### Cache invalidation
+
+  1. <ins>Write through Cache</ins> - Data is written into the cache and the corresponding database at the same time   
      Latency ↑ ie Speed ↓, Consistency ↑
   1. <ins>Write-around cache</ins> - Data is written directly to db, bypassing the cache  
      disadvantage that a read request for recently written data will create a “cache miss”
-  1. <ins>Write Back cache</ins> - Data is updated on cache only and sent to client, DB update happens after specified intervals or conditions
+  1. <ins>Write Back cache</ins> - Data is updated on cache only and sent to client, DB update happens after specified intervals or conditions   
      Speed ↑ , Latency ↓, Throughput ↑, Risk of data loss
 
   <!-- After making DB update, return response to FE, then update cache    -->
 
+
+
+### Cache eviction policies 
+Methods to decide which cache to clear
+1. <ins>FIFO/ Round Robin</ins>
+1. <ins>Least Recently Used</ins>
+
+    - LRU in redis - https://tokers.github.io/posts/lru-and-lfu-in-redis-memory-eviction/
+
+    - TODO
+      https://www.interviewcake.com/concept/java/lru-cache
+
+    - A Least Recently Used (LRU) Cache organizes items in order of use, allowing you to quickly identify which item hasn't been used for the longest amount of time.
+
+    - Under the hood, an LRU cache is often implemented by pairing a doubly linked list with a hash map.
+
+    - Advantage - Super fast accesses : LRU caches store items in order from most-recently used to least-recently used. That means both can be accessed in O(1) time.
+
+    - Advantage - Super fast updates : Each time an item is accessed, updating the cache takes O(1) time
+
+    - Disadvantage - Space heavy : An LRU cache tracking n items requires a linked list of length n, and a hash map holding n items. That's  O(n) space, but it's still two data structures (as opposed to one)
+
+
+1. <ins>Most Recently Used</ins>
+1. <ins>Least Frequently Used</ins>
+
 <br/>
 
-- ### Cache eviction policies - Methods to decide which cache to clear
-  1. <ins>FIFO/ Round Robin</ins>
-  1. <ins>Least Recently Used</ins>
-  1. <ins>Most Recently Used</ins>
-  1. <ins>Least Frequently Used</ins>
-
-<br/>
-
-- ### Content Distribution Network (CDN)
-- for sites serving large amounts of static media
+### Content Distribution Network (CDN)
+- For sites serving large amounts of static media
 - In a typical CDN setup, a request will first ask the CDN for a
   piece of static media; the CDN will serve that content if it has it locally
   available.  
   If it isn’t available, the CDN will query the back-end servers for the
   file, cache it locally, and serve it to the requesting user.
--
 - CDN works because network latency plays a huge role
 - CDN serves file from a region physically/geographically closer to them
 - Since Data is replicated in CDN it prevents a single point of failure
 
-<br/>
-<br/>
+### Distributed Caching
 
----
+Distributed caching is a strategy employed in distributed systems to optimize data access and enhance performance by storing frequently accessed information across multiple nodes. In this approach, a cache system is set up across a network, with each node maintaining a portion of the cached data in a key-value format. When a request is made for specific data, the system first checks the cache. If the data is found (cache hit), it is swiftly returned to the requester, avoiding the need to retrieve it from the primary data storage and thereby reducing latency. In the case of a cache miss, where the requested data is not in the cache, the system fetches the data from the primary storage, updates the cache, and then delivers the data. Distributed caching systems implement scalability by adding more nodes, load balancing to evenly distribute requests, and fault tolerance mechanisms to handle node failures. This strategy significantly improves response times and overall system efficiency by strategically storing and retrieving frequently accessed data in a distributed manner
 
-## Implementation of Cache eviction policies
+#### Tools/Services to implement caching
 
-### LRU
+**Caching**
+1. Local Caching Libraries
+    1. Memcached: A simple and high-performance in-memory caching system
+    1. Redis: An advanced key-value store that supports various data structures.
 
-- Basically your node (object) should contain a field to mark its position in the LRU queue and whenever the node is accessed, it will be moved to the queue head, which means it was used recently. You might have guessed the eviction process: iterating objects from the tail of queue and free some of them
+1. Web Server Caching
+    1. Varnish: A web application accelerator that caches HTTP responses, improving website performance.
 
-- LRU in redis - https://tokers.github.io/posts/lru-and-lfu-in-redis-memory-eviction/
+1. Client-Side Caching
+    1. LocalStorage and SessionStorage: Browser-based storage options for caching data on the client side.
 
-- TODO
-  https://www.interviewcake.com/concept/java/lru-cache
+**Distributed Caching**
+
+1. Distributed Caching Systems
+    1. Redis Cluster: A distributed version of Redis that provides partitioning and high availability.
+    1. Apache Ignite: An in-memory computing platform that includes a distributed cache.
+
+1. Cloud-Based Services
+    1. Amazon ElastiCache: A fully managed caching service supporting both Memcached and Redis.
+    1. Azure Cache for Redis: A fully managed Redis service on the Azure cloud platform.
+
+1. Data Grids
+    1. Hazelcast: An open-source in-memory data grid that supports distributed caching.
+    1. Infinispan: A distributed caching and data grid platform.
+
 
 <br/>
 <br/>
@@ -297,15 +351,17 @@ Benefits of Load Balancing
 
 - Distributing databases accross multiple machines to improve manageability, performance, availability, and load balancing of an application
 
-- Partitioning methods
+Partitioning methods
 
-1. Horizontal Partitioning (Range based partitioning) - Eg - all zip codes below 5000  
+1. Horizontal Partitioning (Range based partitioning)   
+   Eg - all zip codes below 5000  
    Partitions may not be uniform
-1. Vertical Partitioning - divide our data to store tables related to a specific feature  
+1. Vertical Partitioning   
+   divide our data to store tables related to a specific feature  
    Eg photos, user data etc
 1. Directory based Partitioning -
 
-- Partitioning Criteria
+Partitioning Criteria
 
 1. Key or Hash-based partitioning
 1. List partitioning
@@ -348,11 +404,60 @@ Common Problems of Sharding
 - Proxies are used to <ins>filter requests, log requests, or sometimes transform requests (by adding/removing headers, encrypting/decrypting, or compressing a resource)</ins>
 
 Proxy Server Types
+There are several types of proxies, each serving specific functions
 
-- Open Proxy
-  - Anonymous Proxy
-  - Trаnspаrent Proxy
-- Reverse Proxy
+### Forward Proxy (or HTTP Proxy)
+
+Acts on behalf of clients (users) to access resources from the internet.
+Conceals the user's IP address, providing anonymity.
+Often used for content filtering, access control, and improving network performance.
+
+Imagine you want to access the internet, but you don't want websites to know your real identity (your IP address).
+A forward proxy acts like a middleman between you and the websites you visit. When you request a website, the proxy makes the request on your behalf, and the website sees the proxy's IP address instead of yours. It hides your identity.
+
+### Open Proxy
+
+An open proxy, also known as a public proxy, is a proxy server that is accessible to any internet user without any authentication. It means that anyone can connect to and use the open proxy server without requiring any username or password. Open proxies can be intentionally set up for public use, or they may be misconfigured or compromised servers that allow unauthorized access.
+
+Users may use open proxies for anonymity, bypassing content restrictions, security testing, or circumventing censorship
+
+Uses of open proxies
+
+1. Anonymity and Privacy - Users may use open proxies to hide their IP addresses and enhance online anonymity. This can be for privacy reasons or to bypass restrictions imposed by websites or networks
+
+1. Bypassing Content Restrictions - Enables access to geographically restricted or censored content
+
+1. Security Testing - Employed by security professionals for penetration testing and research
+
+1. Load Balancing - Improves performance by distributing network traffic and caching content
+
+1. Web Scraping - Utilized for automated data extraction from websites for various purposes
+
+1. Malicious Activities - Unfortunately, open proxies can be exploited for cybercrimes, such as DDoS attacks and malware distribution.
+
+
+### Reverse Proxy
+
+Operates on behalf of servers, handling requests from clients.
+Enhances security by hiding the server's IP address and handling tasks like load balancing.
+Commonly used to improve web server performance, security, and scalability
+
+Think of a situation where many people want to access a specific website, and that website wants to stay safe and perform well.
+A reverse proxy stands in front of the web server and takes requests on behalf of the server. When users want to access the website, they interact with the reverse proxy, which then communicates with the actual web server to get the content. It helps the server stay hidden and secure.
+
+**Difference between a forward proxy and a reverse proxy**
+
+A forward proxy handles client requests to access the internet, while a reverse proxy manages requests on behalf of servers, enhancing security and performance
+
+### Anonymous Proxy
+
+
+
+### Transparent Proxy
+
+A transparent proxy intercepts and redirects traffic without requiring user configuration, often used for content filtering and caching
+
+TODO : different types of proxies
 
 <br/>
 <br/>
@@ -433,7 +538,11 @@ https://www.youtube.com/watch?v=k-Yaq8AHlFA
 
 ## PACELC Theorem
 
-- ```js
+**Why are network partitions considered inevitable in distributed systems**   
+Network partitions, or temporary breaks in communication between nodes, are inevitable in distributed systems due to factors like geographic distribution, hardware failures, software bugs, network maintenance, and unpredictable events. The CAP theorem acknowledges the presence of partitions and requires a trade-off between ensuring Consistency and Availability in the face of these partitions.
+  
+
+```js
   if(partition P){
     choose between availability A and consistency C
   } else {
@@ -442,6 +551,7 @@ https://www.youtube.com/watch?v=k-Yaq8AHlFA
   ```
 
 - We cannot avoid partition in a distributed system, therefore, according to the CAP theorem, a distributed system should choose between consistency or availability.
+
 
 - ACID (Atomicity, Consistency, Isolation, Durability) databases, such as RDBMSs like MySQL, Oracle, and Microsoft SQL Server, chose consistency (refuse response if it cannot check with peers)
 
@@ -465,10 +575,69 @@ https://www.youtube.com/watch?v=k-Yaq8AHlFA
 
 [What is Consistent Hashing and Where is it used?](https://www.youtube.com/watch?v=zaRkONvyGr8&list=PLMCXHnjXnTnvo6alSjVkgxV-VH6EPyvoX&index=4)
 
+Consistent Hashing is a technique used in distributed computing and data storage systems to distribute data across multiple nodes while minimizing the reorganization of data when the number of nodes changes. It provides a way to efficiently map keys to nodes in a way that remains stable even as nodes are added or removed.
+
+In traditional hashing, when the number of nodes changes, most keys need to be remapped to different nodes, causing significant overhead. Consistent Hashing minimizes this remapping by ensuring that only a fraction of keys need to be moved when the number of nodes changes.
+
+#### How Consistent Hashing Works:
+
+* Ring Structure:
+Nodes and keys are placed on a virtual ring. Each node is assigned a range on the ring, and keys are distributed along the ring.
+
+* Hash Function:
+A hash function is used to map both nodes and keys onto points on the ring. This allows for easy determination of which node is responsible for a given key.
+
+* Adding or Removing Nodes:
+When a new node is added or a node is removed, only the keys that fall within the range of the affected node and its immediate successor need to be remapped. The majority of keys and nodes remain unchanged.
+
+#### Use Cases of Consistent Hashing
+* Load Balancing:
+Distributes traffic across multiple servers in a way that minimizes the need for remapping when servers are added or removed.
+
+* Distributed Databases:
+Efficiently allocates data across nodes, allowing for seamless scaling and rebalancing in distributed database systems.
+
+* Content Delivery Networks (CDNs):
+Determines which server or edge location should serve specific content, ensuring efficient content delivery.
+
+* Peer-to-Peer Networks:
+Allocates responsibility for storing or retrieving data to nodes in peer-to-peer networks.
+
+* Distributed File Systems:
+Decides where to store data blocks across multiple nodes in distributed file systems.
+
+#### Example
+Let's imagine you have a group of friends sitting in a circle, and you want to distribute snacks among them. Each friend has a specific range on the circle assigned to them, and the snacks are placed at different points on the circle.
+
+Now, let's say a new friend joins the group, and they need to be given a portion of the snacks. With a normal approach, you might need to rearrange the snacks for everyone. However, with consistent hashing, the new friend is only responsible for the snacks in their immediate range. This means only the snacks within the new friend's assigned part of the circle and the next friend's part need to be adjusted. The rest of the snacks, belonging to the other friends, remain where they are.
+
+Similarly, if a friend needs to leave, only the snacks within their assigned range and the next friend's range need adjustment. The rest of the snacks stay where they are.
+
+In consistent hashing, when you add or remove a friend (or node), you only need to worry about the specific portion of the "circle" assigned to them and the portion assigned to the next friend. This minimizes the need to reshuffle or redistribute everything, making it more efficient and less disruptive. This concept is applied to efficiently manage data distribution in distributed systems when nodes are added or removed.
+
+In a simple consistent hashing scenario, when a friend leaves, the next friend in the circle not only takes responsibility for the snacks in the leaving friend's range but also for the snacks of the friend who left.
+
+Original Scenario:
+
+Friend A has snacks from position 0 to 10.
+Friend B has snacks from position 11 to 20.
+Friend C has snacks from position 21 to 30.
+
+If Friend B Leaves:
+
+Friend A will now be responsible for snacks from position 0 to 20.
+Friend C remains responsible for snacks from position 21 to 30.
+
+So, you're correct that the immediate next friend (Friend A, in this case) will indeed have more snacks after Friend B leaves.
+
+This behavior is a trade-off in consistent hashing. While it reduces the amount of reshuffling needed when a friend leaves, it can result in some temporary imbalance in the distribution of responsibilities. In practical systems, additional techniques, such as virtual nodes or replication, are often employed to mitigate this imbalance and ensure a more even distribution over time.
+
 <br/>
 <br/>
 
 ## Long-Polling vs WebSockets vs Server-Sent Events
+
+TODO
 
 <br/>
 <br/>
@@ -485,10 +654,37 @@ https://www.youtube.com/watch?v=k-Yaq8AHlFA
    This happens when two titles produce the name hash value  
    To prevent this use multiple hash functions
 
+A Bloom filter is a space-efficient probabilistic data structure used to test whether a given element is a member of a set. It provides a way to quickly check if an element is definitely not in a set or may be in the set. Bloom filters are widely used in various computer science applications where quick set membership tests are crucial.
+
+1. Initialization:
+A Bloom filter starts as an array of bits, all set to 0.
+1. Hash Functions: 
+Multiple independent hash functions are chosen.
+When an element is added to the set, it is hashed by each function, and the corresponding bits in the array are set to 1.
+1. Membership Test: 
+To check if an element is in the set, the same hash functions are applied to the element.
+If all corresponding bits in the array are 1, the element may be in the set (a false positive is possible due to hash collisions).
+If any of the bits are 0, the element is definitely not in the set.
+
+Use Cases
+1. Caching Systems:
+Bloom filters are used in caching systems to quickly check if a requested item is likely to be in the cache before performing a more time-consuming lookup.
+1. Distributed Systems:
+In distributed systems, Bloom filters can be used to reduce the number of unnecessary network requests by quickly checking if an item may exist on a remote node.
+1. Spell Checking:
+Bloom filters are applied in spell-checking algorithms to quickly determine if a word may be misspelled.
+Network Routing Tables:
+1. Bloom filters can be used in network routers to quickly check whether a destination IP address might be in a routing table
+
 <br/>
 <br/>
 
 ## Quorum
+
+A quorum refers to the minimum number of votes or participants required for a decision or operation to be considered valid or successful. It plays a crucial role in distributed systems and databases, ensuring that a sufficient number of nodes agree on a particular action to maintain consistency and reliability. Quorums help prevent issues such as split-brain scenarios and ensure that the system remains operational even in the presence of failures.
+
+TODO
+
 
 <br/>
 <br/>
@@ -528,11 +724,29 @@ TODO : notes from video
 
 ## Message Queue
 
+A message queue is a form of communication between different software components or systems, allowing them to exchange messages asynchronously. In a message queue system, messages are sent by producers and received by consumers. Messages are temporarily stored in the queue until the consumer is ready to process them. This decouples the sender and receiver, allowing for more scalable and flexible communication between components.
+
+Key Concepts of Message Queue:
+
+* Producers: Components or applications that send messages to the queue.   
+* Queue: The storage mechanism that holds messages until they are consumed.   
+* Consumers: Components or applications that retrieve and process messages from the queue.   
+* Asynchronous Communication: Producers and consumers operate independently, and messages are stored in the queue until consumed.   
+
+
+
 TODO : notes
 
 <br/>
 
 ## Distributed message queue
+
+A distributed message queue extends the concept of a message queue to operate across multiple nodes or servers in a distributed system. This allows for communication and coordination between components that may be running on different machines or in different locations.
+
+Popular examples of distributed message queues include Apache Kafka, RabbitMQ, and Amazon SQS (Simple Queue Service). These systems provide features that support reliable, scalable, and fault-tolerant communication in distributed environments.
+
+Example of Distributed Message Queue:
+Consider an e-commerce platform with microservices architecture. Each microservice (e.g., order processing, payment, shipping) runs on different servers. A distributed message queue allows these microservices to communicate by sending messages across the network. For instance, when an order is placed, a message is sent to the distributed queue, and various microservices in different locations consume and process that order.
 
 TODO : notes
 
@@ -731,6 +945,62 @@ Redis - PA EL
 
 Mongo DB - PA EC (default config), PC EC (if configured to write on majority replicas)
 
+### Can you not scale SQL databases?
+Is it true that when you userbase/scale increases you will need to move to a NOSQL db?   
+Many companies with huge scale use SQL, how do they do it ?   
+
+The perception of SQL databases being difficult to scale is changing   
+While it's true that NoSQL databases have been traditionally associated with horizontal scaling, modern SQL databases have evolved and adopted strategies to handle large-scale applications
+
+Companies like Facebook, Google, and Amazon use SQL databases at a massive scale by implementing these strategies. The key is to carefully design the database architecture, leverage modern technologies, and adopt best practices for scalability.    
+
+While NoSQL databases are suitable for certain use cases, SQL databases remain a robust choice for applications that demand strong consistency, complex queries, and transactional integrity at scale.
+
+Here's an explanation of how SQL databases achieve scalability
+1. Horizontal Scaling   
+To overcome the limitations of vertical scaling, modern SQL databases have adopted horizontal scaling strategies.
+Horizontal scaling involves distributing the data and workload across multiple servers, forming a cluster.
+Each server in the cluster is responsible for a portion of the data, and together they handle the overall workload
+
+2. Sharding   
+Sharding is a technique used in horizontal scaling where the dataset is divided into smaller, more manageable parts called shards.
+Each shard is stored on a separate server, allowing the database to distribute the load across multiple machines.
+Sharding can be done based on certain criteria such as ranges of data, geographic location, or other factors
+
+3. Replication   
+Replication involves creating copies of the database and distributing them across multiple servers.
+One server serves as the primary (read and write operations), while others act as replicas (read-only operations).
+This improves read scalability and provides fault tolerance. If one server fails, another can take over.
+
+4. Caching   
+Caching frequently accessed data in memory can significantly improve the performance of SQL databases.
+This is particularly effective for read-heavy workloads, as it reduces the need to fetch data from disk
+
+5. Cloud-Based Solutions
+Cloud platforms offer scalable infrastructure, allowing databases to leverage cloud services for dynamic scaling.
+Auto-scaling features and managed database services make it easier to adapt to varying workloads.
+
+6. Advanced Architectural Designs   
+Database management systems have evolved with features designed for scalability, such as distributed transaction management and global consistency
+
+#### How amazon scales its SQL database
+
+Amazon scales its SQL databases, particularly with Amazon RDS, using the following key strategies:
+
+1. Multi-AZ Deployment: Maintains a primary database with a backup replica in a different location for high availability.
+
+1. Read Replicas: Creates copies of the primary database for handling read queries, distributing the workload.
+
+1. Sharding: Splits large datasets into smaller shards, managed independently for improved scalability.
+
+1. Amazon Aurora: Utilizes the high-performance, distributed architecture of Amazon Aurora for both read and write operations.
+
+1. Elastic Load Balancing: Distributes incoming database traffic across multiple instances, preventing bottlenecks.
+
+1. Auto Scaling and Cloud Infrastructure: Integrates with AWS Auto Scaling for dynamic adjustments based on demand, leveraging the flexibility of cloud infrastructure.
+
+
+
 <br/>
 <br/>
 
@@ -848,12 +1118,35 @@ https://www.youtube.com/watch?v=YSW3UE5AFD4
 
 TODO - Notes from video
 
-### 4 Ways to implement API rate limiting
+API rate limiting is a strategy used to control the rate at which clients or applications can make requests to an API (Application Programming Interface). It is implemented to prevent abuse, ensure fair usage, and protect the API server from being overwhelmed by a large number of requests. By setting limits on the number of requests a client can make within a specified time frame, API rate limiting helps maintain a balance between resource utilization and availability.
 
-1. Token Bucket
-1. Leaky Bucket
-1. Fixed Window
-1. Sliding Window
+
+
+### Ways to implement API rate limiting
+
+1. Token Bucket   
+In this algorithm, clients are assigned tokens at a fixed rate. Each API request consumes a token. When a client runs out of tokens, it must wait until new tokens are replenished.   
+Pros: Simple implementation, allows bursts of requests.   
+Cons: May not be suitable for scenarios where a smooth rate of requests is required.   
+
+1. Leaky Bucket   
+Similar to the token bucket, the leaky bucket algorithm enforces a constant output rate. Requests are added to the "bucket," and if the bucket is full, excess requests are discarded.   
+Pros: Predictable and steady rate limiting.   
+Cons: May result in discarding excess requests, which might not be suitable for certain use cases.   
+
+1. Fixed Window   
+In this approach, a counter is incremented for each request within a fixed time window (e.g., 1 minute). When the counter exceeds the allowed limit, further requests are rejected until the window resets.   
+Pros: Simple to implement.   
+Cons: Prone to sudden spikes in traffic at the start of each time window.   
+
+1. Sliding Window    
+A sliding window log maintains a timestamped log of requests within a time window. By summing up the requests within the window, the rate is calculated and compared against the limit.   
+Pros: More accurate representation of recent request patterns.   
+Cons: Increased implementation complexity compared to fixed window counter.   
+
+1. Distributed Rate Limiting:   
+In distributed systems, rate limiting can be more challenging. A centralized approach may lead to a single point of failure. Distributed rate limiting involves using techniques like consistent hashing or token distribution across nodes to ensure a distributed and scalable solution.
+
 
 <br/>
 <br/>
@@ -872,6 +1165,28 @@ https://www.youtube.com/watch?v=LJajkjI5RHE
 <br/>
 <br/>
 <br/>
+
+---
+
+## Development and deployment
+
+### Deployment strategies
+
+1. Scheduled or Maintenance Window Deployment   
+Scheduled or Maintenance Window Deployment is a traditional strategy where software updates are deployed during predefined off-peak hours or maintenance windows, typically at night, to minimize user impact. This approach involves planned downtime, thorough testing before deployment, and a rollback plan for quick reversion in case of issues. The strategy aims to provide predictability for downtime and reduce disruptions by choosing times of lower user activity.
+
+1. Blue-Green Deployment   
+A blue-green deployment is a software release strategy that minimizes downtime and risk during the deployment process. In this approach, two identical production environments, often referred to as "blue" and "green," are maintained. At any given time, only one of these environments is live and serving production traffic while the other remains inactive.
+
+1. Canary Releases   
+A canary release is a deployment strategy where a new version of an application is gradually rolled out to a subset of users or servers before being made available to the entire user base. This subset of users or servers acts as the "canary in the coal mine," providing early feedback on the new release.   
+In assembly we used Split to release a feature for only some users using feature flags   
+[Split feature flags](https://www.split.io/product/feature-flags/)
+
+1. Emergency (Red-Black) Deployment:   
+In an emergency or red-black deployment, the existing version (red) is replaced entirely by the new version (black). This is a faster deployment strategy suitable for critical fixes or urgent updates.
+
+
 
 ---
 
@@ -1051,28 +1366,33 @@ Ask yourself
 
 # Random Notes
 
-### Why choose S3
+* Why choose S3
 
-- Backed by AWS
-- Reliable
-- SLA
-- Can hook up S3 to CDN
-- Since Data is replicated in CDN it prevents a single point of failure
-- Note - S3 is not mutable
+  - Backed by AWS
+  - Reliable
+  - SLA
+  - Can hook up S3 to CDN
+  - Since Data is replicated in CDN it prevents a single point of failure
+  - Note - S3 is not mutable
 
-### Always save meta data of media in NOSQL databases, as it is more flexible, fast for analysis, Horizontal scalable and you dont have joins
+* Always save meta data of media in NOSQL databases, as it is more flexible, fast for analysis, Horizontal scalable and you dont have joins
 
-### For media, check if we need to support different resolutions and devices
+* For media, check if we need to support different resolutions and devices
 
-### Akamai - Akamai is the leading content delivery network (CDN) services provider for media and software delivery, and cloud security solutions.
+* Akamai - Akamai is the leading content delivery network (CDN) services provider for media and software delivery, and cloud security solutions.
 
-Amazon CloudFront is a global content delivery network (CDN) service built for high-speed, low-latency performance, security, and developer ease-of-use.
+* Amazon CloudFront is a global content delivery network (CDN) service built for high-speed, low-latency performance, security, and developer ease-of-use.
+AWS offers a CDN service called Amazon CloudFront, which integrates seamlessly with S3 to accelerate content delivery.
 
-### Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine
+* If your primary concern is delivering web content (images, videos, scripts) with low latency and high performance, you would typically use a CDN like Akamai or a combination of Amazon S3 and Amazon CloudFront.
 
-### Think about Security and Permission
+* Can i hook up s3 to Akamai? Yes, you can integrate Amazon S3 (Simple Storage Service) with Akamai, and it's a common practice to do so for optimizing content delivery
 
-### In a system design review, in addition to development, it’s often a bonus point to call out operation and maintenance, which many candidates neglect
+* Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine
+
+* Think about Security and Permission
+
+* In a system design review, in addition to development, it’s often a bonus point to call out operation and maintenance, which many candidates neglect
 
 <br/>
 
