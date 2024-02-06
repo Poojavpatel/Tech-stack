@@ -18,9 +18,9 @@
    1. [Data Partitioning (Sharding)](#data-partitioning-sharding)
    1. [Indexes](#indexes)
    1. [Proxies](#proxies)
-      1. [Forward Proxy]()
-      1. [Open Proxy]()
-      1. [Reverse Proxy]()
+      1. [Forward Proxy](#forward-proxy-or-http-proxy)
+      1. [Open Proxy](#open-proxy)
+      1. [Reverse Proxy](#reverse-proxy)
    1. [Redundancy and Replication](#redundancy-and-replication)
    1. [Horizontal vs Vertical Scaling](#horizontal-vs-vertical-scaling)
    1. [CAP Theorem](#cap-theorem)
@@ -637,12 +637,43 @@ This behavior is a trade-off in consistent hashing. While it reduces the amount 
 
 ## Long-Polling vs WebSockets vs Server-Sent Events
 
-TODO
+Refer https://www.pubnub.com/guides/long-polling/
+
+#### Short polling
+Traditionally, web browsers use a pull-based approach to fetch data from servers. The client sends a request to the server, which responds with the requested data. This approach, known as short polling, can create delays in communication as the client has to send requests to check for updates repeatedly.
+
+#### Long-Polling
+On the other hand, long polling is a push-based approach that allows the server to send updates to the client as soon as they are available. Here's how it works:
+1. The client initiates a request to the server, typically through an HTTP request.
+1. Instead of immediately responding, the server holds the request open, keeping the connection active.
+1. If no new data is available, the server waits until it has something to send back.
+1. Once the server has new data or a predefined timeout occurs, it responds to the client with the latest information.
+1. Upon receiving the response, the client immediately sends another request to the server to maintain the connection.
+1. This cycle of sending requests and receiving responses continues, ensuring real-time updates.
+
+Long polling effectively simulates a real-time connection between the client and the server by keeping the request-response cycle open for an extended period. It allows the server to push updates to the client as soon as they are available and eliminates the need for the client to check for updates repeatedly.
+
+Long-Polling is suitable when real-time updates are not critical, and there is no need for bidirectional communication
+
+#### Web sockets
+WebSocket is a full-duplex communication protocol that enables real-time communication between the client and server over a single, long-lived connection. It provides a more efficient and low-latency alternative to long polling. WebSocket enables bidirectional data flow, allowing the client and server to send messages asynchronously. It eliminates the need for frequent HTTP requests and reduces network overhead. WebSocket is well-suited for applications requiring instant updates and real-time interaction.
+
+WebSockets are ideal for applications requiring low-latency, bidirectional communication. It's suitable for real-time features, such as chat applications, online gaming, or collaborative editing tools.
+
+#### Server-Sent Events
+SSE is a unidirectional communication technology that allows the server to push data to the client over a single, long-lived HTTP connection. With SSE, the server can send multiple updates to the client without requiring the client to make requests continuously. The server initiates the connection and sends data as a series of events. The client receives these events and can handle them as needed.
+
+SSE is suitable when you need server-initiated updates in a unidirectional flow (from server to client). It's a simpler alternative to WebSockets for scenarios where bidirectional communication is not necessary.   
+Example: In a financial application where users need real-time stock updates pushed from the server without requiring immediate user input.   
 
 <br/>
 <br/>
 
 ## Bloom Filters
+
+A Bloom filter is a space-efficient probabilistic data structure used to test whether a given element is a member of a set. It provides a way to quickly check if an element is definitely not in a set or may be in the set. Bloom filters are widely used in various computer science applications where quick set membership tests are crucial.
+
+#### Understanding bloom filters
 
 - Suppose you work at a library and a customer approches with a book name, how do you tell him wether you have the book or not, Traversing whole library is possible but inefficient
 - Maintain a Hash - Save a hash which contains names of all books in library, gets bigger with no of books
@@ -654,7 +685,7 @@ TODO
    This happens when two titles produce the name hash value  
    To prevent this use multiple hash functions
 
-A Bloom filter is a space-efficient probabilistic data structure used to test whether a given element is a member of a set. It provides a way to quickly check if an element is definitely not in a set or may be in the set. Bloom filters are widely used in various computer science applications where quick set membership tests are crucial.
+#### How bloom filters work
 
 1. Initialization:
 A Bloom filter starts as an array of bits, all set to 0.
@@ -666,15 +697,23 @@ To check if an element is in the set, the same hash functions are applied to the
 If all corresponding bits in the array are 1, the element may be in the set (a false positive is possible due to hash collisions).
 If any of the bits are 0, the element is definitely not in the set.
 
-Use Cases
+#### Key Characteristics
+
+1. False Positives: Bloom filters can produce false positives (indicating an element is in the set when it's not) but no false negatives (if it says an element is not in the set, it's definitely not).
+
+1. Space Efficiency: Bloom filters are memory-efficient because they use a small number of bits per element compared to traditional data structures like hash tables
+
+1. Quick Membership Tests: Membership tests are extremely fast, as they only involve checking a few bits in the array
+
+#### Use Cases
 1. Caching Systems:
 Bloom filters are used in caching systems to quickly check if a requested item is likely to be in the cache before performing a more time-consuming lookup.
 1. Distributed Systems:
 In distributed systems, Bloom filters can be used to reduce the number of unnecessary network requests by quickly checking if an item may exist on a remote node.
 1. Spell Checking:
 Bloom filters are applied in spell-checking algorithms to quickly determine if a word may be misspelled.
-Network Routing Tables:
-1. Bloom filters can be used in network routers to quickly check whether a destination IP address might be in a routing table
+1. Network Routing Tables:
+Bloom filters can be used in network routers to quickly check whether a destination IP address might be in a routing table
 
 <br/>
 <br/>
@@ -683,7 +722,16 @@ Network Routing Tables:
 
 A quorum refers to the minimum number of votes or participants required for a decision or operation to be considered valid or successful. It plays a crucial role in distributed systems and databases, ensuring that a sufficient number of nodes agree on a particular action to maintain consistency and reliability. Quorums help prevent issues such as split-brain scenarios and ensure that the system remains operational even in the presence of failures.
 
-TODO
+Here are two common use cases where quorum is applied:
+
+Distributed Databases:   
+In distributed databases using techniques like replication or sharding, quorum is employed to determine how many copies of data must agree on a read or write operation.   
+For example, in a system with data replicated across three nodes, a quorum of two may be required for a successful write operation. This means that at least two out of the three nodes must acknowledge the write for it to be considered successful.
+
+   
+Consensus Algorithms:   
+Quorums are fundamental in consensus algorithms, where a group of nodes must agree on a decision or a leader in a distributed system.
+For instance, in the Paxos consensus algorithm, a majority quorum is required for a decision to be accepted. If there are five nodes, at least three must agree for the consensus to be reached.
 
 
 <br/>
@@ -691,10 +739,73 @@ TODO
 
 ## Leader and Follower
 
+In system design, especially in distributed systems, the terms "Leader" and "Follower" often refer to roles assigned to nodes within a group of nodes. These roles play a significant role in achieving coordination, consistency, and fault tolerance in distributed systems
+
+Leader
+* The leader is a designated node responsible for making decisions, coordinating actions, and maintaining overall control of the system.
+* The leader often handles tasks like accepting write requests, making decisions in consensus algorithms, or coordinating the distribution of work among nodes.
+* Having a single leader simplifies decision-making and helps ensure consistency in the system.
+
+Follower
+* Followers are nodes that do not have decision-making authority on their own.
+* They typically replicate data or state from the leader and respond to read requests. In consensus algorithms, followers vote in agreement with the leader.
+* Followers play a crucial role in providing fault tolerance. If the leader fails, followers can elect a new leader or carry out the necessary tasks to maintain system functionality.
+
+#### Use cases
+* Consensus Algorithms:
+In consensus algorithms like Paxos or Raft, the leader is responsible for proposing decisions, and followers accept or reject these proposals. This ensures that the distributed system reaches a consensus on the state of the system.
+
+* Distributed Databases:
+In distributed databases with replication, a leader-follower model is often employed. The leader handles write requests, and followers replicate the data to maintain consistency.
+
+* Load Balancing:
+In systems with load balancing, a leader may be responsible for distributing tasks or requests among the followers to ensure even utilization of resources.
+
+* Fault Tolerance:
+Leaders and followers contribute to fault tolerance. If a leader node fails, followers can promote a new leader, ensuring continuous operation
+
 <br/>
 <br/>
 
 ## Heartbeat
+
+In system design, a "heartbeat" is a regularly transmitted signal or message between nodes or components in a distributed system to indicate their liveliness and status. Heartbeats serve as a form of health check, allowing nodes to monitor the availability and responsiveness of each other.
+
+#### Here's how heartbeat works in system design:
+
+* Regular Signaling   
+Nodes or components send periodic heartbeat signals to indicate that they are still operational and responsive.
+
+* Monitoring Health   
+Other nodes or a central monitoring system receive these heartbeats and use them to assess the health and availability of the sending nodes.
+If a node stops sending heartbeats or exhibits an irregular pattern, it may be considered unhealthy or potentially failed.
+
+* Fault Detection   
+Heartbeats are crucial for detecting faults, failures, or network issues in a distributed system.
+If a node fails to send heartbeats within the expected timeframe, it can trigger actions such as restarting the node, redirecting traffic to healthy nodes, or initiating failover mechanisms.
+
+* Dynamic Configuration   
+Heartbeats can be used to dynamically configure the system based on the current state of nodes. For example, adjusting load balancing or replication based on the health of individual components.
+
+* Preventing Split-Brain Scenarios   
+In systems with multiple nodes or clusters, heartbeats help prevent split-brain scenarios, where nodes become isolated due to network issues. If heartbeats are not received, it can be an indication of network partitioning.
+
+#### Use Cases:
+
+* Cluster Management:   
+Heartbeats are widely used in managing clusters of servers or nodes to ensure that each node is operational and part of the active cluster.
+
+* Load Balancing:   
+Load balancers may use heartbeats to monitor the health of servers and route traffic only to healthy and responsive servers.
+
+* Distributed Databases:   
+In distributed databases, nodes may exchange heartbeats to coordinate tasks, monitor replication status, and detect failures.
+
+* High Availability Systems:   
+Heartbeats are integral to high availability systems where rapid detection and response to node failures are critical.
+
+* Network Monitoring:   
+Heartbeats can be part of network monitoring systems to track the availability and performance of network devices.
 
 <br/>
 <br/>
@@ -706,6 +817,9 @@ TODO
 - Calculate a checksum and store it with data.
   To calculate a checksum, a cryptographic hash function like MD5, SHA-1, SHA-256, or SHA-512 is used. The hash function takes the input data and produces a string (containing letters and numbers) of fixed length; this string is called the checksum.
 - When a system is storing some data, it computes a checksum of the data and stores the checksum with the data. When a client retrieves data, it verifies that the data it received from the server matches the checksum stored. If not, then the client can opt to retrieve that data from another replica.
+
+Interview Question -   
+[In user service how do I verify request came from auth service and not malicious source](../Auth/README.md#interview-questions-related-to-jwt)
 
 <br/>
 <br/>
@@ -741,14 +855,21 @@ TODO : notes
 
 ## Distributed message queue
 
-A distributed message queue extends the concept of a message queue to operate across multiple nodes or servers in a distributed system. This allows for communication and coordination between components that may be running on different machines or in different locations.
+### Message Queue
+In a traditional message queue, communication happens within a single system or application. It's a mechanism for asynchronous communication between components or services within the same application or server. Messages are sent from producers to a central queue, and consumers retrieve and process those messages.
+
+Example of Message Queue:   
+Imagine a simple e-commerce application. The order processing component generates an order message and puts it into a queue. The inventory management component, acting as a consumer, retrieves the order message from the queue and updates the inventory accordingly.
+
+
+### Distributed message queue
+
+A distributed message queue extends the concept of a message queue to operate across multiple nodes or servers in a distributed system. This allows for communication and coordination between components that may be running on different machines or in different locations. This is crucial for building scalable and fault-tolerant systems where components may be distributed across a network.
+
+Example of Distributed Message Queue:   
+Consider an e-commerce platform with microservices architecture. Each microservice (e.g., order processing, payment, shipping) runs on different servers. A distributed message queue allows these microservices to communicate by sending messages across the network. For instance, when an order is placed, a message is sent to the distributed queue, and various microservices in different locations consume and process that order.   
 
 Popular examples of distributed message queues include Apache Kafka, RabbitMQ, and Amazon SQS (Simple Queue Service). These systems provide features that support reliable, scalable, and fault-tolerant communication in distributed environments.
-
-Example of Distributed Message Queue:
-Consider an e-commerce platform with microservices architecture. Each microservice (e.g., order processing, payment, shipping) runs on different servers. A distributed message queue allows these microservices to communicate by sending messages across the network. For instance, when an order is placed, a message is sent to the distributed queue, and various microservices in different locations consume and process that order.
-
-TODO : notes
 
 <br/>
 
@@ -1424,6 +1545,8 @@ AWS offers a CDN service called Amazon CloudFront, which integrates seamlessly w
 <br/>
 
 ## URL Shortening service like TinyURL
+
+https://www.youtube.com/watch?v=zgIyzEEXfiA
 
 (done offline)
 

@@ -13,7 +13,8 @@
 1. [REPL in Node.js](#relp-in-nodejs)
 1. [Asynchronous vs Non-blocking](#asynchronous-vs-non-blocking)
 1. [How to Serve Static Files](#how-to-serve-static-files)
-1. [process.nextTick() and setImmediate()](#process-nexttick-and-setimmediate)
+1. [setTimeout setImmediate setInterval](#settimeout-setimmediate-setinterval)
+1. [process.nextTick() and setImmediate()](#processnexttick-and-setimmediate)
 1. [Difference between readFile and createReadStream](#difference-between-readfile-and-createreadstream)
 1. [EventEmitter](#eventemitter)
 1. [Setup Basic Server and Using Node](#setup-basic-server-and-using-node)
@@ -40,6 +41,14 @@ Node js is a **Runtime environment for executing javacsript code outside of a br
 * Responsive web apps
 * Distributed computing
 * Network application
+
+### My Take
+
+Nodejs is 
+* event-driven
+* single-threaded
+* asynchronous
+* Supports non-blocking I/O operations
 
 
 ## When to use Node js 
@@ -232,6 +241,104 @@ Can be accessed anywhere in any file
   }).listen(8080);
   ```
 ---
+
+### setTimeout setImmediate setInterval
+
+
+In Node.js, setTimeout(), setImmediate(), and setInterval() are functions used to schedule the execution of code at specified intervals
+
+#### setTimeout()
+The setTimeout() function is used to schedule a function or code block to run after a specified delay (in milliseconds)
+
+```js
+console.log('Start');
+
+setTimeout(() => {
+  console.log('Inside setTimeout after 2000ms');
+}, 2000);
+
+console.log('End');
+
+// In this example, "Start" and "End" will be logged first, and after a delay of 2000 milliseconds (2 seconds), "Inside setTimeout after 2000ms" will be logged
+```
+
+#### setImmediate()
+
+The setImmediate() function is used to schedule a function or code block to run in the next iteration of the event loop. It allows executing code immediately after the current event loop cycle.
+
+```js
+console.log('Start');
+
+setImmediate(() => {
+  console.log('Inside setImmediate');
+});
+
+console.log('End');
+// In this example, "Start" and "End" will be logged first, and then "Inside setImmediate" will be logged in the next iteration of the event loop.
+```
+
+#### setInterval()
+
+The setInterval() function is used to repeatedly execute a function or code block at specified intervals
+
+```js
+let count = 0;
+
+const intervalId = setInterval(() => {
+  count++;
+  console.log(`Counter: ${count}`);
+
+  if (count === 5) {
+    clearInterval(intervalId); // Stop the interval after 5 executions
+    console.log('Interval stopped');
+  }
+}, 1000);
+
+// the function inside setInterval will be executed every 1000 milliseconds (1 second), incrementing the counter. The interval will be stopped after the counter reaches 5
+```
+
+```js
+console.log('Start');
+
+// setTimeout example
+setTimeout(() => {
+  console.log('Inside setTimeout after 2000ms');
+}, 2000);
+
+// setImmediate example
+setImmediate(() => {
+  console.log('Inside setImmediate');
+});
+
+// setInterval example
+let count = 0;
+const intervalId = setInterval(() => {
+  count++;
+  console.log(`Interval Counter: ${count}`);
+
+  if (count === 3) {
+    clearInterval(intervalId); // Stop the interval after 3 executions
+    console.log('Interval stopped');
+  }
+}, 1000);
+
+console.log('End');
+
+/*
+Expected Output 
+Start
+End
+Inside setImmediate
+Interval Counter: 1
+Interval Counter: 2
+Interval Counter: 3
+Interval stopped
+Inside setTimeout after 2000ms
+*/
+```
+
+---
+
 ### process.nextTick() and setImmediate()   
 
 > Consoles -> then all process.nextTick -> setTimeouts -> then all setImmediate
