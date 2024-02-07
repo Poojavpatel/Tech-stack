@@ -99,6 +99,21 @@ Use AWS Systems Manager Parameter Store to store configuration data and secrets,
 ### Elastic Compute Cloud (EC2)
 Virtual servers in the cloud
 
+Provides secure and resizable compute capacity in cloud
+
+[Deploying Nodejs code to EC2 and map to your domain using Route53](https://www.youtube.com/watch?v=S45jZCvd2M8)   
+Using Instance connect method, git clone and npm start the server, link your domain name to your EC2 instance using Route53
+
+[Deploying Nodejs code to EC2, setup tunnel](https://www.youtube.com/watch?v=T-Pum2TraX4)   
+Using SSH client, downloading permissions file, using git clone and npm start the server   
+This is how we deployed code in Mosaic, tunnel was setup where we could go and do git pull master and restart server   
+Internally the tunnel has an SSH connection to the EC2 instance   
+
+[Deploying html css website(with download link) to EC2](https://www.youtube.com/watch?v=Islmm-LMu38)   
+Using Instance connect method, download zip file source code from a link using wget
+
+
+
 
 ### Lambda
 AWS’s serverless technology that allows you to run functions in the cloud. It’s a huge cost saver as you pay only when your functions execute.
@@ -167,6 +182,7 @@ It is AWS’s Content Delivery Network (CDN) that consists of Edge locations tha
 <br/>
 
 ### VPC (Virtual Private Cloud)
+
 A Virtual Private Cloud (VPC) is a logically isolated section of the Amazon Web Services (AWS) cloud where you can launch AWS resources in a virtual network that you define. It provides a way to logically isolate and segment your AWS infrastructure, allowing you to create a private and secure environment for your resources
 
 VPCs provide a flexible and scalable foundation for deploying and managing AWS resources. They are a fundamental building block for creating secure, isolated, and customized network environments within the AWS cloud.
@@ -192,6 +208,10 @@ VPCs provide a flexible and scalable foundation for deploying and managing AWS r
 1. VPC Endpoints: VPC endpoints allow you to privately connect your VPC to supported AWS services without requiring internet access. This enhances security and reduces data transfer costs.
 
 1. Peering: VPC peering enables direct communication between VPCs, allowing resources in different VPCs to communicate with each other as if they were on the same network.
+
+#### Subnets
+Subnets can be Public, Private or VPN only subnets    
+Refer https://www.youtube.com/watch?v=70VeggbI39U
    
 
 #### AWS PrivateLink
@@ -243,6 +263,10 @@ Amazon Route 53 is a highly available and scalable cloud Domain Name System (DNS
 
 Amazon Route 53 effectively connects user requests to infrastructure running in AWS – such as Amazon EC2 instances, Elastic Load Balancing load balancers, or Amazon S3 buckets – and can also be used to route users to infrastructure outside of AWS. You can use Amazon Route 53 to configure DNS health checks, then continuously monitor your applications’ ability to recover from failures and control application recovery with Route 53 Application Recovery Controller.
 
+**Demo**   
+[Deploying Nodejs code to EC2 and map to your domain using Route53](https://www.youtube.com/watch?v=S45jZCvd2M8)   
+Using Instance connect method, git clone and npm start the server, link your domain name to your EC2 instance using Route53
+
 Amazon Route 53 can also be used as a [load balancer between two AWS regions](#between-two-regions)
 
 
@@ -283,6 +307,8 @@ Image and video analysis service.
 ---
 
 ## Availability Zone (AZ)
+
+[AWS Global Infrastructure (Regions and availability zones)](https://www.youtube.com/watch?v=WhSDtjrKmpE)
    
 An AWS Availability Zone (AZ) is essentially a data center or a cluster of data centers operated by Amazon Web Services (AWS). Each Availability Zone is isolated from others, but they are all within the same geographical region
 

@@ -6,10 +6,12 @@ Everything related to Authentication, Authorization, Sessions, web tokens, cooki
 - [Encryption](#encryption)
 - [JSON Web Token (JWT)](#json-web-token-jwt)
 - [Explaining Sessions Tokens, JWT, SSO, and OAuth](#explaining-session-tokens-jwt-sso-and-oauth-in-one-diagram)
-- [SAML](#security-assertion-markup-language-saml)
 - [Social sign-in](#social-sign-in)
 - [SSO](#sso-single-sign-on)
-  - [Social sign-in vs SSO](#social-sign-in-vs-sso)
+- [Social sign-in vs SSO](#social-sign-in-vs-sso)
+- [SAML](#security-assertion-markup-language-saml)
+- [OpenId Connect](#openid-connect)
+- [OAuth 2.0](#oauth-20)
 
 <br/>
 
@@ -208,14 +210,6 @@ To ensure that requests coming to your User service originate from the Auth serv
 
 <br/>
 
-## Security Assertion Markup Language (SAML)
-
-Its primary role in online security is that it enables you to access multiple web applications using one set of login credentials
-
-SAML works by passing information about users, logins, and attributes between the identity provider and service providers. Each user logs in once to Single Sign On with the identify provider, and then the identify provider can pass SAML attributes to the service provider when the user attempts to access those services
-
-<br/>
-
 ## Social Sign-In   
 Social sign-in refers to the practice of using credentials from a social media platform (such as Facebook, Google, Twitter, or LinkedIn) to log in to a third-party website or application.   
 Users can sign in to a service using their existing social media account credentials, eliminating the need to create a new account for each service.   
@@ -226,6 +220,8 @@ Benefits
 * Can increase user engagement as it reduces the friction associated with account creation.
 
 ## SSO (Single sign-on)
+
+Refer - https://www.youtube.com/watch?v=O1cRJWYF-g4
 
 Single sign-on is an authentication scheme that allows a user to log in with a single ID to any of several related, yet independent, software systems. True single sign-on allows the user to log in once and access services without re-entering authentication factors
 
@@ -238,10 +234,81 @@ Benefits
 * Enhances security by centralizing authentication processes and reducing the need for users to remember multiple passwords.
 * Simplifies user management and reduces the risk of password-related issues.
 
-MyTake
-Assembly app was 
+My Take:   
+Assembly app had enabled SSO with Slack, since the userbase of assembly is also the userbase of slack, they both were highly integrated   
+When signed into slack, we did not need to enter credentials to sign in to assembly. One common login for all connected apps
 
-### Social sign-in vs SSO
+There are two common protocols for SSO authentication process
+1. [SAML](#security-assertion-markup-language-saml)
+1. [OpenId Connect](#openid-connect)
+
+Common commercial Identity providers (Idps)
+1. Okta
+1. Auth0
+1. OneLogin
+
+### Basic SSO login flow 
+
+<img src="./img/SSO_first.png" width="45%"/>   
+
+
+1. An office worker visits an application Gmail, in SAML terms Gmail is a service provider
+1. Gmail detects that user is form a work domain and returns SAR (SAML authentication request) back to the browser
+1. The browser redirects the user to the identity provider for the company specified in SAR, eg okta Auth0 or OneLogin
+1. The Idp shows a login page where user enters the login credentials 
+1. which are sent to the Idp
+1. One user is authenticated, Idp generates a SAML response (called SAML assertion) and returns it to the browser   
+    SAML assertion is a cryptographically signed XML document that contains information about user and what the user can access with the service provider, in this case Gmail
+1. The browser forwards signed SAML assertion to the service provider Gmail
+1. The service provider validates that the assertion was signed by Idp, validation usually done with public key cryptography
+1. The service provider returns the protected resource to browser based on what the user is allowed to access as specified in SAML assertion
+
+<br/>
+
+**When user navigates to another SSO integrated application**   
+Eg - User did the above SSO login flow with slack, and now navigates to Assembly   
+In our example we will consider workday
+
+
+<img src="./img/SSO_second.png" width="45%"/>
+
+1. In this case, now Workday is the service provider
+1. Workday detects that user is form a work domain and returns SAR (SAML authentication request) back to the browser. Exactly same like Gmail
+1. The browser redirects the user to the identity provider for the company specified in SAR, eg okta Auth0 or OneLogin. Exactly same as above
+1. Since user is already logged in with the Idp, it skips the login process
+1. It generates a SAML assertion for workday, detailing user access, and returns it to the browser
+1. The browser forwards signed SAML assertion to the service provider workday
+1. The service provider validates that the assertion 
+1. and grants user access
+
+<br/>
+
+My Take -    
+1. When user tries to access a work service like Slack, instead of slack showing the login screen to enter credentials, browser redirects user to an Idp like okta and okta shows the login screen   
+1. The user enters credentials, authentication is done by okta, and it returns a SAML assertion to browser
+1. browser sends this SAML assertion to Slack, which slack validates, and user can now access slack
+1. Next time when user access a work service like Assembly, instead of assembly showing the login screen to enter credentials, browser redirects user to an Idp
+1. since user is already logged into the Idp, it directly returns SAML assertion for Assembly to browser
+1. browser sends this SAML assertion to Assembly, which Assembly validates, and user can now access Assembly
+
+Real life example - 
+* Imagine you work in a large office building, and you have a single key (Identity Provider) that grants you access to various rooms and facilities within the building   
+* The key serves as your authentication token, and it is issued by the building's security office.   
+* The office building has different rooms and facilities (Service Providers) such as your office, meeting rooms, gym, and cafeteria.   
+* Each room or facility requires the use of your key for entry.   
+* Once you've used your key to enter the building in the morning, you can move between different rooms throughout the day without having to use the key again.   
+* The key allows you seamless access to authorized areas without the need for repeated authentication.   
+* The doors to each room are equipped with electronic locks that can validate your key (SAML assertion).   
+* The electronic lock checks whether your key is valid and has the necessary permissions to enter the specific room.   
+* Over time, new areas may be added to the building, such as a new lounge or additional meeting rooms.   
+* Your key, issued by the security office (Identity Provider), still provides access to these new areas without requiring you to get a separate key for each.   
+
+<br/>
+
+<br/>
+<br/>
+
+## Social sign-in vs SSO
 
 Social sign-in and Single Sign-On (SSO) are both authentication mechanisms, but they serve different purposes and operate in distinct contexts
 * Scope   
@@ -258,8 +325,39 @@ SSO simplifies the user experience within a connected system of services, elimin
 
 <br/>
 
+## Security Assertion Markup Language (SAML)
+
+> SAML is an XML based open standard for exchanging identity information between services
+
+It is commonly found in the work environment   
+Used by Office 365, box, cloud bees, salesforce, sentry, sharepoint, slack, zendesk, zoom, adobe, etc
+
+Its primary role in online security is that it enables you to access multiple web applications using one set of login credentials
+
+SAML works by passing information about users, logins, and attributes between the identity provider and service providers. Each user logs in once to Single Sign On with the identify provider, and then the identify provider can pass SAML attributes to the service provider when the user attempts to access those services
+
+<br/>
+
 ## What is difference between SAML and SSO?
 
 SAML 2.0 (Security Assertion Mark-up Language) is an umbrella standard that covers federation, identity management and single sign-on (SSO).
 
 <br/>
+
+## OpenId Connect
+
+When we use one google account credentials to signin to youtube, google analytics, gmail, etc, we are using OpenId connect   
+It uses JWT to share identity information between services  
+
+<br/>
+
+## OAuth 2.0
+
+OAuth 2.0 (Open Authorization 2.0) is an open standard authorization framework that provides a method for users to grant third-party applications limited access to their resources without exposing their credentials. It is widely used for enabling secure and delegated access to APIs (Application Programming Interfaces) and web services. OAuth 2.0 is not meant for authentication but focuses on authorization and access delegation.
+
+OAuth 2.0 is widely adopted and used by major internet companies and developers for securing APIs and enabling secure access to user data without exposing credentials. It is important to note that OAuth 2.0 itself does not provide authentication, and it should be combined with other protocols (such as OpenID Connect) if authentication is also required in addition to authorization.
+
+OAuth 2.0 and SSO with SAML are often used together in some scenarios to complement each other. For instance, a user might use SAML for single sign-on into an identity provider, and then OAuth 2.0 to authorize a third-party application to access certain resources on their behalf.
+
+In more complex identity and access management scenarios, protocols like OpenID Connect (which builds on OAuth 2.0) can be used to provide both authentication and authorization, offering a unified solution that combines the strengths of both OAuth 2.0 and SAML.
+
