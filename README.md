@@ -57,6 +57,8 @@
 - [Git](Git/README.md)
 - [Elastic search](Elastic%20search/README.md)
 
+**Data Science**
+- [Data science](DataScience/README.md)
 
 ---
 

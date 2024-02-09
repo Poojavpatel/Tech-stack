@@ -133,12 +133,25 @@ To fix it segregate interface into smaller ones
 
 ## Dependency Inversion principle
 
-**High-level modules:** These are modules or classes that define the main logic of your application (eg - Usecase)   
+[Twitter post by Milan Jovanović](https://twitter.com/mjovanovictech/status/1755497516760531228)   
+[Dependency Inversion Principle 101 - Medium blog](https://mcvalls.medium.com/dependency-inversion-principle-101-efa4a4d5bfa5)   
+
+<!-- <img src="https://pbs.twimg.com/media/F8OreCHXUAAkr8C.jpg" width="40%" />
+
+<br/> -->
+
+<img src="https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg" width="45%" />
+
+<br/>
+
+**High-level modules:** These are modules or classes that define the main logic (business logic) of your application (eg - Usecase)   
 **Low-level modules:** These are modules or classes that perform specific tasks or services that the high-level modules depend on (eg - Repo methods, service methods)   
+**Abstraction:** Abstraction is an abstract class or an interface   
+**Detail:** Detail is everything that isn’t business logic: Data persistence, external services, frameworks, UI, etc.
 
 **The Dependency Inversion Principle states that high-level modules should not depend on low-level modules; both should depend on abstractions** 
 
-* Abstractions should not depend on details. Details should depend on abstractions.
+* Abstractions should not depend on details. Details (concrete implementations) should depend on abstractions.
 * The principle encourages the use of interfaces or abstract classes to define a contract between different components of your system, rather than having concrete implementations depend on each other directly
 * The goal is to reduce coupling between different parts of your codebase, making it more modular, maintainable, and adaptable to changes
 
@@ -167,7 +180,9 @@ class OrderProcessor {
   }
 }
 
-/* Low-level module (Service or Repo method for Data Access) */
+/* Low-level module (Service or Repo method for Data Access)
+OrderService isn’t an abstraction but a concrete class 
+*/
 class OrderService {
   getOrder(orderId: number): Order {
     return models.Orders.findById(orderId);
@@ -178,6 +193,8 @@ const orderService = new OrderService();
 const orderProcessor = new OrderProcessor(orderService);
 ```
 
+> If the OrderService is a detail (it doesn’t have any business logic), coupling a high-level module to the detail could be considered as a design error
+
 **Adhering to DIP**
 * To adhere to the Dependency Inversion Principle, we introduce an abstraction OrderRepository that acts as an intermediary between the high-level and low-level modules
 * The high-level module OrderProcessor now depends on the OrderRepository abstraction, not directly on DatabaseOrderService. 
@@ -185,12 +202,12 @@ const orderProcessor = new OrderProcessor(orderService);
 
 ```ts
 /* Abstraction (Interface) */
-interface IOrderRepository {
+interface IOrderService {
   getOrder(orderId: number): Order;
 }
 
 /* Implementing the abstraction in the low-level module */
-class DatabaseOrderService implements IOrderRepository {
+class OrderService implements IOrderService {
   getOrder(orderId: number): Order {
     return models.Orders.findById(orderId);
   }
@@ -198,15 +215,16 @@ class DatabaseOrderService implements IOrderRepository {
 
 /* High-level module */
 class OrderProcessor {
-  constructor(private orderRepository: IOrderRepository) {}
+  constructor(private orderService: IOrderService) {}
 
   processOrder(orderId: number): void {
-    const order = this.orderRepository.getOrder(orderId);
+    const order = this.orderService.getOrder(orderId);
     order.state = "processed";
   }
 }
 
-/* TODO: mention how to instantiate */
+const orderService: IOrderService = new OrderService(); // Instantiate the interface, not the concrete class
+const orderProcessor = new OrderProcessor(orderService);
 ```
 
 **TODO**      

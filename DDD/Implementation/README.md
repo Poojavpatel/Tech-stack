@@ -268,6 +268,12 @@ Else its an entity
   }
   ```
 
+Notes:   
+* A value object can only have getter methods but no setter methods as value objects are immutable
+* While creating value objects we usually use [factory pattern](../../DesignPatterns/README.MD#factory) and set constructor to private and public methods that create instances.
+* This approach is commonly seen in domain driven design, it makes sure that whenever you instantiate, you can only instantiated in valid states, plus we can add validation in create methods
+* Refer - https://www.youtube.com/watch?v=fO2T5tRu3DE
+
 ### Aggregates 
 * Aggregates are clusters of related entities and value objects treated as a single unit.
 * Each aggregate has an aggregate root, which is an entity serving as the entry point for interactions with the aggregate
@@ -307,6 +313,14 @@ Else its an entity
     }
   }
   ```
+
+Note :   
+* Refer - https://www.youtube.com/watch?v=fO2T5tRu3DE
+* All setters in an Aggregate should be private, as we do not want entities to be changeable outside of the scope of the aggregate class. If we want to change a value, we can do that explicitly exposing some method to change the entity (this is different from how we implemented it at assembly, our setters were public)
+
+<br/>
+<br/>
+
 
 ### Entities 
 * These are objects with distinct identities that are defined by their unique identifiers   
