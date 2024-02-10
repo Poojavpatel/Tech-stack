@@ -19,6 +19,8 @@
     1. [Understanding how asynchronous calls work](#understanding-how-asynchronus-calls-work)
     1. [Callbacks](#call-backs)
     1. [Promise](#promise)
+        * [Types of promises](#types-of-promises)
+        * [Bluebird](#bluebird)
     1. [Async-await](#async-await)
 * [Array Methods](#array-methods)
 * [Object-oriented Programming in JavaScript](#object-oriented-programming-in-javascript)
@@ -664,6 +666,8 @@ createPost({ title:"Post 3", body:"This is Post 3" }, getPosts)
 
 ### Promise
 
+> Promises represent a value that may be available now, or in the future, or never.
+
 >Promise constructor takes only one argument,a callback function.\
 Callback function takes two arguments, resolve and reject\
 Perform operations inside the callback function and if everything went well then call resolve.\
@@ -693,6 +697,138 @@ createPost({ title:"Post 3", body:"This is Post 3" })
 })
 .catch(() => {})
 ```
+
+**Promise States:**   
+* Pending: The initial state. The promise is neither fulfilled nor rejected.
+* Fulfilled: The operation completed successfully, and the promise has a resulting value.
+* Rejected: The operation failed, and the promise has a reason for the failure.
+
+**Promise Chaining**    
+Promises can be chained using the .then() method. This allows you to execute multiple asynchronous operations in sequence.   
+The .catch() method is used to handle errors in the promise chain. It catches any rejection in the chain.
+
+```js
+myPromise
+  .then((result) => {
+    console.log(result);
+    return anotherPromise;
+  })
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+```
+
+#### Nodejs Interview question (asked by DAZN)  
+I want to make 4 api calls in parallel, how can I do that?   
+A - Using `Promise.all([])`
+
+#### Types of promises
+
+1. `Promise.all([])`   
+Promise.all is a utility function that takes an array of promises and returns a new promise that fulfills with an array of the fulfilled values when all of the input promises have been fulfilled. If any of the promises are rejected, the whole promise is rejected.   
+
+1. `Promise.race()`    
+Promise.race() is similar to Promise.all(), but it fulfills or rejects as soon as one of the promises in the array settles (either fulfills or rejects)
+
+1. `Promise.allSettled()`   
+Promise.allSettled() is similar to Promise.all(), but it waits for all promises to settle (fulfilled or rejected) rather than immediately rejecting if any of the input promises are rejected. It returns an array of objects, each representing the outcome of each promise (including a status indicating whether it was fulfilled or rejected, and a value or reason accordingly).
+
+1. `Promise.any()`   
+Promise.any() is similar to Promise.race(), but it fulfills as soon as one of the promises in the array fulfills. It ignores rejections until all promises have been rejected. If all promises are rejected, it then rejects with an AggregateError containing all the rejection reasons.
+
+#### Bluebird
+
+> Bluebird is a third-party promise library for JavaScript.   
+
+It is known for its performance and additional features beyond the standard Promise implementation in JavaScript. One of the features provided by bluebird is a method called Promise.all(), which is similar to the native Promise.all() but with some enhancements.   
+
+In bluebird, the Promise.all() method not only works with arrays of promises but also with objects. It allows you to pass an object where each property is a promise, and the method returns a promise that fulfills with an object containing the fulfilled values of the input promises.   
+
+```js
+const Promise = require('bluebird');
+
+const promise1 = Promise.resolve(1);
+const promise2 = Promise.resolve(2);
+const promise3 = Promise.resolve(3);
+
+// Using Promise.all with an array of promises
+Promise.all([promise1, promise2, promise3])
+  .then((results) => {
+    console.log(results); // Output: [1, 2, 3]
+  });
+
+// Using Promise.all with an object of promises
+const promisesObject = {
+  prop1: Promise.resolve('a'),
+  prop2: Promise.resolve('b'),
+  prop3: Promise.resolve('c'),
+};
+
+Promise.all(promisesObject)
+  .then((results) => {
+    console.log(results); // Output: { prop1: 'a', prop2: 'b', prop3: 'c' }
+  });
+
+```
+
+Using await in a for loop can sometimes give issues, and not work as expected   
+Using bluebird's promise.map can help   
+
+bluebird provides several utility methods, such as Promise.map, Promise.mapSeries, and Promise.each, which can simplify working with arrays or other iterable structures in a promise-based loop.
+
+```js
+const Promise = require('bluebird');
+
+const arrayOfItems = [/* ... */];
+
+// Using Promise.map for concurrent execution
+Promise.map(arrayOfItems, (item) => {
+  return someAsyncOperation(item);
+})
+.then((results) => {
+  console.log(results);
+})
+.catch((error) => {
+  console.error(error);
+});
+```
+
+bluebird allows you to control the concurrency of asynchronous operations
+```js
+Promise.map(arrayOfItems, (item) => {
+  return someAsyncOperation(item);
+}, { concurrency: 5 }) // Limit concurrency to 5
+.then()
+```
+
+Native JavaScript promises do not natively support cancellation   
+To implement cancellation with native promises, developers often resort to manual workarounds, such as introducing a cancellation flag and checking it within the asynchronous operation   
+bluebird supports promise cancellation, which can be beneficial in scenarios where you want to cancel asynchronous operations in a loop if needed
+
+```js
+const promise = Promise.map(arrayOfItems, (item) => {
+  return someAsyncOperation(item);
+}, { concurrency: 5 });
+
+// Cancel the entire operation after a certain condition
+if (someCondition) {
+  promise.cancel();
+}
+```
+
+
+
+
+
+
+
+
+
+
+<br/>
 
 ### Async-await
 > Async-await is a special syntax to work with promises in a more comfortable fashion   
