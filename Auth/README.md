@@ -12,6 +12,9 @@ Everything related to Authentication, Authorization, Sessions, web tokens, cooki
 - [SAML](#security-assertion-markup-language-saml)
 - [OpenId Connect](#openid-connect)
 - [OAuth 2.0](#oauth-20)
+- [HRIS](#hris)
+    - [Merge](#merge)
+
 
 <br/>
 
@@ -361,3 +364,34 @@ OAuth 2.0 and SSO with SAML are often used together in some scenarios to complem
 
 In more complex identity and access management scenarios, protocols like OpenID Connect (which builds on OAuth 2.0) can be used to provide both authentication and authorization, offering a unified solution that combines the strengths of both OAuth 2.0 and SAML.
 
+## HRIS
+
+HRIS stands for Human Resources Information System. It is a software solution or an integrated suite of applications designed to streamline and automate the management of human resources (HR) functions within an organization. HRIS helps HR professionals and other employees manage various aspects of HR tasks more efficiently, improving overall organizational effectiveness.
+
+Some HRIS systems we worked with at Assembly - ADP, BambooHR, 
+Other popular HRIS systems - Workday, SAP SuccessFactors, Kronos Workforce Ready, Namely, PeopleSoft
+
+### Merge
+
+One Unified API for all HR, Payroll, Accounting, Ticketing    
+Merge is a single API to add hundreds of integrations to your app    
+It is build on one data model, we can just pass one object, which will get formatted according to multiple ticketing softwares eg Jira, Trello, etc.
+
+Merge API   
+https://www.merge.dev
+
+#### Merge categories
+* HRIS - bamboo hr, google workspace, gusto, okta, onelogin, ukg, zoho people
+* File storage - google drive, dropbox, one drive, sharepoint, box
+* Ticketing - asana, Jira, bitbucket, freshdesk, github, gitlab, hubspot, trello, zendesk, 
+* Accounting - workday, zoho, freshbooks
+* ATS - bamboohr, freshteam, lever, workday, workable
+
+#### How merge was integrated at Assembly 
+
+Dora AI was able to search through flows created in Assembly, files uploaded in assembly knowledge center, tasks created in assembly and everything else within assembly   
+For a more holistic experience, we wanted it to be able to search across other work apps too, like jira tickets, github, google drive documents, etc   
+Integrating each service individually in Assembly would be very complex and time consuming, Instead we used Merge, a single integration to be able to integrate with multiple other applications including Jira, github, bitbucket, google drive, dropbox, etc
+
+
+TODO

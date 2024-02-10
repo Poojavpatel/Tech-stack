@@ -384,6 +384,12 @@ console.log(gfg.next());          // { value: undefined, done: true }
 * Apply invokes the function and allows you to pass in arguments as an array.
 * Bind returns a new function, allowing you to pass in a this array and any number of arguments.
 
+   
+When we say invokes the function, we mean that the function is called or executed   
+
+
+Call is a method in JavaScript that allows you to call a function with a specified `this` value and individual arguments provided explicitly
+
 ```js
 // Call
 var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
@@ -397,6 +403,8 @@ say('Hey There'); // Hey There undefined undefined
 say.call(person1, 'Hello'); // Hello Jon Kuperman
 say.call(person2, 'Hello'); // Hello Kelly King
 ```
+
+Apply is similar to call, but it allows you to pass arguments as an array
 ```js
 // Apply
 var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
@@ -409,6 +417,8 @@ function say(greeting) {
 say.apply(person1, ['Hello']); // Hello Jon Kuperman
 say.apply(person2, ['Hello']); // Hello Kelly King
 ```
+
+Bind returns a new function with a specified `this` value and initial arguments. It does not invoke the function immediately.
 ```js
 // Bind
 var person1 = {firstName: 'Jon', lastName: 'Kuperman'};
@@ -423,6 +433,16 @@ var sayHelloKelly = say.bind(person2);
 
 sayHelloJon(); // Hello Jon Kuperman
 sayHelloKelly(); // Hello Kelly King
+```
+
+```js
+function sayHello(message) {
+  console.log(`${message}, ${this.name}!`);
+}
+
+const person = { name: 'John' };
+const sayHelloToJohn = sayHello.bind(person, 'Hello');
+sayHelloToJohn(); // Hello, John!
 ```
 
 * binds obj's 'this' context to foo, but doesn't call it
@@ -1651,6 +1671,104 @@ const numberZero = 0;
 const result = numberZero ?? 'You did not tell me, again!';
 console.log(result); // 0
 ```
+
+#### Can we break foreach loop in javascript?   
+JavaScript's forEach() function executes a function on every element in an array. However, since forEach() is a function rather than a loop, using the break statement is a syntax error
+
+If you find yourself stuck with a forEach() that needs to stop after a certain point and refactoring to use for/of is not an option, here's 4 workarounds
+
+1. Use every() instead of forEach()
+The every() function behaves exactly like forEach(), except it stops iterating through the array whenever the callback function returns a falsy value.
+
+```js
+[1, 2, 3, 4, 5].every(v => {
+  if (v > 3) {
+    return false;
+  }
+
+  console.log(v);
+  // Make sure you return true. If you don't return a value, `every()` will stop.
+  return true;
+});
+```
+
+Another alternative is to use the find() function, which is similar but just flips the boolean values. With find(), return true is equivalent to break, and return false is equivalent to continue.
+
+2. Filter Out The Values You Want to Skip
+
+```js
+const arr = [1, 2, 3, 4, 5];
+
+arr.slice(0, arr.findIndex(v => v > 3)).forEach(v => {
+  console.log(v);
+});
+```
+
+3. Use a shouldSkip Local Variable
+
+```js
+let shouldSkip = false;
+[1, 2, 3, 4, 5].forEach(v => {
+  if (shouldSkip) {
+    return;
+  }
+  if (v > 3) {
+    shouldSkip = true;
+    return;
+  }
+
+  console.log(v);
+});
+```
+
+4. Modify the array length
+
+The forEach() function respects changes to the array's length property. So you can force forEach() to break out of the loop early by overwriting the array's length property as shown below.   
+While this approach works, it also mutates the array!
+
+```js
+const myNums = [1, 2, 3, 4, 5];
+myNums.forEach((v, index, arr) => {
+  console.log(v);
+  if (val > 3) {
+    arr.length = index + 1; // Behaves like `break`
+  }
+}
+```
+
+5. The Plot Twist: Stopping forEach with a throw Error   
+refer - https://dev.to/polakshahar/interview-can-you-stop-foreach-in-javascript-57h0
+
+```js
+const array = [1, 2, 3, 4, 5];
+
+try {
+  array.forEach((number) => {
+    console.log("Number:", number);
+    if (number === 3) {
+      throw new Error("Oops! Stopping the loop.");
+    }
+  });
+} catch (error) {
+  console.log("Caught an error:", error.message);
+}
+```
+
+In this daring feat, when we hit the number 3, we throw an error. It's like setting off a flare in the middle of our forEach party. The loop screeches to a halt, and control is passed to the catch block. It's not the most graceful exit, more like jumping off a moving merry-go-round, but hey, it stops the loop!
+
+
+
+
+
+
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
 
 --- 
 ## Code Dump 
