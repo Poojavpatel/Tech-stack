@@ -53,6 +53,9 @@
 - [CS Fundamentals](ComputerScience/README.md)
 - [Auth](Auth/README.md)
 
+**Networking**
+- [Networking](Networking/README.md)
+
 **Others**
 - [Regex](Regex/README.md)
 - [Kafka](Kafka/README.md)

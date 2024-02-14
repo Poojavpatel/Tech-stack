@@ -13,6 +13,7 @@
   - [Path Module](#path-module)
   - [Events Module](#events-module)
   - [Datagram Module (dgram)](#datagram-module-dgram)
+  - [Worker Threads](#worker-threads)
   - [Cluster Process Module](#cluster-process-module)
   - [child_process Module](#child_process-module)
   - [Zlib Module](#zlib-module)
@@ -91,6 +92,18 @@ Using Node.js in this case would be like driving a Formula 1 car while... stuck 
 * Backends with Relational Databases   
 Node’s relational database support tools are not up to the expected level when compared to other languages. This makes Node an undesirable for use cases with relational databases
 
+### Limitations of Single-Threaded Event Loop
+
+Refer - https://blog.bitsrc.io/top-5-features-of-nodejs-e49d1c68f4a7
+
+Initially, Node.js was designed for I/O-bound tasks like web servers. For these, creating multiple threads adds overhead and complexity in managing thread synchronization and context switching. Instead, Node.js adopted an event-driven approach.
+
+This behavior brings several advantages but also limitations to Node.js.
+CPU-bound tasks can block the loop   
+No true parallelism: Tasks are still executed one after another, not simultaneously  
+
+To address these limitations, Node.js introduced [Worker Threads](#worker-threads) and the [Cluster Module](#cluster-process-module) in various Node.js versions.
+
 ---
 
 ### RELP in NodeJs   
@@ -164,6 +177,9 @@ provides utilities for working with file and directory paths
 ### Events module
 provides us the [EventEmitter](#event-emitters) class, which is key to working with events in Node.js.
 
+<br/>
+
+
 
 ### Datagram Module (dgram)
 
@@ -172,10 +188,73 @@ It can be used to send messages from one computer/server to another.
      
 (A datagram socket provides a symmetric data exchange interface. There is no requirement for connection establishment. Each message carries the destination address)
 
+<br/>
+
+### Worker Threads
+
+<img src="https://images.ctfassets.net/hspc7zpa5cvq/20h5efXHT4bQbuf44mdq2H/a40944191d031217a9169b17a8ef35d6/worker-diagram_2x__1_.jpg" width="50%" />
+
+<br/>
+
+Think of worker threads as separate JavaScript execution contexts within the same Node.js process.   
+
+Instead of the main thread handling everything, it can delegate CPU-intensive tasks to these worker threads. This allows the main thread to remain responsive and handle other requests while the worker threads crunch away on the complex calculations.   
+
+Remember, worker threads share memory. So data structures like ArrayBuffer or SharedArrayBuffer are recommended for large data exchanges to avoid unnecessary copying.
+
+Creating and managing worker threads has some overhead, so consider its benefit vs. cost for your specific use case.
+
+Example of using worker threads :
+```js
+const { Worker } = require('worker_threads');
+
+const worker = new Worker('./worker.js', { data: { someData: 'to process' } });
+
+worker.on('message', (message) => {
+  console.log(Received message from worker: ${message} );
+});
+
+worker.postMessage({ anotherData: 'to send' });
+```
+
+<br/>
+
 ### Cluster Process Module
-The cluster module provides a way of creating child processes that runs simultaneously and share the same server port.   
-Node.js runs single threaded programming, which is very memory efficient, but to take advantage of computers multi-core systems, the Cluster module allows you to easily create child processes that each runs on their own single thread, to handle the load.   
-Run the code three times, the first time is as a master, then as workers
+
+Node.js runs single threaded programming, which is very memory efficient, but to take advantage of computers multi-core systems, the Cluster module allows you to easily create child processes that each runs on their own single thread, to handle the load.
+
+The cluster module provides a way of creating child processes that runs simultaneously and share the same server port.
+
+The Cluster Module creates multiple separate Node.js processes, each with its own event loop and memory space.
+These processes run independently on different cores, utilizing multiple cores for improved performance (Horizontal Scaling).
+   
+This operates by creating a master process and several worker processes. The master process manages the distribution of incoming connections among the worker processes. If a worker process fails, the master process can respawn a new one, ensuring robustness in the face of failures.
+
+Worker processes share memory and resources, so consider data synchronization carefully.
+
+Example usage : 
+```js
+const cluster = require('cluster');
+
+if (cluster.isMaster) {
+  // Master process
+  const numWorkers = require('os').cpus().length;
+
+  for (let i = 0; i < numWorkers; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(worker ${worker.process.pid} died );
+  });
+} else {
+  // Worker process
+  // Your application logic here
+  app.listen(3000);
+}
+```
+
+<br/>
 
 ### child_process Module
 We can easily spin a child process using Node’s child_process module and those child processes can easily communicate with each other with a messaging system.   
