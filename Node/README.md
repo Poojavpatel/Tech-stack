@@ -2,25 +2,36 @@
 
 ## Table of Contents
 
-1. [Node.js Introduction](#introduction)
-1. [Use Cases](#node-js-is-used-in)
-1. [Core Modules of Node.js](#core-modules-of-node-js)
-1. [Event Emitters](#event-emitters)
-1. [Global Objects](#global-objects)
-1. [Process Object](#process-object)
-1. [Default Scope in Node.js](#default-scope-in-node-js-is-local)
-1. [Buffer](#buffer)
-1. [REPL in Node.js](#relp-in-nodejs)
-1. [Asynchronous vs Non-blocking](#asynchronous-vs-non-blocking)
-1. [How to Serve Static Files](#how-to-serve-static-files)
-1. [setTimeout setImmediate setInterval](#settimeout-setimmediate-setinterval)
-1. [process.nextTick() and setImmediate()](#processnexttick-and-setimmediate)
-1. [Difference between readFile and createReadStream](#difference-between-readfile-and-createreadstream)
-1. [EventEmitter](#eventemitter)
-1. [Setup Basic Server and Using Node](#setup-basic-server-and-using-node)
-1. [Setup a Node Express Server and Connect to mLab Database](#setup-a-node-express-server-and-connect-to-mlab-database)
-1. [Auth](#auth)
-1. [Guess The Output](#guess-the-output)
+- [Introduction](#introduction)
+- [Node.js Use Cases](#node-js-use-cases)
+- [REPL in Node.js](#repl-in-nodejs)
+- [Buffer Datatype](#buffer-datatype)
+- [Core Modules of Node.js](#core-modules-of-node-js)
+  - [HTTP/HTTP2/HTTPS Module](#httphttp2https-module)
+  - [OS Module](#os-module)
+  - [FS Module](#fs-module)
+  - [Path Module](#path-module)
+  - [Events Module](#events-module)
+  - [Datagram Module (dgram)](#datagram-module-dgram)
+  - [Cluster Process Module](#cluster-process-module)
+  - [child_process Module](#child_process-module)
+  - [Zlib Module](#zlib-module)
+- [Event Emitters](#event-emitters)
+- [Streams in Node.js](#streams-in-nodejs)
+  - [Difference between readFile and createReadStream](#difference-between-readfile-and-createreadstream)
+- [Scopes in Node.js](#scopes-in-nodejs)
+  - [Global Objects](#global-objects)
+  - [Process Object](#process-object)
+  - [Local Objects](#local-objects)
+- [Asynchronous vs Non-blocking](#asynchronous-vs-non-blocking)
+- [setTimeout setImmediate setInterval](#settimeout-setimmediate-setinterval)
+- [process.nextTick() and setImmediate()](#processnexttick-and-setimmediate)
+- [Auth](#auth)
+- [How to Serve Static Files](#how-to-serve-static-files)
+- [Setup Basic Server and Using Node](#setup-basic-server-and-using-node)
+- [Setup a Node Express Server and Connect to mlab Database](#setup-a-node-express-server-and-connect-to-mlab-database)
+- [Guess The Output](#guess-the-output)
+
 
 <br/>
 
@@ -36,7 +47,7 @@ Node js is a **Runtime environment for executing javacsript code outside of a br
 * Node applications are asynchronous by default
 
 ---
-### Node js is used in
+## Node js use cases
 * Server client applications
 * Responsive web apps
 * Distributed computing
@@ -51,7 +62,7 @@ Nodejs is
 * Supports non-blocking I/O operations
 
 
-## When to use Node js 
+### When to use Node js 
 * Web Servers   
 Web servers are a perfect use case that benefits from Node’s inherent features. Node’s event-driven implementation can be used to trigger events in the server every time a request from the client-side is received. The single-threaded and asynchronous features ensure that the server can serve a large number of requests at a given time using callbacks. Sending responses back to the client-side is handled by these callbacks while the event loop keeps accepting and passing the receiving requests to event handlers without much delay.
 
@@ -64,7 +75,7 @@ Building command-line applications are another common application of Node.js. Th
 * Creating APIs   
 The language’s ability to integrate well with NoSQL databases, Node becomes a good fit for creating API fronts for NoSQL databases
 
-## When to not use Node js 
+### When to not use Node js 
 * Heavy Computational Applications   
 If your application is likely to run tasks that involve heavy computing and number crunching, like running the Fibonacci algorithm   
 the heavy computation blocks the single-thread running in the application and halts the progress of the event loop until the computation is finished. And it delays serving the requests still in the queue, which may not take as much time   
@@ -81,27 +92,101 @@ Using Node.js in this case would be like driving a Formula 1 car while... stuck 
 Node’s relational database support tools are not up to the expected level when compared to other languages. This makes Node an undesirable for use cases with relational databases
 
 ---
-### Core Modules of Node js
-1. Http/http2/https module - provides an HTTP client/server implementation
-1. OS module - provides operating system-related utility methods and properties
-2. FS module - provides an API for interacting with the file system
-3. Path module - provides utilities for working with file and directory paths
-4. Events module - provides us the EventEmitter class, which is key to working with events in Node.js.
 
-Other Modules 
-1. Datagram Module (dgram) - The dgram module provides a way of working with Datagram sockets.   
-  It can be used to send messages from one computer/server to another.
+### RELP in NodeJs   
+  The Node.js **Read-Eval-Print-Loop (REPL)** is an interactive shell that processes Node. js expressions. The shell reads JavaScript code the user enters, evaluates the result of interpreting the line of code, prints the result to the user, and loops until the user signals to quit.    
+  Node comes bundled with a REPL environment. It performs the following tasks −   
+  * Read − Reads user's input, parses the input into JavaScript data-structure, and stores in memory.   
+  * Eval − Takes and evaluates the data structure.   
+  * Print − Prints the result.   
+  * Loop − Loops the above command until the user presses ctrl-c twice.   
+  The REPL feature of Node is very useful in experimenting with Node.js codes and to debug JavaScript codes
+
+  **Underscore(_) is a special variable in node which stores the result of last expression evaluation**.   
+  It can be used to access result of last command execution — similar to $? in bash
+
+---
+
+
+
+### Buffer datatype
+
+Node.js includes an additional data type called Buffer (not available in browser's JavaScript).   
+A buffer is a temporary storage area in memory that allows for the manipulation of raw binary data.   
+It is particularly useful when working with I/O operations, such as reading from or writing to files, handling network data, or interacting with binary streams.     
+
+
+* Fixed Size: Buffers have a fixed size, meaning you need to specify the size when creating a buffer. Once the size is set, it cannot be changed.
+
+* Buffers provide methods for reading and writing data at specific positions, making it easy to manipulate binary data.
+
+* Efficient Memory Allocation: Buffers provide a way to efficiently allocate memory for binary data, making it suitable for scenarios where memory efficiency is crucial.
+
+* Buffer Creation:   
+Buffer.alloc(size): Allocates a new buffer of the specified size.   
+Buffer.from(array): Creates a buffer from an existing array or array-like object.   
+Buffer.from(string, encoding): Creates a buffer from a string, optionally specifying the encoding (e.g., 'utf-8').   
+
+Example of creating a buffer and manipulating data
+```js
+// Creating a buffer of size 4
+const buffer = Buffer.alloc(4);
+
+// Writing data to the buffer
+buffer.writeUInt8(65, 0);  // 'A' in ASCII
+buffer.writeUInt8(66, 1);  // 'B' in ASCII
+buffer.writeUInt8(67, 2);  // 'C' in ASCII
+buffer.writeUInt8(68, 3);  // 'D' in ASCII
+
+// Reading data from the buffer
+console.log(buffer.toString());  // Outputs 'ABCD'
+```
+
+
+
+---
+
+## Core Modules of Node js
+
+### Http/http2/https module
+provides an HTTP client/server implementation
+
+### OS module
+provides operating system-related utility methods and properties
+
+
+### FS module
+provides an API for interacting with the file system
+
+### Path module
+provides utilities for working with file and directory paths
+
+### Events module
+provides us the [EventEmitter](#event-emitters) class, which is key to working with events in Node.js.
+
+
+### Datagram Module (dgram)
+
+The dgram module provides a way of working with Datagram sockets.   
+It can be used to send messages from one computer/server to another.
      
-  (A datagram socket provides a symmetric data exchange interface. There is no requirement for connection establishment. Each message carries the destination address)
+(A datagram socket provides a symmetric data exchange interface. There is no requirement for connection establishment. Each message carries the destination address)
 
-1. Zlib Module - The Zlib module provides a way of zip and unzip files.
-1. Cluster Process Module - The cluster module provides a way of creating child processes that runs simultaneously and share the same server port.   
+### Cluster Process Module
+The cluster module provides a way of creating child processes that runs simultaneously and share the same server port.   
 Node.js runs single threaded programming, which is very memory efficient, but to take advantage of computers multi-core systems, the Cluster module allows you to easily create child processes that each runs on their own single thread, to handle the load.   
 Run the code three times, the first time is as a master, then as workers
-1. child_process Module - We can easily spin a child process using Node’s child_process module and those child processes can easily communicate with each other with a messaging system.   
+
+### child_process Module
+We can easily spin a child process using Node’s child_process module and those child processes can easily communicate with each other with a messaging system.   
 The child_process module enables us to access Operating System functionalities by running any system command inside a, well, child process.   
 We can control that child process input stream, and listen to its output stream. We can also control the arguments to be passed to the underlying OS command, and we can do whatever we want with that command’s output   
 There are four different ways to create a child process in Node: ```spawn(), fork(), exec(), and execFile()```.
+
+### Zlib Module
+The Zlib module provides a way of zip and unzip files
+
+
 ---
 ### Event Emitters
 * The core of NodeJS is **event-driven programming**. In NodeJS, we achieve event-driven programming with the event-emitter class
@@ -137,20 +222,93 @@ process.on('uncaughtException', () => {
 throw new Error('Test Error');
 ```
 
+Note : In Node.js EventEmitter, `addListener` and `on` methods are equivalent and used interchangeably to subscribe to events. They both add a listener function to the specified event.    
+
 ---
+
+### Streams in Nodejs
+
+In Node.js, streams are a powerful and efficient concept for handling data flow, especially when dealing with large amounts of data or real-time data processing. Streams provide an abstraction that allows you to read or write data piece by piece, instead of loading the entire data into memory at once. This makes streams particularly useful for scenarios like reading or writing files, handling network communication, and processing data in real-time.   
+
+There are several types of streams in Node.js   
+
+#### Readable Streams
+These streams represent a source of data that you can read from. Examples include reading data from a file, receiving data over the network, or generating data dynamically
+
+```js
+const fs = require('fs');
+const readableStream = fs.createReadStream('example.txt');
+
+readableStream.on('data', (chunk) => {
+  console.log(`Received ${chunk.length} bytes of data.`);
+});
+
+readableStream.on('end', () => {
+  console.log('Finished reading data.');
+});
+```
+
+#### Writable Streams
+
+These streams represent a destination for data that you can write to. Examples include writing data to a file, sending data over the network, or storing data in a database.
+
+```js
+const fs = require('fs');
+const writableStream = fs.createWriteStream('output.txt');
+
+writableStream.write('Hello, ');
+writableStream.write('world!');
+writableStream.end();
+```
+
+#### Duplex Streams
+
+These streams represent both a readable and writable side. An example is a network socket, where you can both read data from and write data to the same connection.
+
+
+#### Transform Streams
+
+These streams are a type of duplex stream that allows for data transformation as it is being read or written. An example is the zlib.createGzip() stream for compressing data   
+
+The pipe() method is commonly used to simplify stream interactions, allowing data to flow from one stream to another seamlessly.   
+
+```js
+const fs = require('fs');
+const zlib = require('zlib');
+
+const readableStream = fs.createReadStream('example.txt');
+const gzipStream = zlib.createGzip();
+const writableStream = fs.createWriteStream('example.txt.gz');
+
+readableStream.pipe(gzipStream).pipe(writableStream);
+```
+
+#### Difference between readFile and createReadStream 
+
+| readFile | createReadStream  | 
+| :-----: | :-: | 
+| fs module contains the readFile method. It is used to read a file by bringing it into the buffer | fs module contains the inbuilt API createReadStream.It allows us to open a file/stream and reads the data present inside it. | 
+| It reads the file into the memory before making it available to the user. | It reads the file in chunks according to a need by the user. | 
+| It is slower due to read of whole file.	 | It is faster due to its property of bringing in chunks. | 
+| It will not scale in case of too many requests as it will try to load them all at the same time. | It is scalable as it pipes the content directly to the HTTP response object | 
+| Due to its property, it is easier for nodejs to handle cleaning of memory in this case. | In this case memory cleaning by nodejs is not easy. | 
+
+---
+
+## Scopes in Nodejs
+
 ### Global Objects
 
 > In Browsers we have Document and Window object, in node we have Global scope
 
-Can be accessed anywhere in any file
-* In Node Console is a Global Object
-* eg - setTimeout(), setInterval(), process.exit()
+Can be accessed anywhere in any file   
+In Node Console is a Global Object   
+setTimeout(), setInterval(), process.exit()   
 
----
 ### Process Object
-  * The process object in Node.js is a **global object** that can be accessed inside any module without requiring it
-  * **Each Node.js script runs in a process**. It includes process object to get all the information about the current process of Node.js application
-  * This **process object is an instance of the EventEmitter class**. It contains its own pre-defined events such as exit which can be used to know when a program in Node.js has completed its execution.
+* The process object in Node.js is a **global object** that can be accessed inside any module without requiring it
+* **Each Node.js script runs in a process**. It includes process object to get all the information about the current process of Node.js application
+* This **process object is an instance of the EventEmitter class**. It contains its own pre-defined events such as exit which can be used to know when a program in Node.js has completed its execution.   
   ```javascript
   process.pid
   // 1652
@@ -158,25 +316,20 @@ Can be accessed anywhere in any file
   // 'C:\\'
   process.exit()
   ```
----
-### Default Scope in Node js is LOCAL
-  * In the browser's JavaScript, variables declared without var keyword become global. In Node.js, everything becomes local by default
-  * In a browser, global scope is the window object. In Node.js, global object represents the global scope.   
-    To add something in global scope, you need to export it using export or module.export. The same way, import modules/object using require() function to access it from the global scope.
----
-### Buffer    
-  * Node.js includes an additional data type called Buffer (not available in browser's JavaScript). Buffer is mainly used to store binary data, while reading from a file or receiving packets over the network.
----
-### RELP in NodeJs   
-  The Node.js **Read-Eval-Print-Loop (REPL)** is an interactive shell that processes Node. js expressions. The shell reads JavaScript code the user enters, evaluates the result of interpreting the line of code, prints the result to the user, and loops until the user signals to quit.    
-  Node comes bundled with a REPL environment. It performs the following tasks −   
-  * Read − Reads user's input, parses the input into JavaScript data-structure, and stores in memory.   
-  * Eval − Takes and evaluates the data structure.   
-  * Print − Prints the result.   
-  * Loop − Loops the above command until the user presses ctrl-c twice.   
-  The REPL feature of Node is very useful in experimenting with Node.js codes and to debug JavaScript codes
 
-**Underscore(_) is a special variable in node which stores the result of last expression evaluation**. It can be used to access result of last command execution — similar to $? in bash
+### Local objects
+
+> Default Scope in Node js is LOCAL
+
+* In the browser's JavaScript, variables declared without var keyword become global. In Node.js, everything becomes local by default
+* In a browser, global scope is the window object. In Node.js, global object represents the global scope.   
+    To add something in global scope, you need to export it using export or module.export. The same way, import modules/object using require() function to access it from the global scope.
+
+
+
+
+
+
 
 ---
 ### Asynchronous vs Non-blocking
@@ -200,46 +353,6 @@ Can be accessed anywhere in any file
     <ins>Based on interruption</ins>: You read the book and leave your phone alone. If it rings, you are interrupted. Then you answer it, and after that you come back to your book. This only works if the phone has a function of ringing (event interruption runtime).   
     <ins>Based on thread</ins>: You read the book and have your phone answered by someone else. This only works if you can find someone to help you (multi-thread runtime).   
 
----
-### How to serve static files
-  * A basic necessity for most http servers is to be able to serve static files   
-  This example takes the path requested and it serves that path, relative to the local directory. 
-
-  ```javascript
-  var fs = require('fs'),
-      http = require('http');
-
-  http.createServer(function (req, res) {
-    fs.readFile(__dirname + req.url, function (err,data) {
-      if (err) {
-        res.writeHead(404);
-        res.end(JSON.stringify(err));
-        return;
-      }
-      res.writeHead(200);
-      res.end(data);
-    });
-  }).listen(8080);
-  ```
-
-  * This works fine as a quick solution; however, there are a few problems with this approach. First, this code does not correctly handle mime types. Additionally, a proper static file server should really be taking advantage of client side caching, and should send a "Not Modified" response if nothing has changed. Furthermore, there are security bugs that can enable a malicious user to break out of the current directory. (for example, GET /../../../).
-
-  * Each of these can be addressed invidually without much difficulty. You can send the proper mime type header. You can figure how to utilize the client caches. You can take advantage of path.normalize to make sure that requests don't break out of the current directory
-
-  * In your node application, you can use node-static module to serve static resources.   
-  The node-static module is an HTTP static-file server module with built-in caching.   
-  First of all, install node-static module using NPM.using node-static module, you can create static file server in Node
-
-  ```javascript
-  var static = require('node-static');
-  var http = require('http');
-
-  var file = new(static.Server)(__dirname);
-
-  http.createServer(function (req, res) {
-    file.serve(req, res);
-  }).listen(8080);
-  ```
 ---
 
 ### setTimeout setImmediate setInterval
@@ -456,55 +569,62 @@ immediate
 immediate
 */
 ```
----
-### Difference between readFile and createReadStream 
-
-| readFile | createReadStream  | 
-| :-----: | :-: | 
-| fs module contains the readFile method. It is used to read a file by bringing it into the buffer | fs module contains the inbuilt API createReadStream.It allows us to open a file/stream and reads the data present inside it. | 
-| It reads the file into the memory before making it available to the user. | It reads the file in chunks according to a need by the user. | 
-| It is slower due to read of whole file.	 | It is faster due to its property of bringing in chunks. | 
-| It will not scale in case of too many requests as it will try to load them all at the same time. | It is scalable as it pipes the content directly to the HTTP response object | 
-| Due to its property, it is easier for nodejs to handle cleaning of memory in this case. | In this case memory cleaning by nodejs is not easy. | 
 
 ---
-### EventEmitter
-  * Node.js allows us to create and handle custom events easily by using events module. Event module includes EventEmitter class which can be used to raise and handle custom events.   
-  The following example demonstrates EventEmitter class for raising and handling a custom event.
+
+## Auth
+
+Refer this file for everything related to authentication including    
+Hashing   
+Encryption   
+SSO
+
+[Authentication](../Auth/README.md)
+
+
+
+---
+
+### How to serve static files
+  * A basic necessity for most http servers is to be able to serve static files   
+  This example takes the path requested and it serves that path, relative to the local directory. 
+
   ```javascript
-  // get the reference of EventEmitter class of events module
-  var events = require('events');
-  //create an object of EventEmitter class by using above reference
-  var em = new events.EventEmitter();
+  var fs = require('fs'),
+      http = require('http');
 
-  //Subscribe for FirstEvent
-  em.on('FirstEvent', function (data) {
-      console.log('First subscriber: ' + data);
-  });
-
-  // Raising FirstEvent
-  em.emit('FirstEvent', 'This is my first Node.js event emitter example.');
+  http.createServer(function (req, res) {
+    fs.readFile(__dirname + req.url, function (err,data) {
+      if (err) {
+        res.writeHead(404);
+        res.end(JSON.stringify(err));
+        return;
+      }
+      res.writeHead(200);
+      res.end(data);
+    });
+  }).listen(8080);
   ```
-  * In the above example, we first import the 'events' module and then create an object of EventEmitter class. We then specify event handler function using on() function. The on() method requires name of the event to handle and callback function which is called when an event is raised.   
-  The emit() function raises the specified event. First parameter is name of the event as a string and then arguments. An event can be emitted with zero or more arguments. You can specify any name for a custom event in the emit() function.   
-  You can also use addListener() methods to subscribe for an event as shown below
+
+  * This works fine as a quick solution; however, there are a few problems with this approach. First, this code does not correctly handle mime types. Additionally, a proper static file server should really be taking advantage of client side caching, and should send a "Not Modified" response if nothing has changed. Furthermore, there are security bugs that can enable a malicious user to break out of the current directory. (for example, GET /../../../).
+
+  * Each of these can be addressed invidually without much difficulty. You can send the proper mime type header. You can figure how to utilize the client caches. You can take advantage of path.normalize to make sure that requests don't break out of the current directory
+
+  * In your node application, you can use node-static module to serve static resources.   
+  The node-static module is an HTTP static-file server module with built-in caching.   
+  First of all, install node-static module using NPM.using node-static module, you can create static file server in Node
+
   ```javascript
-  var emitter = require('events').EventEmitter;
-  var em = new emitter();
+  var static = require('node-static');
+  var http = require('http');
 
-  //Subscribe FirstEvent
-  em.addListener('FirstEvent', function (data) {
-      console.log('First subscriber: ' + data);
-  });
-  //Subscribe SecondEvent
-  em.on('SecondEvent', function (data) {
-      console.log('First subscriber: ' + data);
-  });
-  // Raising FirstEvent
-  em.emit('FirstEvent', 'This is my first Node.js event emitter example.');
-  // Raising SecondEvent
-  em.emit('SecondEvent', 'This is my second Node.js event emitter example.');
+  var file = new(static.Server)(__dirname);
+
+  http.createServer(function (req, res) {
+    file.serve(req, res);
+  }).listen(8080);
   ```
+
 ---
 ### Setup basic server and using node.
 ```javascript
@@ -568,17 +688,6 @@ $ npm i express body-parser path concurrently mongoose joi
 $ npm i nodemon --save-dev
 $ node index.js
 ```
-
----
-
-## Auth
-
-Refer this file for everything related to authentication including    
-Hashing   
-Encryption   
-SSO
-
-[Authentication](../Auth/README.md)
 
 ---
 

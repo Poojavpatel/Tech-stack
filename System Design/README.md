@@ -1,4 +1,4 @@
-## Table of Contents
+### Table of Contents
 
 1. [What is System Design](#what-is-system-design)
 1. [System design basics](#system-design-basics)
@@ -36,17 +36,6 @@
    1. [Message Queue](#message-queue)
    1. [Distributed message queue](#distributed-message-queue)
    1. [Logging Monitoring Alerting](#logging-monitoring-alerting)
-1. [Software Architecture Patterns](#software-architecture-patterns)
-   1. [Layered pattern](#layered-pattern)
-   1. [Client-Server pattern](#client-server-pattern)
-   1. [Master-Slave pattern](#master-slave-pattern)
-   1. [Event Bus pattern](#event-bus-pattern)
-   1. [Pipe Filter pattern](#pipe-filter-pattern)
-   1. [Broker pattern](#broker-pattern)
-   1. [Peer to Peer pattern](#peer-to-peer-pattern)
-   1. [MVC pattern](#mvc-pattern)
-   1. [Interpreter pattern](#interpreter-pattern)
-   1. [Blackboard pattern](#blackboard-pattern)
 1. [System Design - Choosing database](#system-design---choosing-database)
    1. [When to choose which database](#when-to-choose-which-database)
    1. [Time series Database](#time-series-database)
@@ -69,22 +58,13 @@
    1. [Put vs Patch](#put-vs-patch)
 1. [Development and deployment](#development-and-deployment)
    1. [Deployment strategies](#deployment-strategies)
+1. [Software Architecture Patterns](../SoftwareArchitecture/README.md)
 1. [Technologies & Frameworks](#technologies--frameworks)
    1. [Kafka](#kafka)
-1. [System Design Interviews - Step by step](#system-design-interviews---step-by-step)
-1. [Tips and Tricks](#tips-and-tricks)
-1. [Random Notes](#random-notes)
-1. [Architecture](#architecture)
-1. [System Design Examples](#system-design-examples)
-   1. [Scaling a local pizza shop](#scaling-a-local-pizza-shop)
-   1. [URL Shortening service like TinyURL](#url-shortening-service-like-tinyurl)
-   1. [Design a WhatsApp Chat messaging system](#design-a-whatsapp-chat-messaging-system-design)
-   1. [Design TikTok](#design-tiktok)
-   1. [Design a B2B application used by Retail stores](#design-a-b2b-application-used-by-retail-stores)
-
+1. [System Design Interviews](./Interviews.md)
 <br/>
 
-# What is System Design
+## What is System Design
 
 System - Architecture or collection of software/technology, that communicate with each other,in order to serve a set of **users**, to filfill a **requirement**
 
@@ -112,11 +92,11 @@ A system may or may not have presentation layer (eg - logger system)
 
 ---
 
-# System design basics
+## System design basics
 
-## Key Characteristics of Distributed Systems
+### Key Characteristics of Distributed Systems
 
-### 1. Scalability
+#### 1. Scalability
 
 - Capability of a system, process, or a network <ins>to grow and manage increased demand</ins>
 - **Horizontal Scaling - Adding more servers into your pool of resources**
@@ -125,7 +105,7 @@ A system may or may not have presentation layer (eg - logger system)
 
 <br/>
 
-### 2. Reliability
+#### 2. Reliability
 
   > Reliability is achieved through redundancy
 
@@ -137,7 +117,7 @@ A system may or may not have presentation layer (eg - logger system)
 
 <br/>
 
-### 3. Availability
+#### 3. Availability
 
 - System should be always available to the end user irrespective of location, network failure, etc
 - Availability is the time a system remains operational to perform its required function in a specific period
@@ -146,14 +126,14 @@ A system may or may not have presentation layer (eg - logger system)
 
 <br/>
 
-### Reliability Vs. Availability
+#### Reliability Vs. Availability
 
 - **If a system is reliable, it is available. However, if it is available, it is not necessarily reliable**
 - In other words, **high reliability contributes to high availability, but it is possible to achieve a high availability even with an unreliable product by minimizing repair time** and ensuring that spares are always available when they are needed
 
 <br/>
    
-### 4. Efficiency    
+#### 4. Efficiency    
   System should fullfill requirements in terms of speed, accuracy, memory
   * Two standard measures of its efficiency are
     1. Response time (latency) - the delay to obtain the first item
@@ -164,7 +144,7 @@ A system may or may not have presentation layer (eg - logger system)
  
 <br/>
 
-### 5. Serviceability or Manageability
+#### 5. Serviceability or Manageability
 
 - How easy it is to operate and maintain
 - Repair and Maintainece should be quick, accesible and affordable
@@ -174,7 +154,7 @@ A system may or may not have presentation layer (eg - logger system)
 
 ---
 
-## Load Balancing
+### Load Balancing
 
 - Used to distribute traffic across a cluster of servers to improve responsiveness and **availability** of applications
 - By balancing application requests across multiple servers, a load balancer reduces individual server load  
@@ -247,7 +227,7 @@ Benefits of Load Balancing
 <br/>
 <br/>
 
-## Caching
+### Caching
 
 - Caches take advantage of the locality of reference principle: recently requested data is likely to be requested again
 - Caching can be at all levels from Frontend cache, load balancer cache, Backend Cache, Hardware, OS, Web application etc
@@ -260,7 +240,7 @@ What we generally implement redis cache on the Backend,
 
 
 
-### Cache invalidation
+#### Cache invalidation
 
   1. <ins>Write through Cache</ins> - Data is written into the cache and the corresponding database at the same time   
      Latency ↑ ie Speed ↓, Consistency ↑
@@ -273,7 +253,7 @@ What we generally implement redis cache on the Backend,
 
 
 
-### Cache eviction policies 
+#### Cache eviction policies 
 Methods to decide which cache to clear
 1. <ins>FIFO/ Round Robin</ins>
 1. <ins>Least Recently Used</ins>
@@ -310,11 +290,11 @@ Methods to decide which cache to clear
 - CDN serves file from a region physically/geographically closer to them
 - Since Data is replicated in CDN it prevents a single point of failure
 
-### Distributed Caching
+#### Distributed Caching
 
 Distributed caching is a strategy employed in distributed systems to optimize data access and enhance performance by storing frequently accessed information across multiple nodes. In this approach, a cache system is set up across a network, with each node maintaining a portion of the cached data in a key-value format. When a request is made for specific data, the system first checks the cache. If the data is found (cache hit), it is swiftly returned to the requester, avoiding the need to retrieve it from the primary data storage and thereby reducing latency. In the case of a cache miss, where the requested data is not in the cache, the system fetches the data from the primary storage, updates the cache, and then delivers the data. Distributed caching systems implement scalability by adding more nodes, load balancing to evenly distribute requests, and fault tolerance mechanisms to handle node failures. This strategy significantly improves response times and overall system efficiency by strategically storing and retrieving frequently accessed data in a distributed manner
 
-#### Tools/Services to implement caching
+##### Tools/Services to implement caching
 
 **Caching**
 1. Local Caching Libraries
@@ -347,7 +327,7 @@ Distributed caching is a strategy employed in distributed systems to optimize da
 
 ---
 
-## Data Partitioning (Sharding)
+### Data Partitioning (Sharding)
 
 - Distributing databases accross multiple machines to improve manageability, performance, availability, and load balancing of an application
 
@@ -379,7 +359,7 @@ Common Problems of Sharding
 <br/>
 <br/>
 
-## Indexes
+### Indexes
 
 - Database indexes enable faster retrival of data
 - Indexes should only be on certain columns that are read using a propety often
@@ -397,7 +377,7 @@ Common Problems of Sharding
 <br/>
 <br/>
 
-## Proxies
+### Proxies
 
 - Intermediate server between the client and the back-end server
 - Clients connect to proxy servers to request for a service like a web page, file, connection, etc.
@@ -406,7 +386,7 @@ Common Problems of Sharding
 Proxy Server Types
 There are several types of proxies, each serving specific functions
 
-### Forward Proxy (or HTTP Proxy)
+#### Forward Proxy (or HTTP Proxy)
 
 Acts on behalf of clients (users) to access resources from the internet.
 Conceals the user's IP address, providing anonymity.
@@ -415,7 +395,7 @@ Often used for content filtering, access control, and improving network performa
 Imagine you want to access the internet, but you don't want websites to know your real identity (your IP address).
 A forward proxy acts like a middleman between you and the websites you visit. When you request a website, the proxy makes the request on your behalf, and the website sees the proxy's IP address instead of yours. It hides your identity.
 
-### Open Proxy
+#### Open Proxy
 
 An open proxy, also known as a public proxy, is a proxy server that is accessible to any internet user without any authentication. It means that anyone can connect to and use the open proxy server without requiring any username or password. Open proxies can be intentionally set up for public use, or they may be misconfigured or compromised servers that allow unauthorized access.
 
@@ -436,7 +416,7 @@ Uses of open proxies
 1. Malicious Activities - Unfortunately, open proxies can be exploited for cybercrimes, such as DDoS attacks and malware distribution.
 
 
-### Reverse Proxy
+#### Reverse Proxy
 
 Operates on behalf of servers, handling requests from clients.
 Enhances security by hiding the server's IP address and handling tasks like load balancing.
@@ -449,11 +429,11 @@ A reverse proxy stands in front of the web server and takes requests on behalf o
 
 A forward proxy handles client requests to access the internet, while a reverse proxy manages requests on behalf of servers, enhancing security and performance
 
-### Anonymous Proxy
+#### Anonymous Proxy
 
 
 
-### Transparent Proxy
+#### Transparent Proxy
 
 A transparent proxy intercepts and redirects traffic without requiring user configuration, often used for content filtering and caching
 
@@ -462,7 +442,7 @@ TODO : different types of proxies
 <br/>
 <br/>
 
-## Redundancy and Replication
+### Redundancy and Replication
 
 - Redundancy is the duplication of critical components or functions of a system
   with the intention of increasing the reliability of the system, usually in the
@@ -482,7 +462,7 @@ TODO : different types of proxies
 <br/>
 <br/>
 
-## Horizontal vs Vertical Scaling
+### Horizontal vs Vertical Scaling
 
 The heart of the difference is the approach to adding computing resources to your infrastructure
 
@@ -492,7 +472,7 @@ The heart of the difference is the approach to adding computing resources to you
 
 <br/>
 
-### Why Horizontal scaling Is Better Than Vertical Scaling
+#### Why Horizontal scaling Is Better Than Vertical Scaling
 
 Horizontal scaling is almost always more desirable than vertical scaling because you don’t get caught in a resource deficit. Instead of taking your server offline while you’re scaling up to a better one, horizontal scaling lets you keep your existing pool of computing resources online while adding more to what you already have. When your app is scaled horizontally, you have the benefit of elasticity.
 
@@ -507,7 +487,7 @@ Horizontal scaling is almost always more desirable than vertical scaling because
 
 ---
 
-## CAP Theorem
+### CAP Theorem
 
 https://www.youtube.com/watch?v=8UryASGBiR4  
 https://www.youtube.com/watch?v=k-Yaq8AHlFA
@@ -536,7 +516,7 @@ https://www.youtube.com/watch?v=k-Yaq8AHlFA
 <br/>
 <br/>
 
-## PACELC Theorem
+### PACELC Theorem
 
 **Why are network partitions considered inevitable in distributed systems**   
 Network partitions, or temporary breaks in communication between nodes, are inevitable in distributed systems due to factors like geographic distribution, hardware failures, software bugs, network maintenance, and unpredictable events. The CAP theorem acknowledges the presence of partitions and requires a trade-off between ensuring Consistency and Availability in the face of these partitions.
@@ -557,7 +537,7 @@ Network partitions, or temporary breaks in communication between nodes, are inev
 
 - BASE (Basically Available, Soft-state, Eventually consistent) databases, such as NoSQL databases like MongoDB, Cassandra, and Redis, chose availability (respond with local data without ensuring it is the latest with its peers).
 
-- ### The PACELC theorem states that in a system that replicates data:
+- #### The PACELC theorem states that in a system that replicates data:
 
   if there is a partition (‘P’), a distributed system can tradeoff between availability and consistency (i.e., ‘A’ and ‘C’);
   Else (‘E’), when the system is running normally in the absence of partitions, the system can tradeoff between latency (‘L’) and consistency (‘C’).
@@ -571,7 +551,7 @@ Network partitions, or temporary breaks in communication between nodes, are inev
 <br/>
 <br/>
 
-## Consistent Hashing
+### Consistent Hashing
 
 [What is Consistent Hashing and Where is it used?](https://www.youtube.com/watch?v=zaRkONvyGr8&list=PLMCXHnjXnTnvo6alSjVkgxV-VH6EPyvoX&index=4)
 
@@ -579,7 +559,7 @@ Consistent Hashing is a technique used in distributed computing and data storage
 
 In traditional hashing, when the number of nodes changes, most keys need to be remapped to different nodes, causing significant overhead. Consistent Hashing minimizes this remapping by ensuring that only a fraction of keys need to be moved when the number of nodes changes.
 
-#### How Consistent Hashing Works:
+##### How Consistent Hashing Works:
 
 * Ring Structure:
 Nodes and keys are placed on a virtual ring. Each node is assigned a range on the ring, and keys are distributed along the ring.
@@ -590,7 +570,7 @@ A hash function is used to map both nodes and keys onto points on the ring. This
 * Adding or Removing Nodes:
 When a new node is added or a node is removed, only the keys that fall within the range of the affected node and its immediate successor need to be remapped. The majority of keys and nodes remain unchanged.
 
-#### Use Cases of Consistent Hashing
+##### Use Cases of Consistent Hashing
 * Load Balancing:
 Distributes traffic across multiple servers in a way that minimizes the need for remapping when servers are added or removed.
 
@@ -606,7 +586,7 @@ Allocates responsibility for storing or retrieving data to nodes in peer-to-peer
 * Distributed File Systems:
 Decides where to store data blocks across multiple nodes in distributed file systems.
 
-#### Example
+##### Example
 Let's imagine you have a group of friends sitting in a circle, and you want to distribute snacks among them. Each friend has a specific range on the circle assigned to them, and the snacks are placed at different points on the circle.
 
 Now, let's say a new friend joins the group, and they need to be given a portion of the snacks. With a normal approach, you might need to rearrange the snacks for everyone. However, with consistent hashing, the new friend is only responsible for the snacks in their immediate range. This means only the snacks within the new friend's assigned part of the circle and the next friend's part need to be adjusted. The rest of the snacks, belonging to the other friends, remain where they are.
@@ -635,14 +615,14 @@ This behavior is a trade-off in consistent hashing. While it reduces the amount 
 <br/>
 <br/>
 
-## Long-Polling vs WebSockets vs Server-Sent Events
+### Long-Polling vs WebSockets vs Server-Sent Events
 
 Refer https://www.pubnub.com/guides/long-polling/
 
-#### Short polling
+##### Short polling
 Traditionally, web browsers use a pull-based approach to fetch data from servers. The client sends a request to the server, which responds with the requested data. This approach, known as short polling, can create delays in communication as the client has to send requests to check for updates repeatedly.
 
-#### Long-Polling
+##### Long-Polling
 On the other hand, long polling is a push-based approach that allows the server to send updates to the client as soon as they are available. Here's how it works:
 1. The client initiates a request to the server, typically through an HTTP request.
 1. Instead of immediately responding, the server holds the request open, keeping the connection active.
@@ -655,12 +635,12 @@ Long polling effectively simulates a real-time connection between the client and
 
 Long-Polling is suitable when real-time updates are not critical, and there is no need for bidirectional communication
 
-#### Web sockets
+##### Web sockets
 WebSocket is a full-duplex communication protocol that enables real-time communication between the client and server over a single, long-lived connection. It provides a more efficient and low-latency alternative to long polling. WebSocket enables bidirectional data flow, allowing the client and server to send messages asynchronously. It eliminates the need for frequent HTTP requests and reduces network overhead. WebSocket is well-suited for applications requiring instant updates and real-time interaction.
 
 WebSockets are ideal for applications requiring low-latency, bidirectional communication. It's suitable for real-time features, such as chat applications, online gaming, or collaborative editing tools.
 
-#### Server-Sent Events
+##### Server-Sent Events
 SSE is a unidirectional communication technology that allows the server to push data to the client over a single, long-lived HTTP connection. With SSE, the server can send multiple updates to the client without requiring the client to make requests continuously. The server initiates the connection and sends data as a series of events. The client receives these events and can handle them as needed.
 
 SSE is suitable when you need server-initiated updates in a unidirectional flow (from server to client). It's a simpler alternative to WebSockets for scenarios where bidirectional communication is not necessary.   
@@ -669,11 +649,13 @@ Example: In a financial application where users need real-time stock updates pus
 <br/>
 <br/>
 
-## Bloom Filters
+### Bloom Filters
+
+[What Are Bloom Filters?](https://www.youtube.com/watch?v=kfFacplFY4Y)
 
 A Bloom filter is a space-efficient probabilistic data structure used to test whether a given element is a member of a set. It provides a way to quickly check if an element is definitely not in a set or may be in the set. Bloom filters are widely used in various computer science applications where quick set membership tests are crucial.
 
-#### Understanding bloom filters
+##### Understanding bloom filters
 
 - Suppose you work at a library and a customer approches with a book name, how do you tell him wether you have the book or not, Traversing whole library is possible but inefficient
 - Maintain a Hash - Save a hash which contains names of all books in library, gets bigger with no of books
@@ -685,7 +667,7 @@ A Bloom filter is a space-efficient probabilistic data structure used to test wh
    This happens when two titles produce the name hash value  
    To prevent this use multiple hash functions
 
-#### How bloom filters work
+##### How bloom filters work
 
 1. Initialization:
 A Bloom filter starts as an array of bits, all set to 0.
@@ -697,7 +679,7 @@ To check if an element is in the set, the same hash functions are applied to the
 If all corresponding bits in the array are 1, the element may be in the set (a false positive is possible due to hash collisions).
 If any of the bits are 0, the element is definitely not in the set.
 
-#### Key Characteristics
+##### Key Characteristics
 
 1. False Positives: Bloom filters can produce false positives (indicating an element is in the set when it's not) but no false negatives (if it says an element is not in the set, it's definitely not).
 
@@ -705,7 +687,7 @@ If any of the bits are 0, the element is definitely not in the set.
 
 1. Quick Membership Tests: Membership tests are extremely fast, as they only involve checking a few bits in the array
 
-#### Use Cases
+##### Use Cases
 1. Caching Systems:
 Bloom filters are used in caching systems to quickly check if a requested item is likely to be in the cache before performing a more time-consuming lookup.
 1. Distributed Systems:
@@ -718,7 +700,7 @@ Bloom filters can be used in network routers to quickly check whether a destinat
 <br/>
 <br/>
 
-## Quorum
+### Quorum
 
 A quorum refers to the minimum number of votes or participants required for a decision or operation to be considered valid or successful. It plays a crucial role in distributed systems and databases, ensuring that a sufficient number of nodes agree on a particular action to maintain consistency and reliability. Quorums help prevent issues such as split-brain scenarios and ensure that the system remains operational even in the presence of failures.
 
@@ -737,7 +719,7 @@ For instance, in the Paxos consensus algorithm, a majority quorum is required fo
 <br/>
 <br/>
 
-## Leader and Follower
+### Leader and Follower
 
 In system design, especially in distributed systems, the terms "Leader" and "Follower" often refer to roles assigned to nodes within a group of nodes. These roles play a significant role in achieving coordination, consistency, and fault tolerance in distributed systems
 
@@ -751,7 +733,7 @@ Follower
 * They typically replicate data or state from the leader and respond to read requests. In consensus algorithms, followers vote in agreement with the leader.
 * Followers play a crucial role in providing fault tolerance. If the leader fails, followers can elect a new leader or carry out the necessary tasks to maintain system functionality.
 
-#### Use cases
+##### Use cases
 * Consensus Algorithms:
 In consensus algorithms like Paxos or Raft, the leader is responsible for proposing decisions, and followers accept or reject these proposals. This ensures that the distributed system reaches a consensus on the state of the system.
 
@@ -767,11 +749,11 @@ Leaders and followers contribute to fault tolerance. If a leader node fails, fol
 <br/>
 <br/>
 
-## Heartbeat
+### Heartbeat
 
 In system design, a "heartbeat" is a regularly transmitted signal or message between nodes or components in a distributed system to indicate their liveliness and status. Heartbeats serve as a form of health check, allowing nodes to monitor the availability and responsiveness of each other.
 
-#### Here's how heartbeat works in system design:
+##### Here's how heartbeat works in system design:
 
 * Regular Signaling   
 Nodes or components send periodic heartbeat signals to indicate that they are still operational and responsive.
@@ -790,7 +772,7 @@ Heartbeats can be used to dynamically configure the system based on the current 
 * Preventing Split-Brain Scenarios   
 In systems with multiple nodes or clusters, heartbeats help prevent split-brain scenarios, where nodes become isolated due to network issues. If heartbeats are not received, it can be an indication of network partitioning.
 
-#### Use Cases:
+##### Use Cases:
 
 * Cluster Management:   
 Heartbeats are widely used in managing clusters of servers or nodes to ensure that each node is operational and part of the active cluster.
@@ -810,7 +792,7 @@ Heartbeats can be part of network monitoring systems to track the availability a
 <br/>
 <br/>
 
-## Checksum
+### Checksum
 
 - In a distributed system, while moving data between components, it is possible that the data fetched from a node may arrive corrupted. This corruption can occur because of faults in a storage device, network, software, etc. How can a distributed system ensure data integrity, so that the client receives an error instead of corrupt data?
 
@@ -824,7 +806,7 @@ Interview Question -
 <br/>
 <br/>
 
-## SLI, SLO, and SLA
+### SLI, SLO, and SLA
 
 https://www.youtube.com/watch?v=LKpIirL8f-I&t=790s
 
@@ -836,7 +818,7 @@ TODO : notes from video
 
 <br/>
 
-## Message Queue
+### Message Queue
 
 A message queue is a form of communication between different software components or systems, allowing them to exchange messages asynchronously. In a message queue system, messages are sent by producers and received by consumers. Messages are temporarily stored in the queue until the consumer is ready to process them. This decouples the sender and receiver, allowing for more scalable and flexible communication between components.
 
@@ -853,16 +835,16 @@ TODO : notes
 
 <br/>
 
-## Distributed message queue
+### Distributed message queue
 
-### Message Queue
+#### Message Queue
 In a traditional message queue, communication happens within a single system or application. It's a mechanism for asynchronous communication between components or services within the same application or server. Messages are sent from producers to a central queue, and consumers retrieve and process those messages.
 
 Example of Message Queue:   
 Imagine a simple e-commerce application. The order processing component generates an order message and puts it into a queue. The inventory management component, acting as a consumer, retrieves the order message from the queue and updates the inventory accordingly.
 
 
-### Distributed message queue
+#### Distributed message queue
 
 A distributed message queue extends the concept of a message queue to operate across multiple nodes or servers in a distributed system. This allows for communication and coordination between components that may be running on different machines or in different locations. This is crucial for building scalable and fault-tolerant systems where components may be distributed across a network.
 
@@ -873,7 +855,7 @@ Popular examples of distributed message queues include Apache Kafka, RabbitMQ, a
 
 <br/>
 
-## Logging Monitoring Alerting
+### Logging Monitoring Alerting
 
 <br/>
 <br/>
@@ -881,18 +863,12 @@ Popular examples of distributed message queues include Apache Kafka, RabbitMQ, a
 
 ---
 
-# Software Architecture Patterns
-
-[Software Architecture Patterns](../SoftwareArchitecture/README.md)
-
----
-
-# System Design - Choosing database
+## System Design - Choosing database
 
 <br/>
 <br/>
 
-## When to choose which database
+### When to choose which database
 
 <br/>
 
@@ -908,7 +884,7 @@ Popular examples of distributed message queues include Apache Kafka, RabbitMQ, a
 
 <br/>
 
-## Time series Database
+### Time series Database
 
 https://www.youtube.com/watch?v=cODCpXtPHbQ
 
@@ -917,7 +893,7 @@ TODO - Notes from video
 <br/>
 <br/>
 
-## File Storage vs Blob Storage
+### File Storage vs Blob Storage
 
 https://www.youtube.com/watch?v=tndzLznxq40
 
@@ -926,14 +902,14 @@ TODO - Notes from video
 <br/>
 <br/>
 
-## Data warehouse, Database for analytics - Hadoop
+### Data warehouse, Database for analytics - Hadoop
 
 Dump all data with querying capabilities on top of it to support reports
 
 <br/>
 <br/>
 
-### RDBMS advantages:
+#### RDBMS advantages:
 
 - <ins>Simple structure</ins>  
   It has a simple structure that matches most kinds of data you normally have in a program.
@@ -952,7 +928,7 @@ Dump all data with querying capabilities on top of it to support reports
 <br/>
 <br/>
 
-### RDBMS disadvantages:
+#### RDBMS disadvantages:
 
 - <ins>No support for objects, arrays, etc</ins>  
   Relational does not support OOP based objects, even representing simple lists is very complicated.
@@ -970,7 +946,7 @@ Dump all data with querying capabilities on top of it to support reports
 <br/>
 <br/>
 
-### Non-relational DBMS advantages:
+#### Non-relational DBMS advantages:
 
 - <ins>Store diverse types of data</ins>  
   NoSQL databases give you unlimited freedom to store diverse types of data in the same place. This offers the flexibility to add new and different types of data to your database at any time.
@@ -992,7 +968,7 @@ Dump all data with querying capabilities on top of it to support reports
 <br/>
 <br/>
 
-### Non-relational DBMS disadvantages:
+#### Non-relational DBMS disadvantages:
 
 - <ins>Atomic transactions are not inherently supported</ins>  
   you can add it yourself in code by using verification and revert mechanism, but since the records are divided between machines it cannot be an atomic process and race conditions can occur.
@@ -1007,7 +983,7 @@ Dump all data with querying capabilities on top of it to support reports
 <br/>
 <br/>
 
-### How to Choose the Right Type of Database
+#### How to Choose the Right Type of Database
 
 Here are some factors you should keep in mind when selecting a database management system:
 
@@ -1037,7 +1013,7 @@ References
 
 ---
 
-## Databases and Analogies with SQL
+### Databases and Analogies with SQL
 
 |      Name      |  Database  |     Table      |   Row    |   Column   | Index |                     Query language                     |              |
 | :------------: | :--------: | :------------: | :------: | :--------: | :---: | :----------------------------------------------------: | :----------: |
@@ -1050,7 +1026,7 @@ References
 <br/>
 <br/>
 
-## Databases according to CAP theorem
+### Databases according to CAP theorem
 
 In terms of partition, database can be PA - PARTITION AVAILABLE or PC - PARTITION CONSISTENT
 If no partition, database can be EL - ELSE LATENCY or EC - ELSE CONSISTENT
@@ -1066,7 +1042,7 @@ Redis - PA EL
 
 Mongo DB - PA EC (default config), PC EC (if configured to write on majority replicas)
 
-### Can you not scale SQL databases?
+#### Can you not scale SQL databases?
 Is it true that when you userbase/scale increases you will need to move to a NOSQL db?   
 Many companies with huge scale use SQL, how do they do it ?   
 
@@ -1104,7 +1080,7 @@ Auto-scaling features and managed database services make it easier to adapt to v
 6. Advanced Architectural Designs   
 Database management systems have evolved with features designed for scalability, such as distributed transaction management and global consistency
 
-#### How amazon scales its SQL database
+##### How amazon scales its SQL database
 
 Amazon scales its SQL databases, particularly with Amazon RDS, using the following key strategies:
 
@@ -1127,16 +1103,16 @@ Amazon scales its SQL databases, particularly with Amazon RDS, using the followi
 
 ---
 
-## Virtualization
+### Virtualization
 
-#### Why do we need to run multiple operating systems on a single machine ?
+##### Why do we need to run multiple operating systems on a single machine ?
 1. Testing    
 Imagine you're creating software that should work on different operating systems like Windows, macOS, and Linux. By using virtual machines, you can test your software on each operating system without needing separate physical devices for each. This helps ensure your software works correctly on all intended platforms.
 
 2. Compatibility   
 Some applications might have specific dependencies or requirements that only work on certain operating systems. 
 
-#### What are some applications or software that only work on certain operating systems
+##### What are some applications or software that only work on certain operating systems
 Certain applications or software have specific technical requirements or dependencies that are closely tied to a particular operating system
 
 1. APIs and Frameworks
@@ -1154,7 +1130,7 @@ Certain applications or software have specific technical requirements or depende
     * 32-bit vs. 64-bit Applications: Some software is designed to work exclusively on either 32-bit or 64-bit operating systems. Certain applications, especially those that require extensive memory usage, might be optimized for 64-bit systems and may not function properly on 32-bit systems, and vice versa.
 
 
-### Bare Metal
+#### Bare Metal
 
 Bare metal refers to a computer system or server that runs directly on the underlying hardware without any intermediary software.   
 In this scenario, the operating system directly interacts with the hardware, providing high performance and full access to the resources.    
@@ -1162,7 +1138,7 @@ Bare metal is often used when high performance and direct control over hardware 
 
 Bare metal provides direct access to hardware resources, while VMs and containers share underlying hardware resources.
 
-#### Providers offering services for bare metal
+##### Providers offering services for bare metal
 
 * **Amazon EC2 Bare Metal**: EC2 Bare Metal instances, you can deploy and manage your applications on dedicated hardware while still benefiting from the scalability, security, and reliability offered by the AWS cloud platform. This service provides a unique option for organizations that require the capabilities of a public cloud infrastructure while maintaining the advantages of running applications on dedicated physical hardware
 
@@ -1170,11 +1146,11 @@ Bare metal provides direct access to hardware resources, while VMs and container
 
 * **Oracle Cloud Infrastructure Bare Metal**: Oracle provides bare metal cloud services that offer high-performance, dedicated compute power with full access to the underlying hardware for workloads with demanding performance and security requirements.
 
-#### At what stage is it used ?
+##### At what stage is it used ?
 
 * Deployment: Bare metal is used for deploying applications that require high performance and direct access to hardware resources. It is often preferred for tasks such as running resource-intensive applications, high-performance databases, and specific hardware optimizations that demand dedicated hardware resources.
 
-### Virtual Machines (VMs)
+#### Virtual Machines (VMs)
 
 Virtual machines are software-based emulations of physical computers. They enable multiple operating systems to run on a single physical machine, each with its own set of resources.    
 VMs provide isolation between different applications and operating systems, allowing for efficient resource utilization and the ability to run multiple applications on a single physical server.     
@@ -1182,7 +1158,7 @@ This technology is particularly useful for consolidating hardware resources, cre
 
 VMs emulate hardware and can run multiple operating systems, whereas containers share the host operating system's kernel and are more lightweight.
 
-#### Providers offering services for virtual machines (VMs)
+##### Providers offering services for virtual machines (VMs)
 
 * **Amazon Elastic Compute Cloud (Amazon EC2)**: Amazon EC2 is a web service provided by Amazon Web Services (AWS) that offers resizable compute capacity in the cloud. It provides secure, scalable, and on-demand virtual server instances known as virtual machines (VMs) to users. 
 Each of these virtual servers acts as an independent computing environment, complete with its own operating system and resources, allowing you to run applications and services in a manner similar to physical servers but without the need to manage actual hardware.
@@ -1191,13 +1167,13 @@ Each of these virtual servers acts as an independent computing environment, comp
 
 * **Google Cloud Compute Engine**: Google Cloud offers virtual machine instances that enable users to deploy and manage applications on the Google Cloud Platform using customizable virtual machine configurations.
 
-#### At what stage is it used ?
+##### At what stage is it used ?
 * Development: VMs are commonly used during the development stage for testing applications on different operating systems and software configurations. Developers can create VMs to simulate various environments and ensure the application works seamlessly across different platforms.
 
 * Deployment: VMs are used during deployment to create multiple isolated environments on a single physical server. They help in consolidating hardware resources, optimizing resource utilization, and providing a flexible and scalable infrastructure for deploying and managing applications.
 
 
-### Containerization
+#### Containerization
 Containerization is a lightweight form of virtualization that allows applications and their dependencies to be packaged together.    
 Containers share the host operating system's kernel, making them more lightweight and efficient than VMs.    
 They provide a consistent runtime environment across different computing environments, enabling developers to build, ship, and run applications seamlessly.    Containers are ideal for creating portable, scalable, and consistent development and deployment environments, making them popular in modern software development and deployment workflows.
@@ -1206,7 +1182,7 @@ Containers are faster to start and require fewer resources compared to VMs.
 
 Bare metal provides the highest performance, while VMs offer a good balance between performance and flexibility. Containers provide lightweight, portable environments that promote scalability and consistency.
 
-#### Providers offering services for containerization
+##### Providers offering services for containerization
 
 * **Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS)**: AWS also provides containerization services through Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS), which allow users to run and manage containers easily on AWS. These services are specifically designed for container orchestration and management, providing scalable and efficient solutions for deploying and managing containerized applications
 
@@ -1214,7 +1190,7 @@ Bare metal provides the highest performance, while VMs offer a good balance betw
 
 * **Kubernetes**: Kubernetes is an open-source container orchestration platform that helps automate the deployment, scaling, and management of containerized applications, often used in conjunction with cloud services such as AWS, Azure, and Google Cloud.
 
-#### At what stage is it used ?
+##### At what stage is it used ?
 
 * Development: Containerization is used during the development stage to create a consistent runtime environment for applications. Developers use containers to package and isolate applications with their dependencies, ensuring that the application runs consistently across different development and testing environments.
 
@@ -1222,9 +1198,9 @@ Bare metal provides the highest performance, while VMs offer a good balance betw
 
 ---
 
-# API Design
+## API Design
 
-## Desiging a good API
+### Desiging a good API
 
 https://www.youtube.com/watch?v=_YlYuNMTCc8
 
@@ -1233,7 +1209,7 @@ TODO - Notes from video
 <br/>
 <br/>
 
-## API rate limiting
+### API rate limiting
 
 https://www.youtube.com/watch?v=YSW3UE5AFD4
 
@@ -1243,7 +1219,7 @@ API rate limiting is a strategy used to control the rate at which clients or app
 
 
 
-### Ways to implement API rate limiting
+#### Ways to implement API rate limiting
 
 1. Token Bucket   
 In this algorithm, clients are assigned tokens at a fixed rate. Each API request consumes a token. When a client runs out of tokens, it must wait until new tokens are replenished.   
@@ -1272,7 +1248,7 @@ In distributed systems, rate limiting can be more challenging. A centralized app
 <br/>
 <br/>
 
-## Put vs Patch
+### Put vs Patch
 
 https://www.youtube.com/watch?v=LJajkjI5RHE
 
@@ -1289,9 +1265,9 @@ https://www.youtube.com/watch?v=LJajkjI5RHE
 
 ---
 
-## Development and deployment
+### Development and deployment
 
-### Deployment strategies
+#### Deployment strategies
 
 1. Scheduled or Maintenance Window Deployment   
 Scheduled or Maintenance Window Deployment is a traditional strategy where software updates are deployed during predefined off-peak hours or maintenance windows, typically at night, to minimize user impact. This approach involves planned downtime, thorough testing before deployment, and a rollback plan for quick reversion in case of issues. The strategy aims to provide predictability for downtime and reduce disruptions by choosing times of lower user activity.
@@ -1311,12 +1287,12 @@ In an emergency or red-black deployment, the existing version (red) is replaced 
 
 ---
 
-# Technologies & Frameworks
+## Technologies & Frameworks
 
 <br/>
 <br/>
 
-## Kafka
+### Kafka
 
 6 scenarios/areas that Kafka is commonly referenced in system design interviews (https://levelup.gitconnected.com/6-things-you-need-to-know-about-kafka-before-using-it-in-a-system-design-interview-1fc31451732c)
 
@@ -1368,278 +1344,5 @@ In an emergency or red-black deployment, the existing version (red) is replaced 
 - Another common Kafka gotcha in system design interviews is that people don’t pay attention to its scalability characteristics. Even though Kafka does not impose any hard limit on the number of topics and partitions, there are some internal constraints. Kafka stores the topics and partitions information in Zookeeper. Zookeeper’s availability can be enhanced by adding more instances, but its capacity is bottlenecked by individual nodes. In addition, Kafka assigns one server to act as the controller to manage the topics and partitions metadata. The controller needs to keep track of the partition leaders, and handle leader changes. And when the controller itself fails, the cluster needs to elect a new controller and transfer the metadata management to the newly elected controller. The controller role is crucial in a Kafka cluster. Increasing the cardinality of topics and partitions leads to higher overhead that may overwhelm the controller. Another aspect to take into consideration is that each partition is a physical file folder, within which there are multiple data files and index files for various log segments. \* So there is also the filesystem overhead in managing a large number of partitions. Finally, don’t forget that all the partitions are replicated, which multiplies the overhead.
 - Thousands of topics and tens of thousands of partitions are definitely on the large end of the spectrum. The typical Kafka paradigm is fewer and larger topics with a reasonable amount of partitions. So the design of one Kafka topic per user and even one partition per user in a system design interview may be frowned upon. If you find yourselves heading to that rabbit hole, you may want to step back and consider whether a distributed key-value store like Cassendra is more appropriate.
 
-<br/>
 
-<br/>
-<br/>
 
-<br/>
-<br/>
-
-<br/>
-<br/>
-
-<br/>
-<br/>
-
----
-
-<br/>
-<br/>
-
-# System Design Interviews - Step by step
-
-## Step 1 - Requirements clarifications
-
-Clarify all these
-
-- ### Functional Requirements
-  - what features are expected - upload video, show feed, cater to multiple resolutions, cater to different internet speeds etc
-  - **For Functional Requirements, consider analytics too**
-  - If you need response **real time/very fast**, call it **Minimal Latency**
-- ### Non Functional requirements
-  What non functional requirements are expected - high availability, low latency, consistency vs performance, fault tolerence et
-- ### Capacity Estimation
-
-  1. What scale is expected from the system (e.g., number of new tweets, number of tweet views, number of timeline generations per sec., etc.)
-  1. DAU (Daily active users), Creators ratio
-  1. How much storage will we need?
-  1. What network bandwidth usage are we expecting? This will be crucial in deciding how we will manage traffic and balance load between servers.
-
-  <br/>
-
-  **Consider Bandwidth estimation, Read/Write ratio, Cache memory estimation too with Traffic estimation, Memory estimation**  
-  For traffic estimation, calculate Reads/second, Writes/second
-
-- ### Write conclusions
-  Write to read ratio consider when data storage
-
-<br/>
-
-## Step 2 - Defining data model
-
-- List down tables in db and their schemas
-- Consider Database design too
-
-```javascript
-// Example of db design for URL shortening service
-
-* Store billions of records
-* Reads > writes
-* No relation among records
-
-// Since we do not need joins, ACID properties, and since horizontal scaling is preferable in this senario
-// NoSQL will be a better choice
-```
-
-<br/>
-
-## DESIGN A MONOLITH FIRST AND THEN TRY TO BREAK IT
-
-## Step 3 - High-level design
-
-- Design monolith first and then try to break it
-- **Ask yourself how will you scale each major service**
-
-<br/>
-
-## Step 4 - Detailed Design
-
-Ask yourself
-
-- How should we partition our data to distribute it to multiple databases?
-- Should we try to store all the data of a user on the same database? What issue could it cause?
-- How much and at which layer should we introduce cache to speed things up?
-- Since users’ timeline will contain the most recent (and relevant) tweets, should we try to store our data so that it is optimized for scanning the latest tweets?
-- What components need better load balancing?
-
-- Along with mentioning cache, LB, **Mention cache evection policy, cache invalidation policy, Load balancing algo too**
-
-<br/>
-
-## Step 5 - Identifying and resolving bottlenecks
-
-- Is there any **single point of failure** in our system? What are we doing to mitigate it?
-- Do we have enough **replicas** of the data so that we can still serve our users if we lose a few servers?
-- Do we have enough **copies of different services running** such that a few failures will not cause a **total system shutdown**?
-- How are we **monitoring the performance** of our service? Do we get **alerts** whenever critical components fail or their performance degrades?
-
-<br/>
-<br/>
-<br/>
-
----
-
-## Tips and Tricks
-
-- **For Functional Requirements, consider analytics too**
-- For Functional Requirements, If you need response **real time/very fast**, call it **Minimal Latency**
-- For Capacity Estimation consider **Bandwidth estimation, Read/Write ratio, Cache memory estimation too with Traffic estimation, Memory estimation**
-- After basic HDD Ask yourself how will you **scale each major service**
-- For traffic estimation, calculate Reads/second, Writes/second
-- In Step 2 Defining data model, Consider **Database Design** too
-- In Step 4 Detailed Design, Along with mentioning cache, LB, **Mention cache evection policy, cache invalidation policy, Load balancing algo too**
-
-<br/>
-<br/>
-
----
-
-# Random Notes
-
-* Why choose S3
-
-  - Backed by AWS
-  - Reliable
-  - SLA
-  - Can hook up S3 to CDN
-  - Since Data is replicated in CDN it prevents a single point of failure
-  - Note - S3 is not mutable
-
-* Always save meta data of media in NOSQL databases, as it is more flexible, fast for analysis, Horizontal scalable and you dont have joins
-
-* For media, check if we need to support different resolutions and devices
-
-* Akamai - Akamai is the leading content delivery network (CDN) services provider for media and software delivery, and cloud security solutions.
-
-* Amazon CloudFront is a global content delivery network (CDN) service built for high-speed, low-latency performance, security, and developer ease-of-use.
-AWS offers a CDN service called Amazon CloudFront, which integrates seamlessly with S3 to accelerate content delivery.
-
-* If your primary concern is delivering web content (images, videos, scripts) with low latency and high performance, you would typically use a CDN like Akamai or a combination of Amazon S3 and Amazon CloudFront.
-
-* Can i hook up s3 to Akamai? Yes, you can integrate Amazon S3 (Simple Storage Service) with Akamai, and it's a common practice to do so for optimizing content delivery
-
-* Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine
-
-* Think about Security and Permission
-
-* In a system design review, in addition to development, it’s often a bonus point to call out operation and maintenance, which many candidates neglect
-
-<br/>
-
----
-
-# Architecture
-
-- Client side interface (usually web app, app, website, etc)
-- Client server communication (usually REST, long polling, web sockets, server side if two way communication)
-- Server and its microservices
-- Introduce queues if req for processing user requests
-- Client server communication protocol (usually HTTP over TCP/IP or UDP, FTP)
-- Databases  
-  (Database Partitioning)
-- S3 for static media storage
-- Databases replica
-- Server to server communication (message queue or REST)
-- Load balancers
-- Cache
-
-<br/>
-<br/>
-
-# System Design Examples
-
-## Scaling a local pizza shop
-
-<br/>
-<br/>
-
-## URL Shortening service like TinyURL
-
-https://www.youtube.com/watch?v=zgIyzEEXfiA
-
-(done offline)
-
-<br/>
-<br/>
-
-## Design a WhatsApp Chat messaging system design
-
-https://leetcode.com/discuss/interview-question/system-design/1588415/WhatsAppMessaging-Chat-System-Design
-
-<br/>
-<br/>
-
-## Design TikTok
-
-https://www.youtube.com/watch?v=07BVxmVFDGY
-
-<br/>
-<br/>
-
-## Design a B2B application used by Retail stores
-
-```json
-retail store B2B
-offline stores
-
-any size (local retailer to Dmart, reliance fresh etc)
-
-
-product catelogue
-Inventory management
-ordering products from vendors
-users & their purchases, payment record
-Invoice
-company structure
-
-customer -> service -> vendors
-
-
-company
-id :
-name ,
-prime location
-locations
-no of outlets
-active
-
-
-product
-name
-price
-selling price
-discount
-features
-SKU
-images
-url
-company_id : ''
-
-customer
-name
-address
-phone
-order total :
-
-
-payment
-amount :
-customer id :
-company id :
-order id :
-payment date : ''
-
-order items
-123 :
-123 : '', name: , price, disc
-date : ''
-
-
-
-
-POST /payment/
-{
-	"orderItems": [],
-  "customerId": "",
-  "comapany id" : "",
-}
-```
-
-### Notes from this design
-
-- For B2B consider Both perspective, To Consumer as well as to bussiness
-- When defining schema, specially mention the foreign keys and relations, Eg - product belongs to a company
-- When saving payments data / order data, Instead of using product_id forign key, dump product data, as price may change and we want an entry of older price at which it was purchased
-- For tables like Order, Payment etc Date Time of transaction is a MUST
-- ***

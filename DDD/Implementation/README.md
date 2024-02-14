@@ -30,6 +30,10 @@ PUT /api/v3/feed/page/:pageId/settings
   - [Runners](#runners)
   - [Testing](#testing)
 
+
+### Design patterns used
+- []()
+
 ## Usecase 
 
 Usecases are where the actually business logic is coded   
