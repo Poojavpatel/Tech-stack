@@ -15,6 +15,8 @@
 ## Double booking problem (Race condition)
 In a booking system like book my show, when two people are trying to book the same seat, how does it ensure that the seat is booked by only one person, and also make sure the seat gets booked by at least one of them   
 
+https://www.youtube.com/watch?v=d0UT6NtpO4o
+
 <br/>
 <br/>
 
