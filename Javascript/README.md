@@ -5,8 +5,9 @@
     1. [Hoisting](#hoisting)
     1. [IIFE (Immediately Invoked Function Expression)](#iife-immediately-invoked-function-expression)
     1. [Scope](#scope)
-    1. [Closure](#closure)
+    1. [Closure](#clousre)
     1. [Higher Order Functions](#higher-order-functions)
+    1. [First-class Function](#first-class-function)
     1. [Memoization in JavaScript](#memoization-in-javascript)
     1. [Currying in JavaScript](#currying-in-javascript)
     1. [Yield in JavaScript](#yield-in-javascript)
@@ -253,8 +254,11 @@ add();
 
 <br/>
 
-### <ins>Higher order functions</ins>
+### Higher order functions
 A Higher order function is a function that takes a function as an argument or a function that returns a function as an argument
+
+Note : In JavaScript, a first-order function is a function that is not a higher-order function.
+
 ```javascript
 //1- a function that accepts a function as an argument
 document.addEventListener('click',myFunction);
@@ -287,6 +291,25 @@ function saySomething(color){
 
 <br/>
 <br/>
+
+### First-class Function
+
+A programming language is said to have First-class functions when functions in that language are treated like any other variable.       
+For example, in such a language, a function can be passed as an argument to other functions, can be returned by another function and can be assigned as a value to a variable.   
+JavaScript treats function as a first-class citizen. This means that functions are simply a value and are just another type of object.
+
+Usage of First-Class Function
+* It can be stored as a value in a variable.
+* It can be returned by another function.
+* It can be passed into another function as a parameter.
+* It can also stored in an array, queue, or stack.
+* It can have its own methods and property.
+
+Note : In JavaScript, all functions are first-class functions, so a first-order function is also a first-class function.
+
+<br/>
+<br/>
+
 
 ### Memoization in JavaScript
 

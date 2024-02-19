@@ -1,12 +1,63 @@
-## When to choose which database
+## Database
+
+### Table of contents
+- [Databases]()
+  - [SQL](../SQL/README.md)
+  - [Mongo db](../Mongodb/README.md)
+  - [DynamoDB](../AWS/DynamoDB.md)
+  - [Redis](../Redis/README.md)
+  - [Cassandra](../Cassandra/README.md)
+- [When to choose which database](#when-to-choose-which-database---cheat-sheet)
+- [Time series Database](#time-series-database)
+- [File Storage vs Blob Storage](#file-storage-vs-blob-storage)
+- [Data warehouse, Database for analytics - Hadoop](#data-warehouse-database-for-analytics---hadoop)
+- [RDBMS advantages](#rdbms-advantages)
+- [RDBMS disadvantages](#rdbms-disadvantages)
+- [Non-relational DBMS advantages](#non-relational-dbms-advantages)
+- [Non-relational DBMS disadvantages](#non-relational-dbms-disadvantages)
+- [How to Choose the Right Type of Database](#how-to-choose-the-right-type-of-database)
+- [Databases and Analogies with SQL](#databases-and-analogies-with-sql)
+- [Databases according to CAP theorem](#databases-according-to-cap-theorem)
+- [Can you not scale SQL databases?](#can-you-not-scale-sql-databases)
+
+
+<br/>
+<br/>
+<br/>
+
+
+### When to choose which database - Cheat Sheet
+- Caching - Use Key Value store - Redis, MemeCache
+- Image/Video - Use Blob Storage - Amazon S3 (+ CDN)
+- Text searching - Text Search Engine - Elastic search, Solr (Both are build on Lucene)
+- Application Metrics tracking system - Time series Database - Influx DB, Open TSDB
+- Analytics - Data warehouse - Hadoop
+- Structured Data and Need ACID - SQL
+- Unstructured Data, no/less relations, No ACID needed - Mongo DB, Couch base
+- Unstructured Data, Ever Increasing data - Cassandra DB, HBase
+- Social network Graphs, Recommendation Engine & Product Recommendation System, Knowledge Graph - Graph databases - Neo4j
 
 <br/>
 
-### Cheat Sheet
-* For cache — use a key-value DB (Redis).
-* For graph-like data — use a graph DB.
-* If you tend to query on subsets of columns /features — use column DB.
-* For all other use cases — Relational or Document DB.
+### Time series Database
+
+https://www.youtube.com/watch?v=cODCpXtPHbQ
+
+TODO - Notes from video
+
+<br/>
+
+### File Storage vs Blob Storage
+
+https://www.youtube.com/watch?v=tndzLznxq40
+
+TODO - Notes from video
+
+<br/>
+
+### Data warehouse, Database for analytics - Hadoop
+
+Dump all data with querying capabilities on top of it to support reports
 
 <br/>
 
@@ -82,6 +133,7 @@
 * <ins>Lack of tools</ins>   
   Since the system is relatively new compared to SQL-based RDBMS solutions, there aren't as many tools to assist with performance testing and analysis.
 
+<br/>
 
 > A race condition is an undesirable situation that occurs when a device or system attempts to perform two or more operations at the same time (two or more threads can access shared data and they try to change it at the same time).   
 Because the thread scheduling algorithm can swap between threads at any time, you don't know the order in which the threads will attempt to access the shared data.
@@ -111,3 +163,101 @@ If speed is more important than ACID compliance, a non-relational database, such
 References
 * [Which Modern Database Is Right for Your Use Case] (https://www.xplenty.com/blog/which-database/)
 * [How to Choose the Right Database] (https://towardsdatascience.com/how-to-choose-the-right-database-afcf95541741)
+
+
+<br/>
+<br/>
+
+---
+
+### Databases and Analogies with SQL
+
+|      Name      |  Database  |     Table      |   Row    |   Column   | Index |                     Query language                     |              |
+| :------------: | :--------: | :------------: | :------: | :--------: | :---: | :----------------------------------------------------: | :----------: |
+|      SQL       |  Database  |     Table      |   Row    |   Column   | Index |                          SQL                           |
+|    MongoDB     |  Database  |   Collection   | Document |   Fields   | Index |                          MQL                           | Aggregations |
+| Elastic search |   Index    | Types/Patterns | Document |   Fields   |   -   | Over RESTful APIs Query DSL (Domain Specific Language) |
+|   Cassandra    | Key spaces |     Table      |          |            |       |             Cassandra Query Language (CQL)             |
+|     Neo4j      |  Database  |     Labels     |   Node   | Properties |       |              Cypher Query Language (CQL)               |
+
+<br/>
+<br/>
+
+### Databases according to CAP theorem
+
+In terms of partition, database can be PA - PARTITION AVAILABLE or PC - PARTITION CONSISTENT
+If no partition, database can be EL - ELSE LATENCY or EC - ELSE CONSISTENT
+
+SQL - PC EC
+
+HBase - PC EC  
+Big Table - PC EC
+
+Dynamo DB - PA EL  
+Cassandra - PA EL  
+Redis - PA EL
+
+Mongo DB - PA EC (default config), PC EC (if configured to write on majority replicas)
+
+<br/>
+
+### Can you not scale SQL databases?
+Is it true that when you userbase/scale increases you will need to move to a NOSQL db?   
+Many companies with huge scale use SQL, how do they do it ?   
+
+The perception of SQL databases being difficult to scale is changing   
+While it's true that NoSQL databases have been traditionally associated with horizontal scaling, modern SQL databases have evolved and adopted strategies to handle large-scale applications
+
+Companies like Facebook, Google, and Amazon use SQL databases at a massive scale by implementing these strategies. The key is to carefully design the database architecture, leverage modern technologies, and adopt best practices for scalability.    
+
+While NoSQL databases are suitable for certain use cases, SQL databases remain a robust choice for applications that demand strong consistency, complex queries, and transactional integrity at scale.
+
+Here's an explanation of how SQL databases achieve scalability
+1. Horizontal Scaling   
+To overcome the limitations of vertical scaling, modern SQL databases have adopted horizontal scaling strategies.
+Horizontal scaling involves distributing the data and workload across multiple servers, forming a cluster.
+Each server in the cluster is responsible for a portion of the data, and together they handle the overall workload
+
+2. Sharding   
+Sharding is a technique used in horizontal scaling where the dataset is divided into smaller, more manageable parts called shards.
+Each shard is stored on a separate server, allowing the database to distribute the load across multiple machines.
+Sharding can be done based on certain criteria such as ranges of data, geographic location, or other factors
+
+3. Replication   
+Replication involves creating copies of the database and distributing them across multiple servers.
+One server serves as the primary (read and write operations), while others act as replicas (read-only operations).
+This improves read scalability and provides fault tolerance. If one server fails, another can take over.
+
+4. Caching   
+Caching frequently accessed data in memory can significantly improve the performance of SQL databases.
+This is particularly effective for read-heavy workloads, as it reduces the need to fetch data from disk
+
+5. Cloud-Based Solutions
+Cloud platforms offer scalable infrastructure, allowing databases to leverage cloud services for dynamic scaling.
+Auto-scaling features and managed database services make it easier to adapt to varying workloads.
+
+6. Advanced Architectural Designs   
+Database management systems have evolved with features designed for scalability, such as distributed transaction management and global consistency
+
+##### How amazon scales its SQL database
+
+Amazon scales its SQL databases, particularly with Amazon RDS, using the following key strategies:
+
+1. Multi-AZ Deployment: Maintains a primary database with a backup replica in a different location for high availability.
+
+1. Read Replicas: Creates copies of the primary database for handling read queries, distributing the workload.
+
+1. Sharding: Splits large datasets into smaller shards, managed independently for improved scalability.
+
+1. Amazon Aurora: Utilizes the high-performance, distributed architecture of Amazon Aurora for both read and write operations.
+
+1. Elastic Load Balancing: Distributes incoming database traffic across multiple instances, preventing bottlenecks.
+
+1. Auto Scaling and Cloud Infrastructure: Integrates with AWS Auto Scaling for dynamic adjustments based on demand, leveraging the flexibility of cloud infrastructure.
+
+
+
+<br/>
+<br/>
+
+---
