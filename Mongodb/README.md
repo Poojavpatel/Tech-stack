@@ -1,4 +1,23 @@
-## Mongodb
+# Mongodb
+
+## Table of Contents
+- [Installation and Setup](#installation-and-setup)
+- [Querying Documents](#querying-documents)
+- [Updating Documents](#updating-documents)
+- [Populate()](#populate)
+- [Mongo Aggregations](#mongo-aggregations)
+  - [Interview question](#interview-question)
+- [$lookup](#lookup)
+- [Mongo aggregate groupby preserve sort](#mongo-aggregate-groupby-preserve-sort)
+- [Import Export Data](#import-export-data)
+- [Lean](#lean)
+- [$pull](#pull)
+
+<br/>
+<br/>
+<br/>
+
+
 
 ## Installation and setup
 To install mongodb
@@ -32,7 +51,12 @@ To start working with (creating and editing) databases, type:
 ```bash
 mongo
 ```
+
 ---
+
+<br/>
+<br/>
+
 ## Querying documents
 
 List all collection names in a db   
@@ -108,6 +132,11 @@ db.Pincode.getIndexes()
 db.Pincode.createIndex({state: 1})
 ```
 ---
+
+<br/>
+<br/>
+
+
 ## Updating Documents
 
 Syntax
@@ -148,6 +177,9 @@ db.city.update({ _id: 123 }, { $inc: { population: 100 } })
 ```
 
 ---
+
+<br/>
+<br/>
 
 ## Populate()
 
@@ -202,6 +234,11 @@ Story.findOne({ title: Nintendo }).populate('_creator', 'name age')
 ```
 
 ---
+
+<br/>
+<br/>
+
+
 ## Mongo Aggregations
 
 
@@ -1090,6 +1127,69 @@ Test8
 
 ```
 
+
+<br/>
+
+### Interview question
+
+For pagination, I need total product count and first 10 products, how do i get them in a single query?   
+Using Facets    
+The $facet stage allows you to run multiple pipelines within a single aggregation stage. It computes the total count and the subset of products in parallel.   
+```js
+const pageSize = 10; // Number of products per page
+const pageNumber = 1; // Page number you want to retrieve
+
+db.products.aggregate([
+  {
+    $facet: {
+      "totalCount": [
+        {
+          $count: "total"
+        }
+      ],
+      "products": [
+        {
+          $skip: (pageNumber - 1) * pageSize
+        },
+        {
+          $limit: pageSize
+        }
+      ]
+    }
+  }
+]);
+```
+
+Without using facets   
+```js
+const pageSize = 10;
+const pageNumber = 1;
+const skipCount = (pageNumber - 1) * pageSize;
+
+db.products.aggregate([
+  {
+    $group: {
+      _id: null,
+      totalCount: { $sum: 1 },
+      products: { $push: "$$ROOT" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      totalCount: 1,
+      products: {
+        $slice: ["$products", skipCount, pageSize]
+      }
+    }
+  }
+]);
+```
+
+
+<br/>
+<br/>
+
 ---
 
 ### $lookup
@@ -1165,6 +1265,9 @@ WHERE inventory_docs IN (
 
 ---
 
+<br/>
+<br/>
+
 ### Mongo aggregate groupby preserve sort
 
 https://stackoverflow.com/questions/14513185/mongo-aggregation-framework-sort-and-then-group-not-working
@@ -1224,6 +1327,11 @@ db.comments.aggregate([
 ```
 
 ---
+
+<br/>
+<br/>
+
+
 ## Import Export Data
 
 Dump data from a specified host and port
@@ -1238,9 +1346,17 @@ $ mongodump --forceTableScan --host 11.234.251.185 --port 27017 --db db_users --
 
 ---
 
+<br/>
+<br/>
+
+### lean()
+
 lean() is not needed on an aggregate function as the documents returned are plain JavaScript objects, and not Mongoose objects. This is because any shape of document can be returned
 
 ---
+
+<br/>
+<br/>
 
 ### $pull
 The 

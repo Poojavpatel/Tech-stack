@@ -477,30 +477,97 @@ Horizontal scaling is almost always more desirable than vertical scaling because
 
 ### CAP Theorem
 
-https://www.youtube.com/watch?v=8UryASGBiR4  
-https://www.youtube.com/watch?v=k-Yaq8AHlFA
+Refer:   
+[CAP Theorem Simplified | Byte Byte Go](https://www.youtube.com/watch?v=BHqjEjzAicA)   
+[CAP Theorem Simplified | Scalar](https://www.youtube.com/watch?v=8UryASGBiR4)   
 
-- CAP theorem states that it is impossible for a distributed software system to
-  simultaneously provide more than two out of three of the following
-  guarantees (CAP)  
-  C - Consistency  
-  A - Availability  
-  P - Partition tolerence
 
-- Consistency: All nodes see the same data at the same time. Consistency is
-  achieved by updating several nodes before allowing further reads.
-- Availability: Every request gets a response on success/failure. Availability is
-  achieved by replicating the data across different servers.
-- Partition tolerance: The system continues to work despite message loss or
-  partial failure. A system that is partition-tolerant can sustain any amount of
-  network failure that doesn’t result in a failure of the entire network. Data is
-  sufficiently replicated across combinations of nodes and networks to keep the
-  system up through intermittent outages.
+<img src="https://i.ytimg.com/vi/BHqjEjzAicA/maxresdefault.jpg" width="50%" />
 
-- TODO : Inser image
+<br/>
 
-- TODO : Take notes from both youtube videos
+The CAP Theorem is a concept in computer science that explains the trade-offs between consistency, availability, and partition tolerance in distributed systems.
 
+- Consistency: Consistency refers to the property of a system where all nodes have a consistent view of the data. It means all clients see the same data at the same time no matter which node they connect to.     
+Consistency is achieved by updating several nodes before allowing further reads. 
+
+- Availability: Availability refers to the ability of a system to respond to requests from users at all times.   
+Availability is achieved by replicating the data across different servers.
+
+- Partition tolerance: Partition tolerance refers to the ability of a system to continue operating even if there is a network partition.    
+A network partition happens when nodes in a distributed system are unable to communicate with each other due to network failures.   
+
+
+When there is a network partition, a system must choose between consistency and availability. If the system prioritizes consistency, it may become unavailable until the partition is resolved. If the system prioritizes availability, it may allow updates to the data, which could result in data inconsistencies until the partition is resolved.
+
+> As with many things in software engineering, this is about tradeoffs   
+And the choices are not always black and white
+
+
+**Example 1:**      
+
+Consider a tiny bank that has only two ATMs connected by a cable, there is no central db     
+The ATM supports 3 operations Deposit, Withdrawal and check balance. At any point bank balance should not go below zero   
+Balance data is stored on both ATMs   
+When personA with balance of 50rs deposits 20rs, the balance is updated to 70 on both the ATMs   
+
+Assume a network partition occurs (wire broken), both ATMs are now not able to communicate with each other   
+According to CAP theorem, In this case, the system must either prioritize consistency or availability   
+Suppose the system prioritizes consistency, the ATMs will refuse to process any deposits or withdrawals till the partition is resolved. This will ensure balance are consistent in both ATMs but system will be unavailable for some time   
+Suppose the system prioritizes availability, personA with balance of 70rs, can withdraw 50rs form ATM1 and 40rs form ATM2. making his balance less than 0, which should not be allowed   
+
+In real world though, we can choose some degree of consistency and availability    
+Eg ATMs can allow check balance, deposits and withdraw smaller amounts and only refuse larger withdrawals    
+
+**Example 2:**      
+
+Consider a social media platform   
+During a network partition if two users are commenting on the same post, one person may not be able to see comment of another user until partition is resolved   
+For a social media platforms it is often acceptable to prioritize availability over the cost of two users seeing slightly different views some of the time    
+
+
+#### Reconciliation     
+When the network partition is healed, distributed systems must decide how to handle updates to the data and resolve inconsistencies   
+This is like merging git changes   
+
+There are two main approaches
+
+**Eventual Consistency**   
+After a partition is resolved, the system works to converge towards a consistent state over time, allowing updates made during the partition to propagate through the system.   
+Conflict resolution mechanisms as mentioned below may be employed to handle conflicting updates.   
+* Last Writer Wins (LWW) - In this approach, each update is associated with a timestamp, and conflicts are resolved by choosing the update with the latest timestamp as the winner.
+
+* Vector clocks are used to track the partial ordering of events in a distributed system. Each replica maintains a vector clock, and conflicts are resolved by comparing the vector clocks to determine the causal relationship between updates
+
+* Similar to vector clocks, version vectors track the versions of data at different replicas. Conflicts are resolved by comparing version vectors to identify the most recent version.
+
+* CRDTs (Conflict-free Replicated Data Types) are data structures designed to be replicated across multiple nodes in a network without the need for coordination during updates. They are inherently conflict-free and support automatic resolution.
+
+* Some distributed systems use [quorums](#quorum) or consensus algorithms to make decisions on conflicting updates. Nodes may vote on the correct value, and a majority decision is considered the winner.
+
+* Merge functions : Merge functions define how conflicting updates should be combined to produce a merged result. This approach is common in systems where the data has a semistructured or nested nature.
+
+**Strong Consistency with Conflict Resolution**   
+
+Some systems prioritize strong consistency and use conflict resolution mechanisms to address inconsistencies.
+
+When a partition is healed, the system may need to reconcile conflicting updates by selecting a winner or merging conflicting changes based on predefined rules or application-specific logic.
+
+This approach often involves more complex conflict resolution strategies and may impact availability during the reconciliation process.
+
+* Timestamps and Ordering - The update with the latest timestamp is often considered the winning update. A distributed relational database that uses timestamp-based concurrency control.
+
+* Pessimistic Locking - Use locks to ensure exclusive access to data during updates. Conflicts are avoided by preventing concurrent access, and the system can explicitly reject conflicting updates.Traditional relational databases often use row-level or table-level locks.
+
+* Optimistic Concurrency Control - Allow concurrent updates, but when conflicts are detected during the commit phase, the system rolls back conflicting transactions and asks the user or application to resolve the conflict.
+
+* Two-Phase Commit (2PC) - In a distributed transactional context, the two-phase commit protocol is used to ensure that all nodes either commit or abort a transaction. If conflicts are detected, the protocol can decide to abort the transaction and roll back the changes.
+
+* Custom Conflict Resolution Logic - Example A content management system where conflicts in document edits are resolved based on predefined rules such as authorship or priority.
+
+* Human Intervention - In some cases, when conflicts cannot be automatically resolved, the system may involve human intervention. Users or administrators are notified of conflicts, and they make decisions on how to resolve them.
+
+<br/>
 <br/>
 <br/>
 

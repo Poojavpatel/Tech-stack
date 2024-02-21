@@ -15,7 +15,8 @@
   - [Employees Earning More Than Their Managers](#employees-earning-more-than-their-managers)
   - [Customers Who Never Order](#customers-who-never-order)
 - [Concepts](#concepts)
-  - [Single vs Composite Indexes](#single-vs-composite-indexes)
+  - [Indexes](#indexes)
+  - [Composite Indexes](#composite-indexes)
   - [Soft delete vs Hard delete](#soft-delete-vs-hard-delete)
   - [RAW Datatype](#raw-datatype)
   - [INSTR Function](#instr-function)
@@ -264,7 +265,7 @@ select MAX(b) from a;
 
 ## Concepts 
 
-### Single vs Composite Indexes 
+### Indexes 
 https://user3141592.medium.com/single-vs-composite-indexes-in-relational-databases-58d0eb045cbe
 
 An index, or more specifically, an index on a column is an additional data structure of the table’s records sorted (typically via b-tree) only on that column. 
@@ -301,6 +302,33 @@ Disadvantages of index
 1. Additional storage space to store indexes
 2. Indexes also need to be updated when state-changing queries like CREATE UPDATE and DELETE are made
 As such, adding unnecessary indexes can actually degrade performance overall
+
+<br/>
+
+### Composite Indexes
+
+In SQL databases, a composite index, also known as a compound index or multi-column index, is an index that involves more than one column in the index key. Unlike a single-column index that indexes only one column of a table, a composite index includes multiple columns.   
+This type of index is beneficial when queries involve conditions or sorting based on multiple columns.   
+
+**Interview question:**    
+If i have an composite index on A-B-C-D, while fetching A-B will the composite index work, what about B-C-D?   
+When you have a composite index on multiple columns (A-B-C-D), the effectiveness of the index in supporting queries depends on how the columns are used in the query conditions.   
+
+* Queries that involve the leftmost columns of the composite index can efficiently use the index.   
+  This includes queries on A, A-B, A-B-C, or A-B-C-D.
+
+* Equality and range queries on the indexed columns can effectively use the composite index.   
+  A query with conditions like A = value or A = value AND B > value2 can utilize the composite index.
+
+* Queries involving sorting or grouping on the leftmost columns of the index can benefit from the index.   
+  A query with ORDER BY A or GROUP BY A may leverage the composite index.
+
+However, queries that involve columns beyond the leftmost part of the index may not fully benefit from the composite index
+
+* If you have a query condition on B-C-D but not on A, the composite index (A-B-C-D) may not be as effective for that specific query. However, it could still be beneficial if the query involves a range condition or sorting on B.    
+The decision on whether to use the composite index or perform a full table scan depends on the database's query optimizer. Modern database engines use sophisticated optimization strategies to determine the most efficient execution plan for a given query.
+
+
 
 <br/>
 <br/>
