@@ -5,6 +5,7 @@
 - [Introduction](#introduction)
 - [Node.js Use Cases](#node-js-use-cases)
 - [REPL in Node.js](#repl-in-nodejs)
+- [Event loop](#event-loop)
 - [Buffer Datatype](#buffer-datatype)
 - [Core Modules of Node.js](#core-modules-of-node-js)
   - [HTTP/HTTP2/HTTPS Module](#httphttp2https-module)
@@ -28,9 +29,10 @@
 - [setTimeout setImmediate setInterval](#settimeout-setimmediate-setinterval)
 - [process.nextTick() and setImmediate()](#processnexttick-and-setimmediate)
 - [Auth](#auth)
+- [Memory Leaks in Nodejs](#memory-leaks-in-nodejs)
+- [Error Handling in Nodejs](#error-handling-in-nodejs)
 - [Nodejs packages](#nodejs-packages)
   - [PM2](#pm2)
-- [Memory Leaks in Nodejs](#memory-leaks-in-nodejs)
 - [Implementations]()
   - [How to Serve Static Files](#how-to-serve-static-files)
   - [Setup Basic Server and Using Node](#setup-basic-server-and-using-node)
@@ -98,7 +100,9 @@ Node’s relational database support tools are not up to the expected level when
 
 ### Limitations of Single-Threaded Event Loop
 
-Refer - https://blog.bitsrc.io/top-5-features-of-nodejs-e49d1c68f4a7
+Refer - https://blog.bitsrc.io/top-5-features-of-nodejs-e49d1c68f4a7   
+
+[Fireship - PROOF JavaScript is a Multi-Threaded language](https://www.youtube.com/watch?v=-JE8P2TiJEg)
 
 Initially, Node.js was designed for I/O-bound tasks like web servers. For these, creating multiple threads adds overhead and complexity in managing thread synchronization and context switching. Instead, Node.js adopted an event-driven approach.
 
@@ -107,6 +111,60 @@ CPU-bound tasks can block the loop
 No true parallelism: Tasks are still executed one after another, not simultaneously  
 
 To address these limitations, Node.js introduced [Worker Threads](#worker-threads) and the [Cluster Module](#cluster-process-module) in various Node.js versions.
+
+### Concurrency vs Parallelism in Node.js
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*ylONk4ex9q6IK68C6USRBg.jpeg" width="30%" />
+
+<br/>
+
+Concurrency: The ability to execute multiple tasks seemingly at the same time, but actually by switching between them rapidly.
+
+Parallelism: The ability to execute multiple tasks truly at the same time, on multiple cores or processors
+
+Node.js is single-threaded, so it cannot execute tasks in true parallel.
+However, it can achieve concurrency using its event loop.
+We can also use worker threads to take advantage of multicore CPUs
+
+
+<br/>
+
+### Event loop
+
+[Event loop in javascript](../Javascript/README.md#understanding-how-asynchronus-calls-work)
+
+Refer - https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick
+
+The event loop is what allows Node.js to perform non-blocking I/O operations — despite the fact that JavaScript is single-threaded — by offloading operations to the system kernel whenever possible.   
+Since most modern kernels are multi-threaded, they can handle multiple operations executing in the background. When one of these operations completes, the kernel tells Node.js so that the appropriate callback may be added to the poll queue to eventually be executed. 
+
+Event loop is a crucial part of Nodejs architecture that enables it to handle asynchronous operations efficiently. It is responsible for managing and executing various events and callbacks in a non-blocking way
+
+Here's a brief explanation of how the event loop works in Node.js:
+
+* When asynchronous operations are initiated in Node.js, such as reading a file, making a network request, or setting a timer, the associated callbacks are not executed immediately. Instead, they are placed in an **Event Queue**.
+
+* The **Event Loop** constantly checks the event queue for any pending callbacks or events. If there are callbacks waiting in the queue, the event loop picks them up one by one and executes them.
+
+* The event loop allows Node.js to handle multiple operations concurrently without blocking the execution of the program. This is achieved by delegating the execution of asynchronous operations to the underlying system, such as the operating system's file I/O or network subsystem.
+
+*  As callbacks are executed, they may trigger additional asynchronous operations, and their associated callbacks will be added to the event queue. This process continues in a loop, giving the appearance of parallelism even though Node.js is single-threaded.
+
+The event loop is the mechanism that enables Node.js to efficiently handle asynchronous operations by continuously checking the event queue for pending tasks and executing their callbacks in a non-blocking manner. This design allows Node.js to handle a large number of concurrent connections and I/O operations efficiently.
+
+#### Interview question
+If you say that nodejs i single-threaded, when there is an async operation that is executed differently than the main thread, without blocking the main thread, what thread executes the async operation? Is it not multithreaded then?
+
+In Node.js, the event-driven architecture allows for asynchronous operations without blocking the main thread. While Node.js itself is single-threaded, it leverages an event loop and the concept of callbacks or promises to handle asynchronous operations efficiently.
+
+When you perform an asynchronous operation, such as reading from a file, making a network request, or interacting with a database, Node.js utilizes background worker threads or the operating system's asynchronous I/O operations. These operations are handled outside the main event loop, ensuring that the main thread remains free to handle other events.
+
+So, even though Node.js is technically single-threaded, it doesn't mean that there's only one thread handling everything. Asynchronous operations can be executed by worker threads or external processes, but the coordination and handling of these operations are done in a single-threaded event loop, which makes the programming model simpler.
+
+In summary, Node.js is not considered multithreaded in the traditional sense, but it effectively manages asynchronous tasks through mechanisms like the event loop and worker threads without blocking the main thread.
+
+
+<br/>
 
 ---
 
@@ -121,6 +179,8 @@ To address these limitations, Node.js introduced [Worker Threads](#worker-thread
 
   **Underscore(_) is a special variable in node which stores the result of last expression evaluation**.   
   It can be used to access result of last command execution — similar to $? in bash
+
+<br/>
 
 ---
 
@@ -160,6 +220,7 @@ console.log(buffer.toString());  // Outputs 'ABCD'
 ```
 
 
+<br/>
 
 ---
 
@@ -220,6 +281,8 @@ worker.on('message', (message) => {
 
 worker.postMessage({ anotherData: 'to send' });
 ```
+
+[Fireship - parallelism and concurrency in JavaScript by experimenting with Node.js Worker Threads](https://www.youtube.com/watch?v=-JE8P2TiJEg)
 
 <br/>
 
@@ -676,6 +739,14 @@ https://www.youtube.com/watch?v=YBnN2JpS4hI
 
 
 
+
+
+<br/>
+<br/>
+
+---
+
+## Error Handling in Nodejs
 
 
 <br/>

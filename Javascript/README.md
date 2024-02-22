@@ -566,7 +566,11 @@ https://blog.evelynstender.com/javascript-what-are-generators-yield
 Refer Video - Loupe - Philip Roberts http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!   
 
 
-https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif   
+https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif 
+
+<img width="70%" src="../Auth/img/eventloop.png"/>
+
+<br/>
 
 * The browser has 4 main compoments - **Call Stack, Web APIs, Callback Queue, Event loop**
 * Code lines get added to the **call stack** as they appear
