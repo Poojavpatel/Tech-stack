@@ -2,6 +2,8 @@
 
 ## Table of Contents
 - [Installation and Setup](#installation-and-setup)
+- [BSON](#bson-binary-json)
+- [Mongodb Ids](#mongodb-ids)
 - [Querying Documents](#querying-documents)
 - [Updating Documents](#updating-documents)
 - [Populate()](#populate)
@@ -52,10 +54,86 @@ To start working with (creating and editing) databases, type:
 mongo
 ```
 
+<br/>
+<br/>
+
 ---
+
+### BSON (Binary JSON) 
+
+* BSON is a binary-encoded serialization format used by MongoDB to represent JSON-like documents. It stands for "Binary JSON," and it extends the JSON model to provide additional data types and to be more efficient for storage and data exchange
+
+* BSON represents JSON-like documents in a binary format, which makes it more compact and efficient for storage and transmission compared to plain text JSON.
+
+* BSON supports a broader range of data types than JSON. In addition to the standard JSON data types (string, number, object, array, true, false, null), BSON includes additional types such as Date, Binary Data, Regular Expression, and more.
+
+* BSON preserves the order of elements in a document, which is not guaranteed in standard JSON. This is important for applications that rely on the order of fields in a document.
+
+* The binary format of BSON is designed to be more space-efficient compared to the text-based JSON format, making it well-suited for storage in databases like MongoDB.
+
+Here's a simple example of a JSON document and its BSON equivalent:
+```js
+{
+  "name": "John",
+  "age": 30,
+  "city": "New York"
+}
+```
+
+BSON (simplified representation):
+```js
+\x16\x00\x00\x00           // Document length
+\x02                       // String type
+name\x00                   // Field name
+\x05\x00\x00\x00John\x00   // String value
+\x10\x00\x00\x00           // 32-bit integer type
+age\x00                    // Field name
+\x1E\x00\x00\x00           // Integer value 30
+\x02\x00\x00\x00           // String type
+city\x00                   // Field name
+\x0B\x00\x00\x00New York\x00  // String value
+\x00                       // Null terminator
+```
+
 
 <br/>
 <br/>
+
+---
+
+### Mongodb Ids
+
+MongoDB uses a BSON (Binary JSON) format for storing documents in its database.    
+Each document in a MongoDB collection has a unique identifier called an "_id" field.   
+This "_id" field is used as the primary key and is automatically created if not provided explicitly when inserting a document.
+
+By default, MongoDB uses a 12-byte ObjectId structure for the "_id" field
+
+The ObjectId "5f8a49b81d1b2a56c7f0caba" is represented in hexadecimal format
+
+The ObjectId consists of
+1. A 4-byte timestamp representing the ObjectId's creation, measured in seconds since the Unix epoch
+1. A 5-byte random value
+1. A 3-byte incrementing counter, initialized to a random value
+
+This structure helps ensure uniqueness across distributed systems, as the combination of timestamp, random value, and incrementing counter reduces the likelihood of collisions.
+
+```js
+// Example of an ObjectId
+5f8a49b81d1b2a56c7f0caba
+
+/*
+(2 characters represent 1 byte)
+"5f8a49b8" represents the Unix timestamp indicating the ObjectId's creation time in seconds
+"1d1b2a56c7" represents the random value generated to reduce the likelihood of collisions
+"f0caba" represents the incrementing counter. It is initialized to a random value and incremented for each ObjectId generated within the same second to further reduce the chance of collisions
+*/
+```
+
+<br/>
+<br/>
+
+---
 
 ## Querying documents
 

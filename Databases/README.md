@@ -239,7 +239,10 @@ Auto-scaling features and managed database services make it easier to adapt to v
 6. Advanced Architectural Designs   
 Database management systems have evolved with features designed for scalability, such as distributed transaction management and global consistency
 
-##### How amazon scales its SQL database
+<br/>
+
+
+#### How amazon scales its SQL database
 
 Amazon scales its SQL databases, particularly with Amazon RDS, using the following key strategies:
 
@@ -255,6 +258,42 @@ Amazon scales its SQL databases, particularly with Amazon RDS, using the followi
 
 1. Auto Scaling and Cloud Infrastructure: Integrates with AWS Auto Scaling for dynamic adjustments based on demand, leveraging the flexibility of cloud infrastructure.
 
+<br/>
+
+#### How Pinterest scaled to 11 Million Users (with SQL db)
+
+[How Pinterest Scaled to 11 Million Users With Only 6 Engineers](https://www.youtube.com/watch?v=QRlP6BI1PFA&t=68)
+
+The speaker starts the video with how Pinterest was launched in 2010 and the tech stack they used at that time. Then he talks about the explosive growth Pinterest experienced and the challenges they faced in scaling their tech stack. 
+
+He mentioned that they explored two solutions: clustering and sharding.   
+Pinterest uses sharding to solve the problem of scaling their database. Sharding is a technique where a large database is partitioned into smaller, more manageable pieces called shards. Each shard is essentially a small database and is hosted on a separate server. Unlike clustering, each shard acts independently of one another and does not cross communicate.
+
+Here are the steps Pinterest took to shard their database:
+
+* Denormalize their database: They combined their tables in order to get rid of the usage of foreign keys and joins. This may include redundant data, however because in a sharded environment you cannot directly access data that resides in another shard.
+
+* Introduce read replicas: They introduced read replicas to handle read queries and improve overall database performance. They also introduced caching to reduce the amount of traffic hitting the database.
+
+* Sharding: They created virtual shards with eight physical servers each hosting 512 databases and all databases having all tables. They then used multimaster replication approach where each master was assigned to a different availability Zone in case of failure the system would immediately switch to the other master and spin up a new one right away.
+
+* ID sharding: They used an ID sharding strategy where the records ID tells you exactly which shard to look for each data use a 64bits ID structure where the first 16 bits is used to determine the shard ID.
+
+Sharding did come with some issues:
+
+* They had to give up on foreign keys, joins and constraints. These logics were instead moved to the application layer as you cannot join on two different shards.
+
+* They lost all transaction capabilities. Transactions are a sequence of one or more operations that are executed as a single unit ensuring atomicity, consistency, isolation and durability where either all operations are successfully completed or none are applied at all. This fails in a sharded environment due to multiple reasons.
+
+* Schema changes require a lot more planning.
+
+some key takeaways from the video
+
+* Your architecture is doing the right thing if you can just spin up more boxes to solve your problems.
+
+* The less your data move across your notes the more stable your architecture is.
+
+* Everything will fail so try to keep it simple.
 
 
 <br/>

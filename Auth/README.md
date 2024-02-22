@@ -5,14 +5,15 @@ Everything related to Authentication, Authorization, Sessions, web tokens, cooki
 - [Authentication vs Authorization](#authentication-vs-authorization)
 - [Hashing](#hashing)
 - [Encryption](#encryption)
-- [JSON Web Token (JWT)](#json-web-token-jwt)
 - [Explaining Sessions Tokens, JWT, SSO, and OAuth](#explaining-session-tokens-jwt-sso-and-oauth-in-one-diagram)
+- [JSON Web Token (JWT)](#json-web-token-jwt)
 - [Social sign-in](#social-sign-in)
 - [SSO](#sso-single-sign-on)
 - [Social sign-in vs SSO](#social-sign-in-vs-sso)
 - [SAML](#security-assertion-markup-language-saml)
 - [OpenId Connect](#openid-connect)
 - [OAuth 2.0](#oauth-20)
+- [Auth0](#auth0)
 - [HRIS](#hris)
     - [Merge](#merge)
 
@@ -93,7 +94,21 @@ Encrypted Data: "xj02l94s1hd8v2jd7f..."
 
 <br/>
 
+### Explaining Session Tokens, JWT, SSO, and OAuth in One Diagram
+
+<p align="left">
+<img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F041727d8-aaba-4c1d-8b74-b2c26e2e05e2_1446x1890.png" width="700px" >
+</p>
+
+<br/>
+
 ### JSON Web Token (JWT)
+
+Experiment with JWTs - https://jwt.io/
+
+<img src="./img/jwt.png" width="50%" />
+
+<br/>
 
 JWT is a standardized way to represent information between two parties securely. It is a compact and self-contained token that can carry claims (statements) about a user or other entities and is commonly used for authentication and authorization purposes.
 
@@ -112,7 +127,6 @@ Example JWT Payload
   "iat": 1516239022     // issued at, represents the UNIX timestamp at which the JWT was issued or created
 }
 ```
-
 
 #### Authentication in a Web Application
 
@@ -185,7 +199,41 @@ JWTs can be sent as part of an HTTP request header or in the URL, making them su
   const verifiedUser = verifyToken(accessToken);
   ```
 
+**Logout using JWT**   
+
+[Why I haven't been using JWT tokens for Authentication](https://www.youtube.com/watch?v=dgg1dvs0Bn4)
+
+To logout a user, the naive approach is to remove the jwt in his browser.   
+The next request will be without token and it will end with an unauthorised response.   
+
+But what if the user want to logout on all device on which he's connected to your API?   
+That's the problem, since the "identity" of the user is managed clientside, you can't natively force the jwt expire.
+
+How can we handle Invalidating JWT before its expiration time for some scenarios like account deleted/blocked/suspended, password changed, permissions changed, user logged out by admin, etc.   
+
+
+
+
+<br/>
+
 #### Interview questions related to JWT
+
+Q - To logout a user, we just delete jwt from browser local storage   
+Lets suppose a user logs in, we set a jwt with expiration of 24 hrs
+Now a malicious user gets hold of this jwt   
+The original user logs out, so basically jwt gets deleted from his client storage   
+The malicious user can still use this jwt for next 22 hours, how can we prevent that?
+
+A - 
+To mitigate the risk, we can implement the following strategies   
+Shorter Token Expiration - Shorter expiration times limit the window of opportunity for malicious users to use stolen tokens
+Token Blacklisting - Implement a token blacklisting mechanism on the server side   
+Token Versioning - Include a version number or a unique identifier in each JWT, When a user logs out or takes an action that requires invalidating the token, update the version or identifier. Servers should reject tokens with outdated versions.   
+Refresh Token Strategy - If you're using refresh tokens in addition to access tokens, consider having shorter-lived access tokens and a mechanism to revoke or rotate refresh tokens upon logout or certain actions.
+   
+<br/>
+
+
 Q - How is authentication done using JWT on backend, explain flow    
 A - FE sends JWT token to BE while hitting an api, User role is extracted from the token and attached to the request in auth middleware, this req is forwarded to the usecase for it, in the usecase the role is checked   
 Q - In case this is a microservice architecture, In user service how do we verify if a request is forwarded from auth service and not malicious source   
@@ -224,14 +272,6 @@ To ensure that requests coming to your User service originate from the Auth serv
 1. Implement logging and monitoring mechanisms to keep track of incoming requests, including information about the source and any failed verification attempts. This helps in identifying and responding to potential security incidents.
 
 <br/>
-<br/>
-
-### Explaining Session Tokens, JWT, SSO, and OAuth in One Diagram
-
-<p align="left">
-<img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F041727d8-aaba-4c1d-8b74-b2c26e2e05e2_1446x1890.png" width="700px" >
-</p>
-
 <br/>
 
 ## Social Sign-In   
@@ -317,7 +357,7 @@ There are two common protocols for SSO authentication process
 
 Common commercial Identity providers (Idps)
 1. Okta
-1. Auth0
+1. [Auth0](#auth0)
 1. OneLogin
 
 ### Basic SSO login flow 
@@ -433,6 +473,15 @@ OAuth 2.0 is widely adopted and used by major internet companies and developers 
 OAuth 2.0 and SSO with SAML are often used together in some scenarios to complement each other. For instance, a user might use SAML for single sign-on into an identity provider, and then OAuth 2.0 to authorize a third-party application to access certain resources on their behalf.
 
 In more complex identity and access management scenarios, protocols like OpenID Connect (which builds on OAuth 2.0) can be used to provide both authentication and authorization, offering a unified solution that combines the strengths of both OAuth 2.0 and SAML.
+
+<br/>
+
+## Auth0
+
+[Auth0 in 100 Seconds](https://www.youtube.com/watch?v=yufqeJLP1rI)
+
+
+<br/>
 
 ## HRIS
 

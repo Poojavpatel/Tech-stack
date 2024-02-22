@@ -30,6 +30,11 @@
   - [DML (Data Manipulation Language)](#dml-data-manipulation-language)
   - [DDL (Data Definition Language)](#ddl-data-definition-language)
   - [DELETE vs DROP vs TRUNCATE](#delete-vs-drop-vs-truncate)
+- [Can you not scale SQL databases?](../Databases/README.md#can-you-not-scale-sql-databases)
+
+<br/>
+<br/>
+<br/>
 
 ## Data Query Language
 * It is used to extract the data from the relations. e.g.; SELECT

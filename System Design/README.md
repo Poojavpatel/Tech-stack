@@ -342,6 +342,9 @@ Common Problems of Sharding
 - Referential integrity (foreign keys)
 - Rebalancing
 
+
+[How Pinterest scaled (using db sharding)](../Databases/README.md#how-pinterest-scaled-to-11-million-users-with-sql-db)
+
 <br/>
 <br/>
 
