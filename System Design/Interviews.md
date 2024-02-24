@@ -21,7 +21,9 @@
   - [Design a B2B Application Used by Retail Stores](#design-a-b2b-application-used-by-retail-stores)
   - [Design a role based access system](#design-a-role-based-access-system-like-sharesheet)
   - [Design a User Login system](#design-a-user-login-system)
-  - [Design UPI]()
+  - [Design UPI application (GPay)](#design-upi-application-gpay)
+  - [Design UPI system](#design-upi-system)
+  - [Design Payment system](#design-payment-system)
 
 <br/>
 <br/>
@@ -335,7 +337,7 @@ In my system design diagram, I have a primary DB and a data warehouse for analyt
 
 <br/>
 
-### Design UPI
+### Design UPI Application (GPay)
 
 > Learning : UPI is based over IMPS payment system
 
@@ -403,6 +405,138 @@ In case he scans code or enters phone number, the FE device is responsible for f
 
 After watching the [video](https://www.youtube.com/watch?v=QpLy0_c_RXk), realized they are not asking to build gpay, rather the UPI service itself
 
-#### Updated design
+<br/>
+
+### Design UPI System
+
+[UPI System Design Mock Interview with Gaurav Sen & sudocode video](https://www.youtube.com/watch?v=QpLy0_c_RXk)
+
+#### UPI overview
+* Earlier before UPI, payment systems and services existed but each one had their own implementation.    
+Eg Sending money through IMPS using HDFC netbanking is slightly different from using ICICI netbanking
+* Payments from HDFC to ICICI was possible too earlier, so the APIs existed, just with different implementations
+* (This is similar to [Merge](../Auth/README.md#merge), which helps us integrate with Jira and Trello, both apps have different names for task/ticket, comment/reply, Jira api expects different values then trello api, merge unifies them both and many other ticketing apps)
+* UPI just unifies these payment systems
+* In traditional transfers there was a lot of friction in adding payee, know the payee bank number, IFSC codes, etc. UPI reduces this friction by having upi ids
+* UPI ids or UPI addresses are basically like IP addresses, not physical but links to a physical entity, A person's bank account
+* UPI addresses could also be purchased, the way we purchase IP addresses or domain names
+* NPCI maintains a list of all UPI addresses mapped to their bank accounts (like a very big hashset). NPCI stores and administers these list
+
+#### Approach 1
+* Consider a scenario of transferring 100 rs from my HDFC account to another user's ICICI account, the receiver upi_id and the amount, this together is a request
+* This request is signed by me using my UPI pin, this is sent to HDFC bank
+* HDFC bank authenticates this request (HDFC knows my account details, amount in my account, etc) and sends this request to NPCI, NPCI forwards it to ICICI
+> Note : NPCI is a single point of failure, If NPCI goes down all UPI transactions wont work
+
+Q - How NPIC and other PSP (payment service providers) systems will handle scale of billion transactions?
+
+#### Approach 2
+* Consider a scenario of transferring 100 rs from my HDFC account to another user's ICICI account, the receiver upi_id and the amount, this together is a request
+* This request is signed by me using my UPI pin, this is sent to HDFC bank
+* HDFC bank does not know what bank the receiver has an account in, so it sends the upi_id to NPCI, NPCI returns the bank account details of the receiver (his account number and IFSC maybe)
+* HDFC now has all of the required info and it sends the money to ICICI account
+
+> In this approach, NPCI works only like a DNS, for upi_id lookups, and does not make any transfers or anything, so it can scale a lot better
+
+* Whenever a new bank is formed, it registers its users with UPI too, so that other banks individually don't have to 
+
+> Caching frequently used upi_ids will help reduce some dependency on NPCI but still if NPCI is down for longer time, it is still single point of failure
+
+#### Capacity estimation
+* Consider 1KB for one upi address (we ignored fingerprints etc)
+* Consider one person to have a 100 upi addresses
+* 7 billion people * 100 upi address per person = 700 Billion records
+* 700 Billion records * 1KB per record = 7 * 10 ^ 2 * 10 ^ 9 * 10 ^ 3 bytes = 7 * 10 ^ 14 bytes
+* 7 * 10 ^ 14 bytes is 700 Terabytes
+* 700 TB seems huge, but since it is all of India, and with enough funding for resources its fine to have this much data storage
+
+#### Handling payment requests 
+* Assume your electricity bill for the month is 3000, Adani requests you to pay on gpay, how does this flow happen?
 
 <br/>
+<br/>
+
+### Design Payment system
+
+[Payment Gateway System Design video](https://www.youtube.com/watch?v=NxjGFIgFCbg)
+
+#### Terms related to payment systems
+
+* Payment Gateway
+* Payment Service Provider (PSP)
+* Issuer Bank
+* Card Association: Organizations like Visa, Mastercard, and American Express
+* PCI DSS: Payment Card Industry Data Security Standard, a set of security requirements for businesses that store, process, or transmit cardholder data. Compliance is mandatory for businesses accepting card payments.
+* Acquiring Bank
+* 3D Secure: An additional security layer requiring cardholders to verify their identity with their bank during online transactions, often through a one-time password (OTP) or biometric authentication.
+* ISO 8583: An international standard for exchanging financial transaction data between different systems in the payment industry. It defines a specific message format for sending and receiving information about transactions.
+
+> Note : All payment messages are done in ISO 8583 standard format, JSON or XML wont work
+
+#### How Card payment works
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*HOHzaEwYa4013l4PmSgCSg.png" width="50%" />
+
+<br/>
+
+1. The user enters their card details on a payment gateway UI. This can be on the seller's website or the payment gateway's website.
+1. The card details are sent to the merchant's application over SSL.
+1. The merchant's application sends the card details to the payment gateway.
+1. The payment gateway converts the card details into an ISO 8583 message format.
+1. The payment gateway sends the ISO 8583 message to the card association.
+1. The card association checks with the issuing bank to see if the card is valid and if there are enough funds in the account.
+1. If the card is valid and there are enough funds, the issuing bank authorizes the payment.
+1. The issuing bank sends a message back to the card association saying that the payment is authorized.
+1. The card association sends a message back to the payment gateway saying that the payment is authorized.
+1. The payment gateway sends a message to the merchant's application saying that the payment is authorized.
+1. The merchant's application completes the transaction.
+1. The payment gateway sends a message to the issuing bank saying that the transaction is complete.
+1. The issuing bank settles the transaction with the acquiring bank.
+1. The acquiring bank deposits the funds into the merchant's account.
+
+#### How 3D secure card payment works
+
+
+#### Functional requirements
+
+* Allow multiple ways of payment
+* Payment details should be secure
+* Payments should be secure
+* Avoid double payment
+* Fast response
+* Handle timeout an failure
+
+#### Non functional requirements
+* Highly consistent (Hard consistency, cannot be eventually consistent) 
+* Highly available (we are okay to give away partition tolerance)
+* Scalable
+
+#### Design considerations
+* Multiple subsystems to deal with UPI, netbanking, card payments
+* Secure payment details using tools like protegrity to encrypt PII fields 
+* Use [SSL](../Networking/README.md#https-hypertext-transfer-protocol-secure) for transmission
+* Consistency and availability should be chosen over partition tolerance
+* Scalable to handle 10M transactions in a day
+
+#### HLD
+
+#### Database
+* Since we need ACID properties and data is mostly structure, we will use SQL
+* Payment related data would look something like this
+  ```js
+  // Transaction 
+  {
+    transaction_id: "",
+    method: "UPI"
+    issuing_bank : " 
+    amount : 500,
+    ...
+  }
+  ```
+* To scale the SQL db, and make sure fetch queries are fast, we need a good partition strategy
+* One good way is to partition table by date, and make sub partitions by payment_method (Date - range partition, method - list partition)
+
+
+#### LLD 
+
+TODO

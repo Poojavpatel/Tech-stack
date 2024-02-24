@@ -8,18 +8,18 @@
   - [Redis](../Redis/README.md)
   - [Cassandra](../Cassandra/README.md)
 - [When to choose which database](#when-to-choose-which-database---cheat-sheet)
-- [Time series Database](#time-series-database)
-- [File Storage vs Blob Storage](#file-storage-vs-blob-storage)
-- [Data warehouse, Database for analytics - Hadoop](#data-warehouse-database-for-analytics---hadoop)
-- [RDBMS advantages](#rdbms-advantages)
-- [RDBMS disadvantages](#rdbms-disadvantages)
-- [Non-relational DBMS advantages](#non-relational-dbms-advantages)
-- [Non-relational DBMS disadvantages](#non-relational-dbms-disadvantages)
-- [How to Choose the Right Type of Database](#how-to-choose-the-right-type-of-database)
+  - [Time series Database](#time-series-database)
+  - [File Storage vs Blob Storage](#file-storage-vs-blob-storage)
+  - [Data warehouse, Database for analytics - Hadoop](#data-warehouse-database-for-analytics---hadoop)
+  - [RDBMS advantages](#rdbms-advantages)
+  - [RDBMS disadvantages](#rdbms-disadvantages)
+  - [Non-relational DBMS advantages](#non-relational-dbms-advantages)
+  - [Non-relational DBMS disadvantages](#non-relational-dbms-disadvantages)
+  - [How to Choose the Right Type of Database](#how-to-choose-the-right-type-of-database)
 - [Databases and Analogies with SQL](#databases-and-analogies-with-sql)
 - [Databases according to CAP theorem](#databases-according-to-cap-theorem)
 - [Can you not scale SQL databases?](#can-you-not-scale-sql-databases)
-
+- [Database Design](#database-design)
 
 <br/>
 <br/>
@@ -300,3 +300,14 @@ some key takeaways from the video
 <br/>
 
 ---
+
+## Database Design 
+
+[Database Design playlist](https://www.youtube.com/watch?v=-C2olg3SfvU&list=PLZDOU071E4v6epq3GS0IqZicZc3xwwBN_)
+
+### Tips and tricks
+* When defining schema, specially mention the foreign keys and relations, Eg - product belongs to a company
+* When saving payments data / order data, Instead of using product_id forign key, dump product data, as price may change and we want an entry of older price at which it was purchased
+* For tables like Order, Payment etc Date Time of transaction is a MUST
+* Never use business field as a primary key, as the value can change, and you don't have control over this field (eg Govt decides to update format of Pan card etc), some values may be restricted to some countries (eg social security number only exists in US)
+* Use snake_case or kebab-case to store db names, do not use spaces

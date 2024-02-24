@@ -33,11 +33,12 @@
 - [Error Handling in Nodejs](#error-handling-in-nodejs)
 - [Nodejs packages](#nodejs-packages)
   - [PM2](#pm2)
+- [Guess The Output](#guess-the-output)
 - [Implementations]()
   - [How to Serve Static Files](#how-to-serve-static-files)
   - [Setup Basic Server and Using Node](#setup-basic-server-and-using-node)
   - [Setup a Node Express Server and Connect to mlab Database](#setup-a-node-express-server-and-connect-to-mlab-database)
-- [Guess The Output](#guess-the-output)
+- [Deploying a Nodejs App](#deploying-a-nodejs-app)
 
 
 <br/>
@@ -754,114 +755,6 @@ https://www.youtube.com/watch?v=YBnN2JpS4hI
 
 ---
 
-### How to serve static files
-  * A basic necessity for most http servers is to be able to serve static files   
-  This example takes the path requested and it serves that path, relative to the local directory. 
-
-  ```javascript
-  var fs = require('fs'),
-      http = require('http');
-
-  http.createServer(function (req, res) {
-    fs.readFile(__dirname + req.url, function (err,data) {
-      if (err) {
-        res.writeHead(404);
-        res.end(JSON.stringify(err));
-        return;
-      }
-      res.writeHead(200);
-      res.end(data);
-    });
-  }).listen(8080);
-  ```
-
-  * This works fine as a quick solution; however, there are a few problems with this approach. First, this code does not correctly handle mime types. Additionally, a proper static file server should really be taking advantage of client side caching, and should send a "Not Modified" response if nothing has changed. Furthermore, there are security bugs that can enable a malicious user to break out of the current directory. (for example, GET /../../../).
-
-  * Each of these can be addressed invidually without much difficulty. You can send the proper mime type header. You can figure how to utilize the client caches. You can take advantage of path.normalize to make sure that requests don't break out of the current directory
-
-  * In your node application, you can use node-static module to serve static resources.   
-  The node-static module is an HTTP static-file server module with built-in caching.   
-  First of all, install node-static module using NPM.using node-static module, you can create static file server in Node
-
-  ```javascript
-  var static = require('node-static');
-  var http = require('http');
-
-  var file = new(static.Server)(__dirname);
-
-  http.createServer(function (req, res) {
-    file.serve(req, res);
-  }).listen(8080);
-  ```
-
----
-### Setup basic server and using node.
-```javascript
-const http = require("http");
-const hostname = '127.0.0.1';
-const port = 3000;
-
-//Create HTTP server and listen on port 3000 for requests
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
-});
-
-//listen for request on port 3000
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
-```
-
-```javascript
-http.createServer(function (req, res) {
-  console.log('hello world');
-}).listen(8080);
-```
-
----
-### Setup a Node Express server and connect to mlab database
-```javascript
-const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const bodyParser = require('body-parser');
-const app = express();
-
-app.use(express.json());
-
-// connecting to mongodb
-const mongouri = require('./config/keys.js').mongoURI;
-mongoose.connect(mongouri)
-    .then( () => console.log('Connected to MongoDB'))
-    .catch( err => console.log('Error while connecting to MongoDB', err));
-
-// Homepage route
-app.get('/',(req,res) => {
-   res.sendFile(path.join(__dirname+'/static/index.html'));
-});
-
-// use routes
-const items = require('./routes/api/items.js');
-app.use('/api/items' , items);
-
-port = process.env.PORT || 5000;
-app.listen(port,() => console.log(`Server started at port ${port}`));
-```
-
-To install basic packages and run the application
-```bash
-$ npm init
-$ npm i express body-parser path concurrently mongoose joi
-$ npm i nodemon --save-dev
-$ node index.js
-```
-
-<br/>
-
----
-
 ## Nodejs packages
 
 ### PM2
@@ -1006,10 +899,204 @@ console.log(clothes[0]);
 undefined
 */
 ```
-```javascript
 
-```
-```javascript
-
-```
 https://medium.com/@vigowebs/frequently-asked-node-js-interview-questions-and-answers-b74fa1f20678
+
+<br/>
+<br/>
+<br/>
+
+---
+
+## Implementations
+
+### How to serve static files
+  * A basic necessity for most http servers is to be able to serve static files   
+  This example takes the path requested and it serves that path, relative to the local directory. 
+
+  ```javascript
+  var fs = require('fs'),
+      http = require('http');
+
+  http.createServer(function (req, res) {
+    fs.readFile(__dirname + req.url, function (err,data) {
+      if (err) {
+        res.writeHead(404);
+        res.end(JSON.stringify(err));
+        return;
+      }
+      res.writeHead(200);
+      res.end(data);
+    });
+  }).listen(8080);
+  ```
+
+  * This works fine as a quick solution; however, there are a few problems with this approach. First, this code does not correctly handle mime types. Additionally, a proper static file server should really be taking advantage of client side caching, and should send a "Not Modified" response if nothing has changed. Furthermore, there are security bugs that can enable a malicious user to break out of the current directory. (for example, GET /../../../).
+
+  * Each of these can be addressed invidually without much difficulty. You can send the proper mime type header. You can figure how to utilize the client caches. You can take advantage of path.normalize to make sure that requests don't break out of the current directory
+
+  * In your node application, you can use node-static module to serve static resources.   
+  The node-static module is an HTTP static-file server module with built-in caching.   
+  First of all, install node-static module using NPM.using node-static module, you can create static file server in Node
+
+  ```javascript
+  var static = require('node-static');
+  var http = require('http');
+
+  var file = new(static.Server)(__dirname);
+
+  http.createServer(function (req, res) {
+    file.serve(req, res);
+  }).listen(8080);
+  ```
+
+---
+### Setup basic server and using node.
+```javascript
+const http = require("http");
+const hostname = '127.0.0.1';
+const port = 3000;
+
+//Create HTTP server and listen on port 3000 for requests
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World');
+});
+
+//listen for request on port 3000
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+```
+
+```javascript
+http.createServer(function (req, res) {
+  console.log('hello world');
+}).listen(8080);
+```
+
+---
+### Setup a Node Express server and connect to mlab database
+```javascript
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(express.json());
+
+// connecting to mongodb
+const mongouri = require('./config/keys.js').mongoURI;
+mongoose.connect(mongouri)
+    .then( () => console.log('Connected to MongoDB'))
+    .catch( err => console.log('Error while connecting to MongoDB', err));
+
+// Homepage route
+app.get('/',(req,res) => {
+   res.sendFile(path.join(__dirname+'/static/index.html'));
+});
+
+// use routes
+const items = require('./routes/api/items.js');
+app.use('/api/items' , items);
+
+port = process.env.PORT || 5000;
+app.listen(port,() => console.log(`Server started at port ${port}`));
+```
+
+To install basic packages and run the application
+```bash
+$ npm init
+$ npm i express body-parser path concurrently mongoose joi
+$ npm i nodemon --save-dev
+$ node index.js
+```
+
+<br/>
+
+---
+
+## Deploying a Nodejs App
+
+There are many ways to deploy a Node js backend code with tradeoffs between cost, complexity and scalability
+
+#### 1. Build your own server   
+
+This is the most traditional way to deploy an app, but it also requires the most maintenance and upfront cost.   
+You will need to purchase and manage your own servers, which can be time-consuming and expensive.   
+You will need to configure the server and also take care of electricity, internet, air conditioning, natural disasters, etc.   
+
+As your app scales you will need to buy more computers and may need to keep them in different parts of the world   
+
+#### 2. Deploy to cloud using a compute engine    
+
+[Deploy a Nodejs app on EC2](../AWS/README.md#elastic-compute-cloud-ec2)
+
+Use compute engine to create a virtual machine   
+This is a more modern approach that is still relatively affordable and easy to manage.   
+You can rent a virtual machine from a cloud provider like Amazon Web Services (AWS), Google Cloud Platform (GCP), or Microsoft Azure.    
+This gives you more control over your server than you would have with a serverless option, but you still need to manage the virtual machine itself.   
+You will need to set up static IP, DNS settings, SSL certificates, etc   
+
+This app won't scale automatically, once the CPU and memory has been fully utilized the app will stop working    
+This can be fixed using Ngnix and adding load balancers which is a lot of configuration work   
+
+#### 3. Deploy to a Platform as a Service (PaaS)  
+
+App engine standard environment
+
+This makes it very easy to get our nodejs app to a production server and the cloud fully manages the virtual machine, which means your app scales automatically 
+
+This is a more hands-off approach that allows you to deploy your app without having to manage the underlying infrastructure. PaaS providers like Heroku, AWS Elastic Beanstalk, and Google App Engine handle all of the server management for you.   
+This can be a good option if you want to focus on developing your app and don't want to worry about the infrastructure.
+
+In this approach it is called the standard environment as you have no control over the runtime itself (nodejs version, dependencies version, etc)
+
+#### 4. Deploy to a Platform as a Service (PaaS)  
+
+App engine flexible environment
+
+Instead of a sandbox environment, you have full control of the environment with docker   
+You can install any version of nodejs along with any other dependencies   
+But at the same time, cloud will automatically scale those vm up or down based on incoming traffic    
+
+Eg - Heroku, elastic beanstalk on aws
+
+#### 5. Deploy to Kubernetes   
+
+Kubernetes is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. However, Kubernetes can be difficult to learn and manage, so it is not recommended for beginners.
+
+Kubernetes require lot of configuration but also provide maximum control  
+It provides a predictable framework for scaling your infrastructure   
+
+It is popular for large teams who have extra demands on their infrastructure   
+
+#### 6. Serverless functions
+
+This is the most hands-off approach, and it can also be the most cost-effective.   
+
+Serverless functions are small pieces of code that run on demand in the cloud.   
+You don't have to worry about provisioning or managing servers, and you only pay for the resources that you use.   
+Cloud Functions are a good option for simple tasks that don't require a lot of processing power.
+
+Servers are ephemeral or short lived    
+These cloud functions can be triggered to run on certain events, this makes them ideal to run background jobs   
+Instead of paying a fixed amount per month, we pay a tiny amount for every use    
+
+However, serverless functions can have limitations, such as cold start times and restrictions on execution time.   
+Also since they are short lived, they do not support web sockets    
+
+
+#### 7. Use Cloud Run   
+
+It works just like a serverless function, but instead of using a predefined runtime, you can customize it by containerizing your app with docker
+
+In this approach we have all benefits of serverless like auto scaling and pay-as-you-go while also having more control over underlying server    
+
+
+The best way to deploy your Node.js application will depend on your specific needs and requirements. 
+* If you are just getting started, a PaaS like Heroku or Google App Engine is a good option. 
+* If you need more control over your infrastructure, you can use a virtual machine or Kubernetes. 
+* And if you are looking for the most cost-effective option, serverless functions are a good choice. 
