@@ -26,6 +26,13 @@
    1. [CAP Theorem](#cap-theorem)
    1. [PACELC Theorem](#pacelc-theorem)
    1. [Consistent Hashing](#consistent-hashing)
+   1. [Real-Time Communication Methods](#real-time-communication-methods)
+      1. [Short polling](#short-polling) 
+      1. [Long-Polling](#long-polling) 
+      1. [Web sockets](#web-sockets) 
+      1. [Server-Sent Events](#server-sent-events) 
+      1. [Webhooks](#webhooks) 
+      1. [Zapier](#zapier) 
    1. [Long-Polling vs WebSockets vs Server-Sent Events](#long-polling-vs-websockets-vs-server-sent-events)
    1. [Bloom Filters](#bloom-filters)
    1. [Quorum](#quorum)
@@ -670,15 +677,22 @@ This behavior is a trade-off in consistent hashing. While it reduces the amount 
 
 <br/>
 <br/>
+<br/>
 
-### Long-Polling vs WebSockets vs Server-Sent Events
+## Real-Time Communication Methods
 
 Refer https://www.pubnub.com/guides/long-polling/
 
-##### Short polling
+We will use an example of me (server) baking a cake, and my friend (client) who needs cakes (data)   
+
+### Short polling
 Traditionally, web browsers use a pull-based approach to fetch data from servers. The client sends a request to the server, which responds with the requested data. This approach, known as short polling, can create delays in communication as the client has to send requests to check for updates repeatedly.
 
-##### Long-Polling
+Eg - My friend will come knock the door every 15 mins to check if the cake is baked, take cake if ready, if not come again after 15 mins
+
+<br/>
+
+### Long-Polling
 On the other hand, long polling is a push-based approach that allows the server to send updates to the client as soon as they are available. Here's how it works:
 1. The client initiates a request to the server, typically through an HTTP request.
 1. Instead of immediately responding, the server holds the request open, keeping the connection active.
@@ -691,19 +705,104 @@ Long polling effectively simulates a real-time connection between the client and
 
 Long-Polling is suitable when real-time updates are not critical, and there is no need for bidirectional communication
 
-##### Web sockets
+Eg - My friend will come and stand on the door for 5 mins, if in that time cake gets baked, he will take and come back for next   
+If cake is not ready, he will go and come back and stand on door for another 5 mins   
+
+<br/>
+
+### Web sockets
 WebSocket is a full-duplex communication protocol that enables real-time communication between the client and server over a single, long-lived connection. It provides a more efficient and low-latency alternative to long polling. WebSocket enables bidirectional data flow, allowing the client and server to send messages asynchronously. It eliminates the need for frequent HTTP requests and reduces network overhead. WebSocket is well-suited for applications requiring instant updates and real-time interaction.
 
 WebSockets are ideal for applications requiring low-latency, bidirectional communication. It's suitable for real-time features, such as chat applications, online gaming, or collaborative editing tools.
 
-##### Server-Sent Events
+Eg - Me and my friend will stay on a call throughout the process, I will keep updating him with cake status without him inquiring
+
+<br/>
+
+### Server-Sent Events
 SSE is a unidirectional communication technology that allows the server to push data to the client over a single, long-lived HTTP connection. With SSE, the server can send multiple updates to the client without requiring the client to make requests continuously. The server initiates the connection and sends data as a series of events. The client receives these events and can handle them as needed.
 
 SSE is suitable when you need server-initiated updates in a unidirectional flow (from server to client). It's a simpler alternative to WebSockets for scenarios where bidirectional communication is not necessary.   
 Example: In a financial application where users need real-time stock updates pushed from the server without requiring immediate user input.   
 
+Eg - I will text my friend every time i make significant progress, like "In the oven", "cake ready"
+
+<br/>
+
+### Webhooks
+
+[What is a Webhook - Youtube video](https://www.youtube.com/watch?v=mrkQ5iLb4DM)
+
+
+Webhooks are extensively used by payment related apps like stripe, Razorpay   
+
+Webhook flow:   
+1. We have a website where we sell courses, courses have a buy now button
+1. We configure stripe webhook to send a message to our EC2 server, whenever someone clicks on buy now button on course (webhook event)
+1. A user clicks on a course buy now button
+1. Stripe sends a message to our server with some metadata
+1. We retrieve the user and course from this metadata, add the course to his subscriptions
+1. The user will now be able to see this course under his subscriptions
+
+
+How to know if req to server is coming from stripe and not an attacker?   
+1. Stripe gives us a secret key
+1. Whenever strip sends us a message, it hashes a string using this secret key
+1. We hash the string using our secret key
+1. If both of them matches, we know that message came from stripe
+1. Also these messages are sent over HTTPs which adds some security too 
+
+What if sending message from stripe to server fails?    
+* Stripe retries after some time based on exponential backoff algorithm   
+Meaning if 1 req fails, rerequest after 2 sec, rerequest after 4 seconds, rerequest after 8 seconds, and so on   
+* This is done to not bombard your server   
+
+
+Note : Make webhooks idempotent. Incase the webhook triggers more than once, it should not cause any issues
+
+Watchout for webhook overload   
+To ensure you server can take load of existing FE requests along with webhook requests when your app gets popular, use a queue   
+The webhook can put data in a queue, and your server can process it one by one
+
+
+
+Eg - I give my friend a buzzer, and press it every time a cake is done. Here buzzer is the webhook which is triggered on action of cake baking done
+
+#### Are server sent events and webhooks related
+
+Server-Sent Events (SSE) and webhooks are related in the sense that they both involve server-initiated communication to push updates or events to clients. However, they are distinct concepts, and their implementations and use cases can differ
+
+Server-Sent Events (SSE):
+* SSE is a standard allowing a server to push real-time updates to clients over a single HTTP connection.
+* The communication is one-way, from the server to the client.
+* SSE is typically used for scenarios where the server needs to push continuous or periodic updates to the client in a unidirectional manner.
+
+Webhooks:
+* Webhooks are HTTP callbacks or user-defined HTTP callbacks initiated by the server to notify the client about events or updates.
+* Webhooks can be used for bidirectional communication, as the client can provide an endpoint for the server to send notifications.
+* Webhooks are often set up by the client, and the server triggers them when specific events occur.
+
+
+<br/>
+
+#### Zapier webhooks
+
+Note : At assembly we used [Zapier](https://zapier.com/workflows) webhooks to create automated flows 
+Zapier allows us to do actions based on events, eg send a slack message once flow is submitted
+
+Zapier works as such   
+* Step 1 : A trigger starts your automation (a person submitted a flow response)
+* Step 2 : Actions are what your automation does when it's triggered (send slack message to group, update docs)
+* Step 3 : That’s it! You’ve created a Zap
+
 <br/>
 <br/>
+<br/>
+<br/>
+
+---
+
+
 
 ### Bloom Filters
 

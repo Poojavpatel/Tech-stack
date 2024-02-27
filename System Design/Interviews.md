@@ -65,6 +65,58 @@ AWS offers a CDN service called Amazon CloudFront, which integrates seamlessly w
 
 - In a system design review, in addition to development, it’s often a bonus point to call out operation and maintenance, which many candidates neglect
 
+
+#### 7 Problems and Solutions in Systems Designs
+
+
+1. Read-Heavy System? Use Cache for faster reads.
+
+Caching temporary data in high-speed data storage (Cache) reduces access time.
+
+
+2. Write-Heavy System? Use Message Queues for async writing.
+
+Message queues decouple processes that produce and consume data, allowing for async processing.
+
+- Take care of load spikes.
+- Improve system responsiveness.
+- Enhance write operations' reliability.
+
+
+3. Transactional data? Choose RDBMS/SQL Database.
+
+RDBMS for managing structured data with complex relationships. 
+They support ACID; they are ideal for integrity and reliability.
+
+
+4. Unstructured or Semi-structured Data? Use NoSQL Database.
+
+They offer flexibility in data models and good handling of large volumes of data.
+
+
+5. Complex Data (Videos, Images, Files)? Use Blob/Object storage.
+
+Blob or object storage systems offer:
+- Scalability.
+- Durability.
+- Cost-effectiveness.
+
+Ideal for multimedia content and data archival purposes.
+
+
+6. High Availability? Use Load Balancer.
+
+Load balancers distribute incoming network traffic; that way, no single server becomes overwhelmed.
+
+You get fewer failures since the service remains accessible even during high traffic or server failures.
+
+
+7. High-Volume Data Search? Use a search index or engine.
+
+Search indexes or engines optimize the performance of search queries across large datasets.
+
+Search indexes enable quick data retrieval.
+
 <br/>
 <br/>
 <br/>

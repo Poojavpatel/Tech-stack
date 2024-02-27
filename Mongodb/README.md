@@ -14,6 +14,11 @@
 - [Import Export Data](#import-export-data)
 - [Lean](#lean)
 - [$pull](#pull)
+- [Mongodb Schema Design](#mongodb-schema-design)
+  - [Normalization](#normalization)
+  - [One to Many (Finite) relationships](#one-to-many-finite-relationships)
+  - [One to Many (InFinite) relationships](#one-to-many-infinite-relationships)
+  - [Many to Many relationships](#many-to-many-relationships)
 
 <br/>
 <br/>
@@ -53,6 +58,17 @@ To start working with (creating and editing) databases, type:
 ```bash
 mongo
 ```
+
+<br/>
+<br/>
+
+---
+
+### Mongodb
+
+[MongoDB in 100 Seconds | Fireship](https://www.youtube.com/watch?v=-bt_y4Loofg)
+
+MongoDB is an open-source NoSQL database written in C++ language
 
 <br/>
 <br/>
@@ -1482,3 +1498,107 @@ After
   vegetables: [ 'broccoli', 'zucchini', 'onions' ]
 }
 ```
+
+<br/>
+<br/>
+<br/>
+
+## Mongodb Schema Design
+
+Refer - [MongoDB Schema Design Best Practices](https://www.youtube.com/watch?v=QAqK-R9HUhc)   
+
+### Normalization
+
+In SQL, It would make more sense to save them into different tables as such    
+In Mongodb, It would make more sense to save them in array or array of objects as such   
+
+<img src="../Auth/img/sql_schema_mongodb_schema.png" width="53%" />
+
+<br/>
+
+> In Mongodb (NoSQL) we prefer to embed unless there is a compelling reason not to 
+
+
+### One to Many (Finite) relationships
+
+Assume one vehicle is made with a few parts   
+One vehicle, many parts   
+We can save parts id as an array in vehicle collection 
+
+> Note : In this case, one vehicle has finite (<50) number of parts and parts of a vehicle are rarely updated, so it would make sense to save them in an array in vehicle collection
+
+
+```js
+// vehicle
+{
+  _id: 
+  name: ""
+  manufacturer: "",
+  catalog_number: "",
+  parts: [
+    ObjectId(part1Id),
+    ObjectId(part2Id),
+    ObjectId(part3Id),
+    ObjectId(part4Id),
+    ObjectId(part5Id)
+  ]
+}
+```
+
+```js
+// part
+{
+  _id: part1Id
+  name: ""
+  cost: ""
+}
+```
+
+### One to Many (InFinite) relationships
+
+Assume you need to save server logs related to a machine   
+One machine, many logs   
+
+But in this case, we cannot save it as an array into machine collection, as the logs would keep growing   
+For every new log, we would need to update machine collection too   
+> Mongodb documents can be of max 16MB, saving reference of so many logs might break the system   
+
+In this case we use reverse reference
+
+```js
+// machine
+{
+  _id: ObjectId(machine1),
+  name: "",
+  stats: ",
+}
+```
+
+```js
+// logs
+{
+  _id: ObjectId(),
+  machineId: ObjectId(machine1),   // reference to machine id
+  error: ""
+}
+```
+
+While fetching logs from a machine we use    
+```js
+Logs.find({where: {machineId: machineId}})
+```
+
+### Many to Many relationships
+
+In this case we can either use cross reference    
+Or create a new relationship table, depending on needs of the specific application   
+
+### Advanced schema design
+
+https://www.youtube.com/watch?v=bxw1AkH2aM4
+
+
+---
+
+https://www.interviewbit.com/mongodb-interview-questions/
+https://www.interviewbit.com/sql-interview-questions/
