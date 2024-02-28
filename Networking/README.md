@@ -587,6 +587,10 @@ GraphQL is a query language and runtime for APIs. It allows clients to request o
 
 GraphQL provides a more flexible and efficient way for clients to interact with APIs by enabling them to define the structure of the response according to their specific requirements.
 
+https://www.youtube.com/watch?v=eIQh02xuVw4
+
+TODO 
+
 <br/>
 
 ### FTP

@@ -5,10 +5,17 @@
   - [Enum](#enum-in-typescript)
   - [Type Assertions](#type-assertions)
   - [Non-null assertion operator](#non-null-assertion-operator)
-  - [Partial Type](#partial-type)
   - [Union Type](#union-type)
   - [Never](#never)
   - ['extends' keyword](#extends-keyword)
+- [Utility types](#utility-types)
+  - [Partial Type](#partial-type)
+  - [Readonly<T>](#readonly)
+  - [Pick<T, K>](#pickt-k)
+  - [Omit<T, K>](#omitt-k)
+  - [Record<K, T>](#recordk-t)
+  - [Exclude<T, U> and Extract<T, U>](#excludet-u-and-extractt-u)
+  - [NonNullable<T>](#nonnullable)
 - [Generics](#generics)
 - [OOPS in Typescript](#oops-in-typescript)
 - [Access Modifier](#access-modifier)
@@ -182,53 +189,6 @@ function getLastElement(arr: number[]): number {
 }
 ```
 
-### Partial<T> Type
-
-* The partial utility type was introduced in TypeScript release 2.1 and it is designed to make all of the properties of a type optional. This means developers will no longer have to provide values to all properties of a type. In fact, it opens the possibility of not providing any property.
-
-```typescript
-Partial<MyType>
-Partial<MyInterface>
-Partial<{}>
-```
-
-* let’s take a look at the following example where we have the Blog interface. Notice the Blog interface is composed of six property keys, which all except by featureImageUrl are required.
-
-```ts
-interface Blog {
-  id: string;
-  title: string;
-  slug: string;
-  categories: string[];
-  tags: string[];
-  featureImageUrl?: string;
-  content: string;
-}
-```
-
-* However, it is common during the development to not know all the values of a Blog, especially when we have a draft of a blog. However, failing to pass all the property keys will lead to a TypeScript error
-* An alternative solution is to make all of the properties optional using the question mark ? However, it is not always possible to make all of the property keys optional. Besides, it will prevent from enforcing property values in certain types. 
-* That’s when the partial type becomes useful as it makes all these properties optional without the need of modifying the requirement of the properties of the type like in the following example.
-```ts
-// Partial<Blog> generates a new type based on Blog with all the property
-// keys being optional
-const draft: Partial<Blog> = {
-  title: 'What kind of title should I type?'
-}
-```
-
-* Make a property required and the rest optional - There are special scenarios where we would want to keep certain properties required, but let the rest be optional. For example, assume we must update the title of a Blog type every time we trigger the updateBlog function.
-Unfortunately, using the Partial type with not work as you know by now, it will make all the properties optional.
-
-* However, we can use Partial in combination with Pick utility type to enforce the property title. to be passed as part of the blog parameter.
-```ts
-async function updateBlog(id: string, blog: Partial<Blog> & Pick<Blog, 'title'>) {
-  await db.Blog.save(id, {
-    ...blog
-  });
-}
-```
-
 ### Union Type
 
 A union type is a type formed by combining multiple types, allowing a value to be of one of those types. The syntax for a union type is the use of the | (pipe) operator between the individual types.
@@ -373,6 +333,157 @@ In the context of class inheritance, extends is used to indicate that a class is
     dog.makeSound();  // Output: Woof!
     dog.wagTail();    // Output: Tail wagging!
     ```
+
+
+
+<br/>
+<br/>
+
+---
+
+## Utility types
+
+* Utility types in TypeScript are predefined generic types provided by the language to perform common transformations on other types
+* They allow you to compose new types from existing ones in a more concise and expressive way. 
+* Utility types come in handy when you need to manipulate and work with the shape of your data types.
+
+
+
+### Partial<T> Type
+
+* The partial utility type was introduced in TypeScript release 2.1 and it is designed to make all of the properties of a type optional. This means developers will no longer have to provide values to all properties of a type. In fact, it opens the possibility of not providing any property.
+
+```typescript
+Partial<MyType>
+Partial<MyInterface>
+Partial<{}>
+```
+
+* let’s take a look at the following example where we have the Blog interface. Notice the Blog interface is composed of six property keys, which all except by featureImageUrl are required.
+
+```ts
+interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  categories: string[];
+  tags: string[];
+  featureImageUrl?: string;
+  content: string;
+}
+```
+
+* However, it is common during the development to not know all the values of a Blog, especially when we have a draft of a blog. However, failing to pass all the property keys will lead to a TypeScript error
+* An alternative solution is to make all of the properties optional using the question mark ? However, it is not always possible to make all of the property keys optional. Besides, it will prevent from enforcing property values in certain types. 
+* That’s when the partial type becomes useful as it makes all these properties optional without the need of modifying the requirement of the properties of the type like in the following example.
+```ts
+// Partial<Blog> generates a new type based on Blog with all the property
+// keys being optional
+const draft: Partial<Blog> = {
+  title: 'What kind of title should I type?'
+}
+```
+
+* Make a property required and the rest optional - There are special scenarios where we would want to keep certain properties required, but let the rest be optional. For example, assume we must update the title of a Blog type every time we trigger the updateBlog function.
+Unfortunately, using the Partial type with not work as you know by now, it will make all the properties optional.
+
+* However, we can use Partial in combination with Pick utility type to enforce the property title. to be passed as part of the blog parameter.
+```ts
+async function updateBlog(id: string, blog: Partial<Blog> & Pick<Blog, 'title'>) {
+  await db.Blog.save(id, {
+    ...blog
+  });
+}
+```
+
+<br/>
+
+### Readonly<T>
+
+Makes all properties of a type read-only
+
+```ts
+interface Config {
+  apiKey: string;
+  endpoint: string;
+}
+
+const readOnlyConfig: Readonly<Config> = { apiKey: '123', endpoint: 'example.com' };
+// readOnlyConfig.apiKey = '456'; // Error: Cannot assign to 'apiKey' because it is a read-only property.
+```
+
+<br/>
+
+### Pick<T, K>
+
+Selects specific properties from a type.
+
+```ts
+interface Person {
+  name: string;
+  age: number;
+  address: string;
+}
+
+const personNameAndAge: Pick<Person, 'name' | 'age'> = { name: 'Alice', age: 25 };
+```
+
+<br/>
+
+### Omit<T, K>
+
+Excludes specific properties from a type.
+
+```ts
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+}
+
+const productWithoutId: Omit<Product, 'id'> = { name: 'Widget', price: 20 };
+```
+
+<br/>
+
+### Record<K, T>
+
+Creates a type with a set of properties of type T indexed by keys of type K.
+
+```ts
+type Fruit = 'apple' | 'banana' | 'orange';
+const fruitPrices: Record<Fruit, number> = { apple: 1, banana: 0.75, orange: 1.5 };
+```
+
+<br/>
+
+### Exclude<T, U> and Extract<T, U>
+
+Exclude removes types that are assignable to U.
+Extract only includes types that are assignable to U.
+
+```ts
+type AllFruits = 'apple' | 'banana' | 'orange' | 'grape';
+type ExcludeGrapes = Exclude<AllFruits, 'grape'>; // 'apple' | 'banana' | 'orange'
+type OnlyBanana = Extract<AllFruits, 'banana'>; // 'banana'
+```
+
+<br/>
+
+### NonNullable<T>
+
+Removes null and undefined from a type.
+
+```ts
+type NullableString = string | null | undefined;
+const nonNullableString: NonNullable<NullableString> = 'Hello';
+```
+
+
+
+
+<br/>
+<br/>
 
 ---
 
@@ -781,20 +892,6 @@ class MyMixedClass extends TimestampMixin(MyBaseClass) {
 const instance = new MyMixedClass(42);
 instance.displayValue(); // Output : The value is 42
 console.log(instance.getTimestamp()); // current datetime
-```
-
-### Utility types
-```ts
-interface Person {
-  name : string;
-  age : number;
-  email : string;
-}
-
-type PartialPerson = Partial<Person>;
-type ReadonlyPerson = Readonly<Person>;
-type NameAndAge = Pick<Person, "name" | "age">;
-type withoutEmail = Omit<Person, "email">;
 ```
 
 ### Nullish coalescing
