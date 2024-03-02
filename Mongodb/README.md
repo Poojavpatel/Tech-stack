@@ -19,6 +19,7 @@
   - [One to Many (Finite) relationships](#one-to-many-finite-relationships)
   - [One to Many (InFinite) relationships](#one-to-many-infinite-relationships)
   - [Many to Many relationships](#many-to-many-relationships)
+- [Advanced schema design Patterns](#advanced-schema-design-patterns)
 
 <br/>
 <br/>
@@ -1591,11 +1592,78 @@ Logs.find({where: {machineId: machineId}})
 ### Many to Many relationships
 
 In this case we can either use cross reference    
-Or create a new relationship table, depending on needs of the specific application   
+Or create a new relationship table, depending on needs of the specific application  
 
-### Advanced schema design
+
+### LexoRanks
+
+While working on Notebook project at Assembly, we wanted to allow users to rank their tasks manually   
+Eg - There are 3 tasks under todo, Task3 Task2 Task1, listed in descending order by date creation   
+We wanted to allow the users to rank their tasks manually, eg Task2, Task1, Task3   
+
+Approach 1 - Using numbers for ranks   
+Lets think how we can save this rank in db   
+```js
+{task: Task2, rank: 1}
+{task: Task1, rank: 2}
+{task: Task3, rank: 3}
+```
+Now what if the user wants to place Task4 between Task2 and Task1
+```js
+{task: Task2, rank: 1}
+{task: Task4, rank: 2}
+{task: Task1, rank: 3}
+{task: Task3, rank: 4}
+```
+Here we had to change the rank of all following tasks for the user, and this is not ideal or scalable
+
+Approach 2 - Using point numbers   
+One approach that comes to our mind is to use decimal values for rank, and rank of new number = average of up and down rank
+```js
+{task: Task2, rank: 1}
+{task: Task4, rank: 1.5}
+{task: Task1, rank: 2}
+{task: Task3, rank: 3}
+
+// OR
+{task: Task2, rank: 100}
+{task: Task4, rank: 150}
+{task: Task1, rank: 200}
+{task: Task3, rank: 300}
+```
+With this approach we donot need to update other tasks, but the ranks are very uneven,   
+its possible that there are 10 ranks between 1 and 2 and only 1 rank between 3 and 4   
+Here we are also limited by numbers, we can place at max 100 tasks between 200 and 300   
+
+Approach 2 - Using LexoRanks
+
+LexoRanks are used by Jira too
+
+* Each task is assigned a unique Lexorank identifier
+* The identifier consisted of two parts
+  * Bucket Number: This was a single digit (0, 1, or 2) indicating the data storage location for the issue.
+  * Encoded Issue Key: This part used a combination of letters and numbers, potentially with a colon separating additional information, to uniquely identify the issue within its bucket.
+
+Example: 1|hzztzz:i
+
+1: Bucket number (data storage location)   
+hzztzz: Encoded issue key   
+i: Additional information (optional)   
+
+[Reference blog - LexoRanks](https://medium.com/whisperarts/lexorank-what-are-they-and-how-to-use-them-for-efficient-list-sorting-a48fc4e7849f)
+
+<br/>
+<br/>
+<br/>
+
+---
+
+
+## Advanced schema design Patterns
 
 https://www.youtube.com/watch?v=bxw1AkH2aM4
+
+https://www.mongodb.com/blog/post/building-with-patterns-a-summary
 
 
 ---

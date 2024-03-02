@@ -8,6 +8,7 @@
   - [IAAS](#infrastructure-as-a-service-iaas)
   - [PAAS](#platform-as-a-service-paas)
   - [SAAS](#software-as-a-service-saas)
+- [Ansible](#ansible)
 
 <br/>
 <br/>
@@ -23,7 +24,7 @@ Basics
 1. Version control (Git)
 1. CI/CD
 1. CI tools (Jenkins, Github actions)
-1. Configuration management (Ansible)
+1. Configuration management ([Ansible](#ansible))
 1. Ansible playbooks
 
 Good to learn    
@@ -116,3 +117,21 @@ Examples:
 * Dropbox
 * Slack
 * Zoom
+
+
+<br/>
+<br/>
+
+
+### Ansible 
+
+[Fireship Ansible in 100 Seconds](https://www.youtube.com/watch?v=xRMPKQweySE)
+
+
+Ansible, an open-source automation tool that uses a declarative approach to describe IT infrastructure.
+
+Ansible is a popular configuration management tool that uses YAML code to automate tasks on Linux servers. It increases efficiency and reduces human error.
+
+Ansible works by making one machine a control node. The control node connects to other managed nodes and sends them an Ansible module over SSH. This module can configure the machine's dependencies, update network settings, provision databases, or any other task that needs to be done repeatedly.
+
+Ansible playbooks contain a series of jobs called plays. Each play is a set of instructions that can be run on one or more target hosts. Ansible playbooks are idempotent, meaning they won't make changes unless they are necessary.
