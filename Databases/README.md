@@ -7,6 +7,7 @@
   - [DynamoDB](../AWS/DynamoDB.md)
   - [Redis](../Redis/README.md)
   - [Cassandra](../Cassandra/README.md)
+  - [Neo4J](./Neo4j.md)
 - [When to choose which database](#when-to-choose-which-database---cheat-sheet)
   - [Time series Database](#time-series-database)
   - [File Storage vs Blob Storage](#file-storage-vs-blob-storage)

@@ -24,6 +24,7 @@
   - [Design UPI application (GPay)](#design-upi-application-gpay)
   - [Design UPI system](#design-upi-system)
   - [Design Payment system](#design-payment-system)
+- [Database Design](./LLD.md#database-design)
 
 <br/>
 <br/>

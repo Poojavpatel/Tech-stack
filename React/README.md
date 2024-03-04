@@ -2,14 +2,44 @@
 
 > Javascript Library for building User Interfaces, Developed by Facebook
 
-## Why Use React
+## Table of contents
+- [Why Use React](#why-use-react)
+- [What React Does](#what-react-does)
+  - [Major Features of React](#what-are-the-major-features-of-react)
+- [React Class Components Vs. Functional Components](#react-class-components-vs-functional-components)
+- [Common Questions](#common-questions)
+  - [Difference Between Element and Component](#what-is-the-difference-between-element-and-component)
+  - [Pure Components](#what-are-pure-components)
+  - [Callback Function as an Argument of `setState()`](#what-is-the-purpose-of-callback-function-as-an-argument-of-setstate)
+  - [Refs](#refs)
+  - [Virtual DOM, Reconciliation, Diffing](#virtual-dom-reconciliation-diffing)
+  - [JSX, How Does JSX Work](#what-is-jsx-how-does-jsx-work)
+  - [Event Delegation in React](#event-delegation-in-react)
+  - [React Children](#react-children)
+- [Component Lifecycle](#what-are-the-different-phases-of-component-lifecycle)
+  - [Lifecycle Methods of React](#what-are-the-lifecycle-methods-of-react)
+  - [Context](#what-is-context)
+- [React Hooks](#react-hooks)
+  - [useEffect](#useeffect)
+  - [useInterval()](#useinterval)
+- [React Code](#code)
+- [Redux](#redux)
+- [React Query](#react-query)
+
+
+<br/>
+<br/>
+<br/s>
+
+
+### Why Use React
 * Has a **massive ecosystem** and support
 * React does not itself handle **Routing, state management, animation** but there are tons of libaries for each use case
 * Eg- **Gatsby** for static site, **Next js** for server side rendering, **Spring** for animation, **Redux, Flux** for state mangement
 * **React Native** can be used to develop mobile apps for Android and IOS
 * Most in-demand skill for frontend developers
 
-## What React Does
+### What React Does
 * We use it to build components that represent **Logical, Resuable Parts** of the UI
 * A component is just a **Javascript Function** 
 * The return value of this function is a HTML or UI, which is written in a special syntax called **JSX (allows to easily combine javascript with HTML markup)**
@@ -20,7 +50,7 @@
 Eg - const [count, setCount] = useState(0);
 * Count returns the most recent value, setCount can be binded to a button click event
 
-### What are the major features of React?
+#### What are the major features of React?
 
 * It uses **VirtualDOM** instead of RealDOM considering that RealDOM manipulations are expensive.
 * Supports **server-side rendering**.
@@ -324,12 +354,12 @@ function Button(props) {
 
 ## React Hooks
 
-1. useEffect
+### useEffect
   ```jsx
   useEffect(() => {}, [])
   ```
 
-1. useInterval()
+### useInterval()
 
   This useInterval isn’t a built-in React Hook; it’s a custom Hook (https://overreacted.io/making-setinterval-declarative-with-react-hooks/)
 
@@ -1030,3 +1060,10 @@ const MyComponent = props => {
   }, [address]);
 }
 ```
+
+<br/>
+<br/>
+
+## React Query
+
+[Fireship - React Query in 100 Seconds](https://www.youtube.com/watch?v=novnyCaa7To)

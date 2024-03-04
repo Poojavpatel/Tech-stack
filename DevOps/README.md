@@ -135,3 +135,32 @@ Ansible is a popular configuration management tool that uses YAML code to automa
 Ansible works by making one machine a control node. The control node connects to other managed nodes and sends them an Ansible module over SSH. This module can configure the machine's dependencies, update network settings, provision databases, or any other task that needs to be done repeatedly.
 
 Ansible playbooks contain a series of jobs called plays. Each play is a set of instructions that can be run on one or more target hosts. Ansible playbooks are idempotent, meaning they won't make changes unless they are necessary.
+
+<br/>
+<br/>
+
+### Terraform
+
+Terraform helps you avoid manually configuring infrastructure through the graphical user interface (GUI) of your cloud provider. This can be time-consuming and error-prone, especially when you need to reproduce the same configuration multiple times.
+
+Terraform is an infrastructure as code tool that allows you to define and manage your infrastructure in a safe and efficient way. It uses a declarative language, which means you describe what you want your infrastructure to look like, and Terraform takes care of provisioning the resources.
+
+Benefits of Terraform:
+* It eliminates the need to manually configure your cloud infrastructure through the graphical user interface (GUI) of your cloud provider, which can be time-consuming and error-prone.
+* It allows you to define your infrastructure as code, which makes it easy to easy to track changes, version control, share, reuse, and reproduce your infrastructure in different environments.
+* Terraform uses a human-readable language called HashiCorp Configuration Language (HCL) or JSON, which makes it easy to understand and maintain your infrastructure code.
+* Terraform is an open-source tool, which means it is free to use and there is a large community of developers who contribute to its development.
+
+
+How Terraform works:
+* You start by defining your infrastructure in a .tf file.
+* The file consists of Terraform blocks, providers, and resources.
+* Providers connect Terraform to different cloud providers like AWS, Google Cloud, and Azure.
+* Resources define the actual infrastructure components you want to create in the cloud, such as virtual machines, storage buckets, and networks.
+
+
+Key Terraform commands:
+* terraform init: Initializes the Terraform project.
+* terraform apply: Creates or modifies infrastructure based on the configuration.
+* terraform show: Shows the current state of your infrastructure.
+* terraform destroy: Removes the infrastructure defined in the configuration file.
