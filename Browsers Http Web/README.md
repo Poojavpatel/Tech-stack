@@ -178,3 +178,10 @@ Can cookies be shared across domains - No, You cannot share cookies across domai
 
 Local storage capacity - The available size is 5MB per app per browser
 Cookie storage capacity - Maximum size of cookie is 4KB, you can't store more than 20 cookies per site
+
+
+### Async vs Defer in JavaScript
+
+async and defer are attributes used when including external JavaScript files in HTML documents. They affect how the browser loads and executes the script. Let's learn about them in detail.
+
+[Dev to: Async vs Defer in JavaScript](https://dev.to/fidalmathew/async-vs-defer-in-javascript-which-is-better-26gm?ref=dailydev)

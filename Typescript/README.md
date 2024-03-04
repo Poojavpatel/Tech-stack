@@ -32,6 +32,7 @@
   - [Utility types](#utility-types)
   - [Nullish coalescing](#nullish-coalescing)
   - [Discriminated Unions](#discriminated-unions)
+- [Type vs Interface]
 
 <br/>
 
@@ -944,3 +945,9 @@ function area(shape : Shape) {
   }
 }
 ```
+
+<br/>
+<br/>
+
+### Type vs Interface
+

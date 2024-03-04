@@ -31,6 +31,7 @@
   - [DDL (Data Definition Language)](#ddl-data-definition-language)
   - [DELETE vs DROP vs TRUNCATE](#delete-vs-drop-vs-truncate)
 - [Can you not scale SQL databases?](../Databases/README.md#can-you-not-scale-sql-databases)
+- [PostgreSQL](./PostgreSQL.md)
 
 <br/>
 <br/>
