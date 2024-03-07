@@ -6,6 +6,8 @@
 - [Node.js Use Cases](#node-js-use-cases)
 - [REPL in Node.js](#repl-in-nodejs)
 - [Event loop](#event-loop)
+- [Runtime execution of C](#runtime-execution-of-c)
+- [Runtime execution of Nodejs](#runtime-execution-of-nodejs)
 - [Buffer Datatype](#buffer-datatype)
 - [Core Modules of Node.js](#core-modules-of-node-js)
   - [HTTP/HTTP2/HTTPS Module](#httphttp2https-module)
@@ -180,6 +182,35 @@ In summary, Node.js is not considered multithreaded in the traditional sense, bu
 
   **Underscore(_) is a special variable in node which stores the result of last expression evaluation**.   
   It can be used to access result of last command execution — similar to $? in bash
+
+<br/>
+
+---
+
+### Runtime execution of C
+* In C, the source code is typically written in a human-readable format with the .c file extension.
+* The C code needs to be compiled by a C compiler (e.g., GCC, Clang) into machine code or an intermediate form, such as assembly language.
+* The compilation process translates the high-level C code into low-level machine code specific to the target architecture (e.g., x86, ARM).
+* The resulting executable file contains machine code that can be directly executed by the computer's hardware.
+
+### Runtime execution of Nodejs
+
+JavaScript is generally considered an interpreted language. When you run a JavaScript file in a web browser, the browser's JavaScript engine (like V8 in Chrome or SpiderMonkey in Firefox) interprets the code directly.
+
+* You write your JavaScript code in a file with a .js extension, this is called Source Code
+* You execute the JavaScript file using the Node.js runtime. Node.js includes the V8 JavaScript engine, developed by Google.
+* The V8 engine first parses the JavaScript source code to create an Abstract Syntax Tree (AST). The AST represents the syntactic structure of the code. This process is called Parsing
+* The engine then performs lexical analysis and generates an intermediate representation of the code known as bytecode. This is not machine code but a lower-level representation that can be executed more efficiently than the original source code.
+* Optionally, V8 can use Just-In-Time (JIT) compilation. Instead of interpreting the bytecode directly, V8 may compile parts of the code into machine code just before execution. This helps optimize performance.
+* The V8 engine's runtime executes the bytecode or machine code, depending on whether JIT compilation is utilized.
+* During execution, the engine manages the event loop, handles asynchronous tasks, and interacts with the underlying operating system.
+* If your JavaScript code includes module imports using the require keyword, Node.js manages the loading of these modules. Each module is essentially a separate JavaScript file, and Node.js handles the dependencies.
+* Node.js operates on a single-threaded event loop, allowing asynchronous operations to be handled efficiently. Events, such as I/O operations or timers, are processed in a non-blocking manner. Event loop
+
+
+In summary, when you run a JavaScript file with Node.js, the V8 engine takes care of parsing, compiling, and executing the code. Optionally, JIT compilation may be used for performance optimization. 
+
+
 
 <br/>
 

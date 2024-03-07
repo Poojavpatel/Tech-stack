@@ -711,6 +711,9 @@ If cake is not ready, he will go and come back and stand on door for another 5 m
 <br/>
 
 ### Web sockets
+
+[Websockets](../Networking/WebSockets.md)
+
 WebSocket is a full-duplex communication protocol that enables real-time communication between the client and server over a single, long-lived connection. It provides a more efficient and low-latency alternative to long polling. WebSocket enables bidirectional data flow, allowing the client and server to send messages asynchronously. It eliminates the need for frequent HTTP requests and reduces network overhead. WebSocket is well-suited for applications requiring instant updates and real-time interaction.
 
 WebSockets are ideal for applications requiring low-latency, bidirectional communication. It's suitable for real-time features, such as chat applications, online gaming, or collaborative editing tools.

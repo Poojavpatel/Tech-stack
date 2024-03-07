@@ -527,6 +527,8 @@ UDP Header
 
 ### WebSockets
 
+[Websockets](./WebSockets.md)
+
 Enables real-time, two-way communication between web browsers and servers.
 Primarily operates at the Application Layer (Layer 7), building upon established protocols like HTTP (Layer 7) but offering a different communication model.
 

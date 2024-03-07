@@ -81,11 +81,3 @@ https://www.youtube.com/watch?v=LJajkjI5RHE
 * Rollback plan - Have a revert code pipeline or stop script setup 
 * Alerting and monitoring - Setup monitoring and alerting setup on datadog
 
-
-### Scaling web sockets 
-
-Interview question asked in purplle round 2   
-Q : For each logged in user, we keep one socket connection open, how did we scale this as web sockets are expensive?   
-
-
-
