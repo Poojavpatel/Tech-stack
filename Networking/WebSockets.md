@@ -5,7 +5,11 @@
 - [What are websockets](#what-are-websockets)
 - [How a websocket connection is established](#how-a-websocket-connection-is-established)
 - [Implementing Websockets](#implementing-websockets)
+  - [ws](#using-ws)
+  - [Socket.io](#using-socketio)
+  - [Pusher](#using-pusher)
 - [Scaling web sockets](#scaling-web-sockets)
+  - [Scaling web sockets using AWS Gateway](#scaling-web-sockets-using-aws-gateway)
 
 
 <br/>
@@ -164,9 +168,25 @@ public async relayToMember(memberID: string, event: string, payload?: SocketPayl
 <br/>
 
 
-### Scaling web sockets 
+## Scaling web sockets 
 
-Interview question asked in purplle round 2   
-Q : For each logged in user, we keep one socket connection open, how did we scale this as web sockets are expensive?   
+Interview question asked in purplle round 2 - For each logged in user, we keep one socket connection open, how did we scale this as web sockets are expensive?   
+
+[Why WebSockets Are NOT Scalable](https://www.youtube.com/watch?v=xtCddOjITvo)
+
+Web sockets are not horizontally scalable   
+* When you have multiple FE having web socket connections with a single server, you cannot upscale or downscale on demand     
+* Eg - You have 500 active HTTP connections, and 5 servers, each server serves 100 connections   
+When the traffic falls down to 50 connections, you can downscale to having just 1 server and redirect all new HTTP requests there
+This is possible as HTTP connections are stateless
+* Now consider you have 500 active web socket connections,   
+In some time the traffic falls down to 50, but all of the the 50 can be connected to any servers, so you cant downscale to using just one server
+
+### Scaling web sockets using AWS Gateway
+* Amazon has a service called API gateway, which is like a huge load balancer, which can take in a lot of connections
+* All FE clients establish web socket connection with this API gateway
+* The API gateway routes these connections to multiple serverless functions, which are called on demand
+* The API gateway forwards FE req to the serverless function, and returns the response from lambda back to the FE over the same socket connection
+
 
 <br/>
