@@ -16,6 +16,13 @@ Everything related to Authentication, Authorization, Sessions, web tokens, cooki
 - [Auth0](#auth0)
 - [HRIS](#hris)
     - [Merge](#merge)
+- [Integrations](#integrations)
+    - [ADP](#adp)
+    - [Lifion](#lifion)
+    - [HubSpot](#hubspot)
+    - [Stripe for pricing plans](#stripe-for-pricing-plans)
+    - [Tango](#tango)
+    - [HubSpot](#hubspot)
 
 
 <br/>
@@ -362,7 +369,9 @@ Common commercial Identity providers (Idps)
 
 ### Basic SSO login flow 
 
-<img src="./img/SSO_first.png" width="45%"/>   
+<img src="./img/SSO_first.png" width="65%"/>   
+
+<br/>
 
 
 1. An office worker visits an application Gmail, in SAML terms Gmail is a service provider
@@ -383,7 +392,9 @@ Eg - User did the above SSO login flow with slack, and now navigates to Assembly
 In our example we will consider workday
 
 
-<img src="./img/SSO_second.png" width="45%"/>
+<img src="./img/SSO_second.png" width="65%"/>
+
+<br/>
 
 1. In this case, now Workday is the service provider
 1. Workday detects that user is form a work domain and returns SAR (SAML authentication request) back to the browser. Exactly same like Gmail
@@ -514,3 +525,44 @@ Integrating each service individually in Assembly would be very complex and time
 
 
 TODO
+
+<br/>
+<br/>
+
+## Integrations
+
+### ADP
+We had ADP integration at Assembly
+
+ADP stands for Automatic Data Processing, Inc. It is a global provider of human resources management (HRM) and payroll services. ADP offers a range of solutions to help businesses streamline their HR processes, manage payroll, handle tax and compliance issues, and effectively administer employee benefits. The company's services are used by organizations of various sizes and industries to automate and enhance their workforce management functions.
+
+Some of the key services provided by ADP include payroll processing, talent management, time and attendance tracking, benefits administration, and compliance management. ADP's solutions are designed to help businesses save time, reduce administrative burdens, and ensure accuracy in HR-related tasks.
+
+ADP has been a prominent player in the HR and payroll services industry for several decades and continues to evolve its offerings to meet the changing needs of businesses worldwide.
+
+
+TODO
+
+### Lifion
+
+We had Lifion integration at Assembly
+
+Lifion is a subsidiary of ADP (Automatic Data Processing, Inc.)
+Lifion is a platform developed by ADP that focuses on providing a modern and flexible cloud-based solution for human capital management (HCM). Lifion is designed to offer a more agile and customizable approach to HR processes, allowing businesses to adapt and configure their HR systems according to their specific needs. It aims to provide a more personalized and user-friendly experience for both employees and HR professionals.
+
+In summary, Lifion is a product within the ADP family, offering a next-generation HCM platform to address the evolving needs of businesses in managing their workforce effectively.
+
+TODO
+
+### HubSpot
+
+TODO
+
+### Stripe for pricing plans
+
+TODO
+
+### Tango
+
+Gift card API
+The Rewards as a Service (RaaS®) API is a robust digital gift card API built to power rewards and incentives in today’s apps and platforms.
