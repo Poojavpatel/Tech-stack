@@ -38,6 +38,7 @@
 - [Database Design](System%20Design/LLD.md)
 - [Common software problems and solutions](System%20Design/solutions.md)
 - [Software architecture patterns](SoftwareArchitecture/README.md)
+- [Software Concepts](System%20Design/concepts.md)
 
 
 **Web**
