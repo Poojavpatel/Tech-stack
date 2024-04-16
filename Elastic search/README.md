@@ -2,6 +2,11 @@
 
 ## Table of contents
 
+- [Analogies with SQL](#databases-and-analogies-with-sql)   
+- [ELK Stack](#elk-stack)
+- [Indexing and retrieval in Elasticsearch](#indexing-and-retrieval-in-elasticsearch)
+- [Can elastic search be used as a primary db](#can-elastic-search-be-used-as-a-primary-database)
+- [Elasticsearch anti-patterns and bad practices](#elasticsearch-anti-patterns-and-bad-practices)
 
 <br/>
 <br/>
@@ -113,4 +118,52 @@ A few basic terms
 * IDF is the mathematical reciprocal of document frequency. 
 * Relevance is just the product of TF and IDF or TF divided by DF. 
 
+<br/>
+<br/>
 
+---
+
+## Can elastic search be used as a primary database?
+
+Interview question at Zype tech round 1:   
+Instead of using MongoDB as the primary db and elastic search as the secondary db, why can’t we only use elastic search for both storing data and searching, what is something that is lacking in elastic search as compared to mongodb
+
+While Elasticsearch is indeed a powerful tool for storing and searching data, there are several reasons why it might not be ideal to use it exclusively, especially when compared to MongoDB   
+
+Elasticsearch excels at searching. It offers powerful features like stemming, faceting, and relevancy scoring, making it ideal for complex search queries.
+
+* Data Structure Flexibility - Elasticsearch is more structured around documents and indexing, which might not be as flexible for certain data models   
+While Elasticsearch can store data in JSON documents, it enforces a schema on those documents for indexing purposes. This can be less flexible than MongoDB's schema-less approach, which allows for more diverse data structures.
+
+* Transactions and ACID Compliance - Elasticsearch lacks built-in support for transactions and does not provide the same level of data consistency guarantees.
+
+* Complex Query Support - 
+While Elasticsearch excels at full-text search and complex queries using its powerful search DSL (Domain Specific Language), MongoDB also offers rich query capabilities, including aggregation pipelines and geospatial queries. Depending on your application's requirements, MongoDB might provide better support for certain types of queries.
+
+* Scalability and Performance: Both MongoDB and Elasticsearch are designed to scale horizontally, but they excel in different use cases. MongoDB is optimized for general-purpose document storage and retrieval, while Elasticsearch is optimized for near real-time search and analytics.
+
+* CRUD operations: MongoDB offers a wider range of functionalities for CRUD (Create, Read, Update, Delete) operations compared to Elasticsearch. Elasticsearch is optimized for search, and updates require reindexing the affected documents.
+
+> Updating documents in elastic search using update_api can be a very expensive operation
+
+### How are documents updated in Elastic search   
+
+Refer - [Elasticsearch anti-patterns and bad practices to be aware of](https://www.youtube.com/watch?v=gWXkAhnYFYw)
+
+Updating a document is a multi stage process   
+1. read current _source
+1. merge _source with new document
+1. index result
+1. mark original documet as deleted 
+1. Space is freeded up after luciene, the shard holding the document performs a merge
+
+The result of an insert, update or delete operation is immediately visible once the transaction is commited in a relational db
+However in elastic search, queries can return old data, even after operation is flushed to disk.
+Refresh needs to occur to see visible updates, which is an expensive operation
+
+<br/>
+<br/>
+
+### Elasticsearch anti-patterns and bad practices 
+
+Refer - [Elasticsearch anti-patterns and bad practices to be aware of](https://www.youtube.com/watch?v=gWXkAhnYFYw)
