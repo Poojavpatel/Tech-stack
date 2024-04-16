@@ -1214,3 +1214,7 @@ In an emergency or red-black deployment, the existing version (red) is replaced 
 
 
 
+### Resources 
+
+https://github.com/ashishps1/awesome-system-design-resources?tab=readme-ov-file
+https://github.com/ashishps1/awesome-low-level-design

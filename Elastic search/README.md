@@ -2,15 +2,26 @@
 
 ## Table of contents
 
+- [Terminologies](#elastic-search-terminologies)
 - [Analogies with SQL](#databases-and-analogies-with-sql)   
 - [ELK Stack](#elk-stack)
 - [Indexing and retrieval in Elasticsearch](#indexing-and-retrieval-in-elasticsearch)
+  - [Inverted index](#inverted-index)
 - [Can elastic search be used as a primary db](#can-elastic-search-be-used-as-a-primary-database)
 - [Elasticsearch anti-patterns and bad practices](#elasticsearch-anti-patterns-and-bad-practices)
 
 <br/>
 <br/>
 <br/>
+
+### Elastic search terminologies
+
+https://www.youtube.com/watch?v=LqXj1oC1FH0
+
+
+<br/>
+
+
 
 [Elastic Search and ELK Stack playlist](https://www.youtube.com/watch?v=lnEzmQHa6Co&list=PLa6iDxjj_9qVaf5CsXWP-GAgZoVwKowjx)
 
@@ -25,6 +36,11 @@
 | Neo4j                 | Database         | Labels        | Node          | Properties      |              | Cypher Query Language (CQL)|
 
 ---
+
+<br/>
+<br/>
+
+
 
 ## ELK Stack
 
@@ -99,7 +115,7 @@ Elasticsearch uses a technique called indexing to build an index out of all the 
 
 A document is the basic unit of data in Elasticsearch
 
-Elasticsearch builds an inverted index. An inverted index is similar to the index you find in the back of a book. It is a data structure that allows for fast full-text search
+Elasticsearch builds an [inverted index](#inverted-index). An inverted index is similar to the index you find in the back of a book. It is a data structure that allows for fast full-text search
 
 ### The algorithm for creating this index is as follows:
 * Elasticsearch is provided with a set of all documents and it will tokenize the contents of each and every document. Tokenize means it will split the text into different words.
@@ -117,6 +133,72 @@ A few basic terms
 * Document frequency (DF) refers to the frequency of a particular term across all documents in the corpus. 
 * IDF is the mathematical reciprocal of document frequency. 
 * Relevance is just the product of TF and IDF or TF divided by DF. 
+
+<br/>
+
+### Inverted index
+
+The inverted index is typically stored in a data structure optimized for efficient lookups, such as a hash table or a tree.   
+In practice, Elasticsearch's inverted index may include additional information such as term frequency, positional information, and optimizations for compression and speed.
+
+Let's consider a simplified example   
+Suppose we have three documents:
+* Document 1: "The quick brown fox jumps over the lazy dog."
+* Document 2: "A brown cat sits next to a sleeping dog."
+* Document 3: "The lazy dog is sleeping in the sun."
+
+Inverted Index: 
+```js
+Term       | Documents
+-----------|---------------------------------------------------
+a          | 2
+brown      | 1, 2
+cat        | 2
+dog        | 1, 2, 3
+fox        | 1
+in         | 3
+is         | 3
+jumps      | 1
+lazy       | 1, 3
+next       | 2
+over       | 1
+quick      | 1
+sleeping   | 2, 3
+sits       | 2
+sun        | 3
+the        | 1, 3
+to         | 2
+```
+
+```js
+// In practice, Elasticsearch's inverted index may include additional information such as term frequency, positional information, and optimizations for compression and speed.
+
+Term       | Documents                         | TF            | Positions
+-----------|-----------------------------------|---------------|---------------------
+a          | 2                                 | 2             | 1, 7
+brown      | 1, 2                              | 1:1, 2:1     | 3:1, 1:2
+cat        | 2                                 | 1             | 2
+dog        | 1, 2, 3                           | 1:1, 2:1, 3:2| 5:1, 9:1, 7:1
+fox        | 1                                 | 1             | 4
+in         | 3                                 | 1             | 1
+is         | 3                                 | 1             | 2
+jumps      | 1                                 | 1             | 2
+lazy       | 1, 3                              | 1:1, 3:1     | 6:1, 1:2
+next       | 2                                 | 1             | 3
+over       | 1                                 | 1             | 5
+quick      | 1                                 | 1             | 2
+sleeping   | 2, 3                              | 1:1, 2:1     | 6:1, 3:2
+sits       | 2                                 | 1             | 4
+sun        | 3                                 | 1             | 5
+the        | 1, 3                              | 1:2, 3:1     | 1:1, 7:1, 1:2
+to         | 2                                 | 1             | 4
+
+```
+
+Optimizations for compression and speed might involve techniques such as using variable byte encoding for storing integer values, employing dictionary compression for frequently occurring terms, and employing data structures like trie or compressed bitmaps for efficient storage and retrieval of positional information.   
+
+These enhancements provide more detailed information about the occurrences of terms within documents, allowing for more sophisticated search and ranking algorithms in Elasticsearch.
+
 
 <br/>
 <br/>

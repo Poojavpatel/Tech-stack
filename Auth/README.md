@@ -14,6 +14,7 @@ Everything related to Authentication, Authorization, Sessions, web tokens, cooki
 - [OpenId Connect](#openid-connect)
 - [OAuth 2.0](#oauth-20)
 - [Auth0](#auth0)
+- [SuperTokens](#supertokens)
 - [HRIS](#hris)
     - [Merge](#merge)
 - [Integrations](#integrations)
@@ -492,6 +493,50 @@ In more complex identity and access management scenarios, protocols like OpenID 
 [Auth0 in 100 Seconds](https://www.youtube.com/watch?v=yufqeJLP1rI)
 
 
+<br/>
+
+## SuperTokens
+
+https://supertokens.com/
+
+Open Source User Authentication
+
+SuperTokens is an open-source solution that provides secure and easy-to-implement authentication and session management for web applications. It aims to simplify the development process of authentication features while ensuring robust security measures are in place.
+
+Authentication   
+SuperTokens offers various authentication methods, including email/password, social login (such as Google, Facebook, etc.), and custom authentication. Developers can easily integrate these authentication methods into their web applications without needing to build them from scratch. 
+
+Session Management   
+SuperTokens provides mechanisms for session management, including session storage, session expiration, and session revocation. It ensures that user sessions are handled securely to prevent unauthorized access and session hijacking.
+
+Security   
+SuperTokens emphasizes security in its design, implementing measures such as secure session handling, CSRF (Cross-Site Request Forgery) protection, and protection against common web security vulnerabilities.
+
+Easy Integration   
+Integration with SuperTokens typically involves adding a few lines of code to the application, reducing the complexity of implementing authentication and session management.
+
+Scalability    
+SuperTokens is built to scale, allowing web applications to handle a large number of users and sessions efficiently. It offers features such as distributed session storage and horizontal scaling support, enabling applications to scale seamlessly as they grow.
+
+<br/>
+
+### SuperTokens vs Auth0
+
+Both SuperTokens and Auth0 offer authentication and identity management services for web applications, but they have some differences that might influence your decision on which one to use. Here's a comparison:
+
+Open Source vs. SaaS: SuperTokens is open-source, which means you have access to its source code and can customize it to suit your specific requirements. On the other hand, Auth0 is a SaaS (Software as a Service) platform, which provides a hosted solution for authentication and identity management. If you prefer the flexibility and control of self-hosted solutions, SuperTokens might be more appealing. However, if you prefer the convenience of a managed service, Auth0 might be a better choice.
+
+Customization and Control: With SuperTokens being open-source, you have the ability to customize its functionality and integrate it deeply into your application. This gives you more control over how authentication is implemented and allows you to tailor it to your application's unique needs. Auth0 offers a range of customization options through its dashboard and APIs, but the level of control might not be as granular as with self-hosted solutions like SuperTokens.
+
+Cost: Auth0 is a paid service, and its pricing is based on factors such as the number of active users and the features you require. SuperTokens, being open-source, is free to use, but you'll need to consider the cost of self-hosting and maintaining the infrastructure yourself. Depending on your budget and requirements, one option may be more cost-effective than the other.
+
+Features and Ecosystem: Both SuperTokens and Auth0 offer a wide range of features for authentication and identity management, including support for various authentication methods, user management, single sign-on (SSO), and multi-factor authentication (MFA). Auth0 has a mature ecosystem with integrations with many third-party services and platforms, which can be advantageous if you're already using these services in your application.
+
+Community and Support: SuperTokens being open-source has a community of developers contributing to its development and providing support through forums, documentation, and community resources. With Auth0, you have access to dedicated support from the company, which may be preferable if you require professional support and SLAs (Service Level Agreements).
+
+In summary, whether you should use SuperTokens or Auth0 depends on factors such as your preference for self-hosted vs. managed solutions, customization requirements, budget, and support needs. Both are reputable platforms with strengths in different areas, so evaluating your specific requirements and priorities will help you make the best choice for your project.
+
+<br/>
 <br/>
 
 ## HRIS
