@@ -513,6 +513,8 @@ What makes something a monolith ?
 
 ### Microservice Architecture
 
+[Microservice Architecture](./MicroserviceArchitecture.md)
+
 * Microservice is decoupling of entire application into small small services 
 * The application is divided into small services, where each microservice is developed and deployed separately
 * Finished application is the sum of its microservices
