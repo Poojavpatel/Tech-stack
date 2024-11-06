@@ -48,7 +48,9 @@
 
 **DevOps**
 - [DevOps](DevOps/README.md)
+- [Cloud computing](CloudComputing/README.md)
 - [AWS](AWS/README.md)
+- [Azure](CloudComputing/Azure.md)
 - [Docker](Docker/README.md)
 
 **OS**
