@@ -46,6 +46,9 @@ They refer to different aspects of verifying and granting access to resources.
 * Authorization is typically implemented through roles, permissions, and access control lists (ACLs). It involves defining rules that specify who can access what resources and what actions they can perform.
 * After logging into a system, authorization determines whether you, as an authenticated user, have the permissions to read, write, or delete files, access certain features, or perform specific operations.
 
+#### Delegated Authorization
+https://www.youtube.com/watch?v=t18YB3xDfXI
+
 <br/>
 
 ### Hashing
@@ -481,6 +484,8 @@ SAML 2.0 (Security Assertion Mark-up Language) is an umbrella standard that cove
 When we use one google account credentials to signin to youtube, google analytics, gmail, etc, we are using OpenId connect   
 It uses JWT to share identity information between services  
 
+https://www.youtube.com/watch?v=JuyaVlK-kGQ
+
 <br/>
 
 ## OAuth 2.0
@@ -492,6 +497,8 @@ OAuth 2.0 is widely adopted and used by major internet companies and developers 
 OAuth 2.0 and SSO with SAML are often used together in some scenarios to complement each other. For instance, a user might use SAML for single sign-on into an identity provider, and then OAuth 2.0 to authorize a third-party application to access certain resources on their behalf.
 
 In more complex identity and access management scenarios, protocols like OpenID Connect (which builds on OAuth 2.0) can be used to provide both authentication and authorization, offering a unified solution that combines the strengths of both OAuth 2.0 and SAML.
+
+https://www.youtube.com/watch?v=t18YB3xDfXI
 
 <br/>
 
