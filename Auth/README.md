@@ -282,6 +282,13 @@ To ensure that requests coming to your User service originate from the Auth serv
 <br/>
 <br/>
 
+## Modern authentication
+
+What is an Idp   
+What are claims
+
+https://www.youtube.com/watch?v=fbSVgC8nGz4&list=PLLasX02E8BPD5vC2XHS_oHaMVmaeHHPLy&index=6
+
 ## Social Sign-In   
 Social sign-in refers to the practice of using credentials from a social media platform (such as Facebook, Google, Twitter, or LinkedIn) to log in to a third-party website or application.   
 Users can sign in to a service using their existing social media account credentials, eliminating the need to create a new account for each service.   
