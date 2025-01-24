@@ -540,6 +540,44 @@ V - Verb
 
 ---
 
-## Composition vs inheritance 
+## Prefer Composition over inheritance 
 
 https://www.youtube.com/watch?v=hxGOiiR9ZKg
+
+Trying to understand -
+So the problem with interfaces some times is that,    
+if a parent class has a few abstract methods, all child classes need to inherit them, even if it would not make any sense to them   
+Eg - Class Bird has abstract method fly, it makes sense for most classes like sparrow crow,    
+but for penguin, does not make sense. In penguin class, we either have to keep it empty or throw error
+
+In composition i think what they mean is, not to use abstract class,    
+instead use simple class Bird, sparrow and crow will inherit Bird and implement method fly in them independently   
+Penguin will inherit Bird
+Now if the fly method in sparrow, needs to call flap wings method of Bird class,   
+instead of doing this.flipWings, pass bird: Bird to the method and then call bird.flipWings
+
+```
+class Bird {
+  flipWings(){
+    console.log('flip wings');
+  }
+}
+
+class Sparrow extends Bird {
+  fly (){
+    this.flipWings();
+    console.log('flying');
+  }
+}
+
+class Sparrow {
+  fly (bird: Bird){
+    this.flipWings(bird);
+    console.log('flying');
+  }
+}
+
+const bird = new Bird();
+const mySparrow = new Sparrow();
+mySparrow.fly(bird)
+```

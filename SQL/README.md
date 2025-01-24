@@ -25,6 +25,7 @@
   - [Routines and Triggers](#routines-and-triggers)
 - [SQL Joins](#sql-joins)
   - [Cross Join](#cross-join)
+- [SQL vs NoSQL Implementation differences](#sql-vs-nosql-implementation-differences)
 - [SQL Language Components](#sql-language-components)
   - [TCL (Transaction Control Language)](#tcl-transaction-control-language)
   - [DML (Data Manipulation Language)](#dml-data-manipulation-language)
@@ -435,6 +436,46 @@ SELECT * FROM orders right join customers on orders.customer_id = customers.cust
 SELECT * FROM orders full outer join customers on orders.customer_id = customers.customer_id where customers.customer_id is null or orders.customer_id is null;
 
 ```
+
+</br>
+</br>
+
+---
+
+## SQL vs NoSQL Implementation differences
+
+### GroupBy
+* In short - groupBy in mongo returns array of objects, group by in SQL returns first matching row
+* In MongoDB, when you group by a field (e.g., customerId), you usually use the $group aggregation stage.    
+This allows you to define how to aggregate the grouped data. For instance, you can collect all loans for a customer into an array or apply other aggregation functions
+* This query returns all loans associated with each customerId, aggregated into an array
+```mongo
+db.loans.aggregate([
+  {
+    $group: {
+      _id: "$customerId",
+      loans: { $push: "$loanDetails" } // Collect all loans in an array
+    }
+  }
+]);
+```
+* In SQL, GROUP BY is often used in conjunction with aggregate functions like SUM, COUNT, MAX, or MIN. However, if you don't use these explicitly and instead select columns not included in the GROUP BY, SQL usually picks the first row encountered for non-aggregated columns, which depends on the query's execution plan and is not guaranteed to be consistent unless explicitly defined.
+* This would not work in strict SQL modes since loanDetails isn't part of the GROUP BY. If it does work, the database typically picks the loanDetails from the first row encountered for each customerId.
+```sql
+SELECT customerId, loanDetails
+FROM loans
+GROUP BY customerId;
+```
+* To mimic MongoDB's behavior in SQL (e.g., getting all loans per customer), you'd use GROUP_CONCAT (MySQL) or a similar function
+This aggregates all loans for a customerId into a single string, separated by commas (or another delimiter).
+```sql
+SELECT customerId, GROUP_CONCAT(loanDetails) AS loans
+FROM loans
+GROUP BY customerId;
+```
+
+</br>
+</br>
 
 ---
 

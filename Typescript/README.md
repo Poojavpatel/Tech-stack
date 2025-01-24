@@ -17,6 +17,7 @@
   - [Exclude<T, U> and Extract<T, U>](#excludet-u-and-extractt-u)
   - [NonNullable<T>](#nonnullable)
 - [Generics](#generics)
+- [Learning practical Typescript](#learning-practical-typescript)
 - [OOPS in Typescript](#oops-in-typescript)
 - [Access Modifier](#access-modifier)
 - [Properties in typescript](#properties-in-typescript)
@@ -40,6 +41,7 @@
 
 * Typescript is a super set of javascript 
 * Browsers donot understand typescript, Typescript files are **transpiled** into javascript 
+* Official typescript docs - https://www.typescriptlang.org/docs/
 
 ### Advantages of typescript over javascript
 1. Strong typing 
@@ -552,6 +554,40 @@ type NumberWrapper = {
   value: number;
 };
 ```
+
+<br/>
+<br/>
+
+---
+
+### Learning practical Typescript
+
+The best typescript challenges    
+https://github.com/type-challenges/type-challenges?tab=readme-ov-file
+
+
+Creating Types from Types - Official TS docs   
+https://www.typescriptlang.org/docs/handbook/2/types-from-types.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/>
+<br/>
 
 ---
 
